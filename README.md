@@ -10,3 +10,6 @@ https://bitbucket.org/plaoo/
 
 # Basic-er side scroller source code
 http://programarcadegames.com/python_examples/show_file.php?file=platform_scroller.py
+
+# Sprite Sheet
+http://programarcadegames.com/python_examples/en/sprite_sheets/
