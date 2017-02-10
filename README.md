@@ -16,3 +16,6 @@ http://programarcadegames.com/python_examples/en/sprite_sheets/
 
 # Building functionality for bullets
 http://programarcadegames.com/python_examples/f.php?file=bullets.py
+
+# Pygame key binding reference
+https://www.pygame.org/docs/ref/key.html
