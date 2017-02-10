@@ -32,8 +32,10 @@ def main():
     bg.fill(Color("#000000"))
     entities = pygame.sprite.Group()
     bullets = pygame.sprite.Group()
+    blocks = pygame.sprite.Group()
     player = Player(32, 32)
     platforms = []
+    last_direction = "right"
 
     x = y = 0
     level =[
@@ -45,10 +47,10 @@ def main():
     "P                                                                                                                                                                                                                                                                                                                                                                                          P",
     "P                                      P                                                                                                                                                                                                                                                                                                                                                   P",
     "P                         P     P          P                                                                                                                                                                                                                                                                                                                                               P",
-    "P                     P                     P                                                                                                                                                                                                                                                                                                                                               P",
+    "P                     P                     P                                                                                                                                                                                                                                                                                                                                              P",
     "P                                                                                                                                                                                                                                                                                                                                                                                          P",
     "P                 P                                                                                                                                                                                                                                                                                                                                                                        P",
-    "PPPPPPPPPPPPPPPPPPP                                                                               PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP"]
+    "PPPPPPPPPPPPPPPPPPP      PPPPPPPPPPPP                                                           PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP"]
     
     # build the level
     for row in level:
@@ -56,10 +58,12 @@ def main():
             if col == "P":
                 p = Platform(x, y)
                 platforms.append(p)
+                blocks.add(p)
                 entities.add(p)
             if col == "E":
                 e = ExitBlock(x, y)
                 platforms.append(e)
+                blocks.add(e)
                 entities.add(e)
             x += 32
         y += 32
@@ -83,12 +87,14 @@ def main():
                 down = True
             if e.type == KEYDOWN and e.key == K_LEFT:
                 left = True
+                last_direction = "left"
             if e.type == KEYDOWN and e.key == K_RIGHT:
                 right = True
+                last_direction = "right"
             if e.type == KEYDOWN and e.key == K_SPACE:
                 running = True
             if e.type == KEYDOWN and e.key == K_f:
-                bullet = Bullet()
+                bullet = Bullet(last_direction)
                 bullet.rect.x = player.rect.x
                 bullet.rect.y = player.rect.y
                 entities.add(bullet)
@@ -109,6 +115,7 @@ def main():
             for x in range(32):
                 screen.blit(bg, (x * 32, y * 32))
 
+        # update bullets and camera
         bullets.update()
         camera.update(player)
 
@@ -116,22 +123,23 @@ def main():
         player.update(up, down, left, right, running, platforms)
         for e in entities:
             screen.blit(e.image, camera.apply(e))
+
         for bullet in bullets:
             # See if it hit a block
-            block_hit_list = sprite.spritecollide(bullet, entities, True)
+            block_hit_list = sprite.spritecollide(bullet, blocks, True)
  
             # For each block hit, remove the bullet or cause collision
             for block in block_hit_list:
                 bullets.remove(bullet)
                 entities.remove(bullet)
+                if block in platforms:
+                    platforms.remove(block)
 
             # Remove the bullet if it flies off the screen
-            if bullet.rect.y < -10:
+            if bullet.rect.x < -10:
                 bullets.remove(bullet)
                 entities.remove(bullet)
 
-        bullets.draw(screen)
-        pygame.display.flip()
         pygame.display.update()
 
 class Camera(object):
@@ -148,17 +156,20 @@ class Camera(object):
 
 class Bullet(pygame.sprite.Sprite):
     """ This class represents the bullet . """
-    def __init__(self):
+    def __init__(self, last_direction):
         # Call the parent class (Sprite) constructor
         pygame.sprite.Sprite.__init__(self)
- 
-        self.image = pygame.Surface([4, 10])
+        self.direction = last_direction
+        self.image = pygame.Surface([4, 4])
         self.image.fill(WHITE)
         self.rect = self.image.get_rect()
  
     def update(self):
         """ Move the bullet. """
-        self.rect.y -= 3
+        if self.direction == "left":
+            self.rect.x -= 12
+        elif self.direction == "right":
+            self.rect.x += 12
 
 
 def simple_camera(camera, target_rect):
@@ -199,7 +210,7 @@ class Player(Entity):
         if down:
             pass
         if running:
-            self.xvel = 6 # was 12
+            self.xvel + 6 # was 12
         if left:
             self.xvel = -4
         if right:
@@ -243,12 +254,13 @@ class Player(Entity):
 
 
 class Platform(Entity):
+    color = "#DDDDDD"
     """ generates platform """
     def __init__(self, x, y):
         Entity.__init__(self)
         self.image = Surface((32, 32))
         self.image.convert()
-        self.image.fill(Color("#DDDDDD"))
+        self.image.fill(Color(self.color))
         self.rect = Rect(x, y, 32, 32)
 
     def update(self):
