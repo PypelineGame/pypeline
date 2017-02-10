@@ -13,3 +13,6 @@ http://programarcadegames.com/python_examples/show_file.php?file=platform_scroll
 
 # Sprite Sheet
 http://programarcadegames.com/python_examples/en/sprite_sheets/
+
+# Building functionality for bullets
+http://programarcadegames.com/python_examples/f.php?file=bullets.py
