@@ -18,9 +18,11 @@ def main():
     _background = pygame.Surface(load.get_size())
     _background.fill((0,0,0))
     load.blit(_background, (0,0))
-    load.blit(pygame.font.Font(None, 72).render('Loading...', 1, (255,255,255)),(90,10))
+    load.blit(pygame.font.Font(None, 72)\
+    .render('Loading...', 1, (255,255,255)),(90,10))
     pygame.display.update()
-    time.sleep(0.5)
+
+    player_is_dead = False
 
     print ("Game loaded.")
     screen = pygame.display.set_mode(DISPLAY, FLAGS, DEPTH)
@@ -28,6 +30,8 @@ def main():
 
     # defining some useful objects
     up = down = left = right = running = False
+    #a_bullet_has_been_fired = False
+    bullet = None
     bg = Surface((32,32))
     bg.convert()
     bg.fill(BLACK)
@@ -40,7 +44,8 @@ def main():
     x, y = 0, 0
 
     level = get_level(1)
-    build_level(level, platforms, blocks, entities, Platform, ExitBlock)
+    args = level, platforms, blocks, entities, Platform, ExitBlock
+    platforms, blocks, entities = build_level(*args)
 
     # generate size of level and set camera
     total_level_width  = len(level[0])*32
@@ -56,6 +61,10 @@ def main():
         playtime += fps / 1000.0 # add second to playtime
         text_display = "{0:.2f}fps    {1:.2f}s".format(timer.get_fps(), playtime)
         pygame.display.set_caption(text_display)
+
+        #if player_is_dead:
+        #    player_is_dead = False
+        #    time.sleep(0.5)
 
         # event handler
         for e in pygame.event.get():
@@ -96,8 +105,11 @@ def main():
                 running = False
 
             # fire if mouse click or space bar is hit
-            if e.type == pygame.MOUSEBUTTONDOWN or (e.type == KEYUP and e.key == K_SPACE):
-                bullet = Bullet(pygame.mouse.get_pos(), [player.rect.x, player.rect.y, player.height], camera.state)
+            if e.type == pygame.MOUSEBUTTONDOWN or\
+            (e.type == KEYUP and e.key == K_SPACE):
+                #a_bullet_has_been_fired = True
+                bullet = Bullet(pygame.mouse.get_pos(),\
+                [player.rect.x, player.rect.y, player.height], camera.state)
                 bullet.rect.x = player.rect.x + player.height / 2
                 bullet.rect.y = player.rect.y + player.height / 2
                 entities.add(bullet)
@@ -117,49 +129,20 @@ def main():
         for e in entities:
             screen.blit(e.image, camera.apply(e))
 
-        # check bullet collision
-        for bullet in bullets:
-            # See if it hit a block
-            block_hit_list = sprite.spritecollide(bullet, blocks, True)
- 
-            # For each block hit, remove the bullet or cause collision
-            for block in block_hit_list:
-                bullets.remove(bullet)
-                entities.remove(bullet)
-                if block in platforms:
-                    platforms.remove(block)
-
-            # Remove the bullet if it flies off the screen
-            if bullet.rect.y > 1000:
-                bullets.remove(bullet)
-                entities.remove(bullet)
+        # handle bullet collision
+        #if a_bullet_has_been_fired:
+        if len(bullets) > 0:
+            args = bullets, blocks, platforms, entities
+            bullets, entities, platforms, blocks = bullet_collision(*args)
 
         # if player has fallen off screen, player has died
         if player.rect.y > 1000:
-
-            # reset sprites and re-add player to game
-            platforms = []
-            blocks.empty()
-            entities.empty()
-            entities.add(player)
-
-            # rebuild level
-            build_level(level, platforms, blocks, entities, Platform, ExitBlock)
-
-            # respawn player
-            player.rect.x = 32
-            player.rect.y = 32
-
-            # render body text
-            bodylines = [
-                [(140, 100), "Try again n00b..."]]
-            bodyfont = getFont(None, 22)
-            for line in bodylines:
-               position, text = line
-               putText(screen, bodyfont, text, position,
-                    forecolour = WHITE,
-                    backcolour = BLACK )
-            time.sleep(1)
+            respawn_text = "Try again n00b..."
+            args = screen, player, level, platforms, bullets,\
+            blocks, entities, respawn_text, Platform, ExitBlock
+            platforms, blocks, entities,\
+            player.rect.x, player.rect.y = player_has_died(*args)
+            player_is_dead = True
 
         # refresh screen at end of frame
         pygame.display.update()

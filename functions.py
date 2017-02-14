@@ -2,6 +2,7 @@
 
 from classes import *
 import levels
+import os, time
 
 def simple_camera(camera, target_rect):
     """ simple camera class """
@@ -28,7 +29,11 @@ def get_level(level_num):
     else:
         return
 
-def build_level(level, platforms, blocks, entities, Platform, ExitBlock):
+def build_level(*args):
+    # unpackage arguments
+    level, platforms, blocks, entities,\
+    Platform, ExitBlock = (x for x in args)
+
     exit_block_provided = False
     x, y = 0, 0
     # build the level
@@ -58,6 +63,8 @@ def build_level(level, platforms, blocks, entities, Platform, ExitBlock):
         blocks.add(e)
         entities.add(e)
 
+    return platforms, blocks, entities
+
 # Create a font
 # When font name = None, Pygame returns a default font
 def getFont(name = None, size = 20):
@@ -77,3 +84,64 @@ def putText(screen, fontOBJ, message = "Test", position = (10,10),
    # Blit the text
    screen.blit(text, textRect)
    pygame.display.update()
+
+def bullet_collision(*args):
+    # unpackage arguments
+    bullets, blocks, platforms, entities = (x for x in args)
+
+    # See if it hit a block
+    block_hit_list, bullet_hit_list = [], []
+    for bullet in bullets:
+        hit_block = sprite.spritecollide(bullet, blocks, True)
+        block_hit_list += hit_block # keep track of hit blocks
+        if bool(hit_block):
+            bullet_hit_list.append(bullet)
+
+    # For each block hit, cause a collision
+    for block in block_hit_list:
+            platforms.remove(block)
+            blocks.remove(block)
+            entities.remove(block)
+    # remove each bullet that hits a block
+    for bullet in bullet_hit_list:
+            bullets.remove(bullet)
+            entities.remove(bullet)
+
+    # Remove the bullet if it flies off the screen
+    for bullet in bullets:
+        if bullet.rect.y > 1000:
+            bullets.remove(bullet)
+            entities.remove(bullet)
+
+    return bullets, entities, platforms, blocks
+
+def player_has_died(*args):
+    # unpackage arguments
+    screen, player, level, platforms, bullets, blocks,\
+    entities, text, Platform, ExitBlock = (x for x in args)
+
+    # reset sprites and re-add player to game
+    platforms = []
+    blocks.empty()
+    entities.empty()
+    bullets.empty()
+    entities.add(player)
+
+    # rebuild level
+    args = level, platforms, blocks, entities, Platform, ExitBlock
+    platforms, blocks, entities = build_level(*args)
+
+    # respawn player at these coordinates
+    x, y = 32, 32
+
+    # render body text
+    bodylines = [
+        [(140, 100), text]]
+    bodyfont = getFont(None, 22)
+    for line in bodylines:
+       position, text = line
+       putText(screen, bodyfont, text, position,
+            forecolour = WHITE,
+            backcolour = BLACK )
+    time.sleep(1)
+    return platforms, blocks, entities, x, y
