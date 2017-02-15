@@ -19,3 +19,6 @@ http://programarcadegames.com/python_examples/f.php?file=bullets.py
 
 # Pygame key binding reference
 https://www.pygame.org/docs/ref/key.html
+
+# How to use Pygame to parse sprite sheets
+http://programarcadegames.com/python_examples/en/sprite_sheets/
