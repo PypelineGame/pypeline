@@ -22,3 +22,6 @@ https://www.pygame.org/docs/ref/key.html
 
 # How to use Pygame to parse sprite sheets
 http://programarcadegames.com/python_examples/en/sprite_sheets/
+
+# Implementing smooth movement in Pygame
+http://gafferongames.com/game-physics/fix-your-timestep/
