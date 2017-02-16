@@ -197,6 +197,14 @@ class Enemy(Entity):
         self.xvel = 0
         self.yvel = 0
 
+class HitBox(Entity):
+    """ hitbox object """
+    def __init__(self, x1, y1, x2, y2):
+        Entity.__init__(self)
+        self.xvel = 0
+        self.yvel = 0
+        self.rect = Rect(x1, y1, x2, y2)
+
 """                                 Enemies                                 """
 
 class GarbageCollector(Enemy):
@@ -205,12 +213,20 @@ class GarbageCollector(Enemy):
     def __init__(self, x, y):
         Enemy.__init__(self)
         self.rect = Rect(x, y, 70, 70)
-
+        self.hitbox = HitBox(x, y, 70, 70) # used to patrol
         self.counter = 1 # used for alternating images
         self.frame_counter = 0 # used for counting frame rate
 
         self.xvel = 0
+        self.yvel = 0
         self.onGround = False
+
+        #self.group = pygame.sprite.group()
+
+        #self.patrol_radius = Rect(x, y, 140, 70)
+        self.reverse = False
+        #self.value = 0 # trying this out
+
 
         # establish list of sprite images
         self.images = ['1.png', '2.png', '3.png', '4.png']
@@ -226,10 +242,28 @@ class GarbageCollector(Enemy):
             self.image = pygame.image.load(self.images[self.counter])
             self.counter = (self.counter + 1) % len(self.images)
 
-        self.xvel = 1
-        # increment in x and y direction
-        self.rect.left += self.xvel
-        self.rect.top += self.yvel
+        #if self.onGround:
+        #if self.value == "right":
+        #if pygame.sprite.collide_rect(self.patrol_radius, platforms, True)  
+        #if pygame.sprite.collide_rect(self.patrol_radius, platforms):
+        #for p in platforms:
+        #    if self.patrol_radius.bottom == p.rect.top:
+        #        self.xvel = -1
+        #    else:
+        #        self.xvel = 1
+            #self.yvel = 0
+
+        for p in platforms:
+            if pygame.sprite.collide_rect(self.hitbox, p):
+                self.xvel = 1
+                continue
+            self.xvel = -1
+            break
+
+        #if self.reverse == False:
+        #    self.xvel = 1
+        #else:
+        #    self.xvel = -1
 
          # only accelerate with gravity if in the air
         if not self.onGround:
@@ -237,29 +271,50 @@ class GarbageCollector(Enemy):
              # max falling speed
             if self.yvel > 100:
                 self.yvel = 100
-        #if not(left or right):
-        self.xvel = 0
-        # assuming we're in the air
-        self.onGround = False;
-        # do y-axis collisions
+
+        # do x-axis collision
         self.collide(self.xvel, 0, platforms)
+
+        # increment in y direction
+        self.rect.top += self.yvel
+        self.onGround = False;
+
+        # do y-axis collision
         self.collide(self.yvel, 0, platforms)
+        #self.xvel = -1
+
+        # increment in x direction
+        self.rect.left += self.xvel
+        
+        
 
     def collide(self, xvel, yvel, platforms):
         """ handles garbage collector collision """
+
         for p in platforms:
             if pygame.sprite.collide_rect(self, p):
-                #if isinstance(p, ExitBlock):
-                #    pygame.event.post(pygame.event.Event(QUIT))
-                if xvel > 0:
-                    self.rect.right = p.rect.left
-                    #print "collide right"
-                if xvel < 0:
-                    self.rect.left = p.rect.right
-                    #print "collide left"
-                if yvel > 0:
+                    #if isinstance(p, ExitBlock):
+                    #    pygame.event.post(pygame.event.Event(QUIT))
+                    #if xvel < 0:
+                        #self.rect.left = p.rect.right
+                        #print "collide left"
+                if self.yvel > 0:
                     self.rect.bottom = p.rect.top
                     self.onGround = True
                     self.yvel = 0
-                if yvel < 0:
-                    self.rect.top = p.rect.bottom
+                    #print "collide bottom"
+                    #self.value = "bottom"
+                    #return self.value
+                #elif self.xvel > 0:
+                #    self.rect.right = p.rect.left
+                    #print "collide right"
+                    #self.value = "right"
+                    #return self.value
+
+                #if yvel < 0:
+                #    self.rect.top = p.rect.bottom
+                #    self.onGround = False
+                #    print "collide top"
+                #return True
+        #print "no collide"
+        #return self.value

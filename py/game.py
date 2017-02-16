@@ -38,6 +38,7 @@ def main():
     entities = pygame.sprite.Group()
     bullets = pygame.sprite.Group()
     blocks = pygame.sprite.Group()
+    enemy_sprites = pygame.sprite.Group()
     player = Player(32, 32)
     entities.add(player) # adds player to the list of entities
     platforms = []
@@ -48,6 +49,9 @@ def main():
 
     level = get_level(1) # set level
     enemies = get_enemies(level) # set enemy list
+    # add enemies to sprite list
+    for itr in enemies:
+        enemy_sprites.add(itr)
 
     # build level
     args = level, enemies, platforms, blocks,\
@@ -148,8 +152,8 @@ def main():
             args = bullets, blocks, platforms, entities
             bullets, entities, platforms, blocks = bullet_collision(*args)
 
-        # if player has fallen off screen, player has died
-        if player.rect.y > 1000:
+        # if player has fallen off screen or hit an enemy, player has died
+        if player.rect.y > 1000 or sprite.spritecollide(player, enemy_sprites, True):
             respawn_text = "Try again n00b..."
             # build argument list
             args = screen, player, level, platforms, bullets,\
@@ -157,6 +161,9 @@ def main():
             # call player_has_died function with *args
             platforms, blocks, entities, enemies,\
             player.rect.x, player.rect.y = player_has_died(*args)
+            for itr in enemies: # rebuild enemies
+                itr.kill()
+                enemy_sprites.add(itr)
             pygame.time.delay(100)
 
         # refresh screen at end of each frame
