@@ -39,24 +39,33 @@ def main():
     bullets = pygame.sprite.Group()
     blocks = pygame.sprite.Group()
     enemy_sprites = pygame.sprite.Group()
-    player = Player(32, 32)
+    collision_block_sprites = pygame.sprite.Group()
+    player = Player(64, 135)
     entities.add(player) # adds player to the list of entities
     platforms = []
+    collision_blocks = []
+    indestructibles = pygame.sprite.Group()
 
     # create list of different block types
-    block_types = [BaigeBlock(), MossyBlock(), BaigeRoundBlock()]
-    __FPS = 60
+    block_types = [
+    BaigeBlock(), LeftStoneBlock(), RightStoneBlock(),\
+    BlueBlock(), GrayBlock(), BrightBlueBlock(), BrownBlock(),
+    TopRightStoneBlock(), TopLeftStoneBlock(), CollisionBlock()
+    ]
+    __FPS = 80
 
     level = get_level(1) # set level
-    enemies = get_enemies(level) # set enemy list
+    #enemies = get_enemies(level) # set enemy list
+    enemies = []
     # add enemies to sprite list
-    for itr in enemies:
-        enemy_sprites.add(itr)
 
+    # build arg list
+    args = level, enemies, enemy_sprites, platforms, blocks,\
+    entities, Platform, block_types, collision_blocks,\
+    collision_block_sprites, indestructibles
     # build level
-    args = level, enemies, platforms, blocks,\
-    entities, Platform, block_types #ExitBlock
-    platforms, blocks, entities, enemies = build_level(*args)
+    platforms, blocks, entities, enemies,\
+    enemy_sprites, collision_block_sprites, indestructibles = build_level(*args)
 
     # generate size of level and set camera
     total_level_width  = len(level[0])*32
@@ -139,7 +148,7 @@ def main():
         player.update(up, down, left, right, running, platforms)
         for itr in enemies:
             if type(itr).__name__ == "GarbageCollector":
-                itr.update(platforms)
+                itr.update(platforms, collision_blocks, blocks, entities)
             else:
                 itr.update()
 
@@ -149,21 +158,19 @@ def main():
 
         # handle bullet collision
         if len(bullets) > 0:
-            args = bullets, blocks, platforms, entities
-            bullets, entities, platforms, blocks = bullet_collision(*args)
+            args = bullets, blocks, platforms, entities, enemies, enemy_sprites, indestructibles
+            bullets, entities, platforms, blocks, enemies, enemy_sprites = bullet_collision(*args)
 
         # if player has fallen off screen or hit an enemy, player has died
         if player.rect.y > 1000 or sprite.spritecollide(player, enemy_sprites, True):
             respawn_text = "Try again n00b..."
             # build argument list
             args = screen, player, level, platforms, bullets,\
-            blocks, entities, enemies, respawn_text, Platform, block_types #ExitBlock
+            blocks, entities, enemies, enemy_sprites, respawn_text,\
+            Platform, block_types, collision_blocks, collision_block_sprites, indestructibles
             # call player_has_died function with *args
-            platforms, blocks, entities, enemies,\
-            player.rect.x, player.rect.y = player_has_died(*args)
-            for itr in enemies: # rebuild enemies
-                itr.kill()
-                enemy_sprites.add(itr)
+            platforms, blocks, collision_blocks, collision_block_sprites, entities, enemies, enemy_sprites,\
+            player.rect.x, player.rect.y, indestructibles = player_has_died(*args)
             pygame.time.delay(100)
 
         # refresh screen at end of each frame

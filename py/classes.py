@@ -29,9 +29,6 @@ CAMERA_SLACK = 30
 # Define animation frames for classes
 GARBAGE_COLLECTOR_MAX_FRAMES = 8
 
-# Define class keywords
-GARBAGE_COLLECTOR = "Garbage_Collector"
-
 # import our functions
 from functions import *
 
@@ -72,14 +69,14 @@ class Player(Entity):
             pass
         if left:
             if running:
-                self.xvel = -5
+                self.xvel = -6
             else:
-                self.xvel = -4
+                self.xvel = -5
         if right:
             if running:
-                self.xvel = 5
+                self.xvel = 6
             else:
-                self.xvel = 4
+                self.xvel = 5
         # only accelerate with gravity if in the air
         if not self.onGround:
             self.yvel += 0.6
@@ -98,19 +95,14 @@ class Player(Entity):
         self.onGround = False;
         # do y-axis collisions
         self.collide(0, self.yvel, platforms)
-
     def collide(self, xvel, yvel, platforms):
         """ handles platform collision """
         for p in platforms:
             if pygame.sprite.collide_rect(self, p):
-                #if isinstance(p, ExitBlock):
-                #    pygame.event.post(pygame.event.Event(QUIT))
                 if xvel > 0:
                     self.rect.right = p.rect.left
-                    #print "collide right"
                 if xvel < 0:
                     self.rect.left = p.rect.right
-                    #print "collide left"
                 if yvel > 0:
                     self.rect.bottom = p.rect.top
                     self.onGround = True
@@ -134,6 +126,8 @@ class Bullet(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         # offset camera state on x coordinates
         self.mouse_x -= camera_state[0]
+        # might need to offset camera in y coordinates in the future
+        # .. add here
 
     def update(self):
         """ Move the bullet. """
@@ -159,18 +153,20 @@ class Platform(Entity):
     def update(self):
         pass
 
+class BlankPlatform(Entity):
+    """ Generates an invisible 32x32 platform at x,y with a given BlockType """
+    def __init__(self, x, y, BlockType):
+        Entity.__init__(self)
+        self.rect = Rect(x, y, 32, 32)
+        self.image = pygame.Surface([32, 32], pygame.SRCALPHA, 32)
+        self.image = self.image.convert_alpha()
+    def update(self):
+        pass
+
 class BlockType(Entity):
     """ abstract blocktype class """
     def __init__(self):
         Entity.__init__(self)
-    def update(self):
-        pass
-
-class MossyBlock(BlockType):
-    """ mossyblock class """
-    def __init__(self):
-        BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/mossy_block.png")
     def update(self):
         pass
 
@@ -182,11 +178,74 @@ class BaigeBlock(BlockType):
     def update(self):
         pass
 
-class BaigeRoundBlock(BlockType):
-    """ baige round block class """
+class BrownBlock(BlockType):
+    """ brown block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/baige_round_block.png")
+        self.image = pygame.image.load("../sprites/brown_block.png")
+    def update(self):
+        pass
+
+class BlueBlock(BlockType):
+    """ blue block class """
+    def __init__(self):
+        BlockType.__init__(self)
+        self.image = pygame.image.load("../sprites/blue_block.png")
+    def update(self):
+        pass
+
+class BrightBlueBlock(BlockType):
+    """ bright blue block class """
+    def __init__(self):
+        BlockType.__init__(self)
+        self.image = pygame.image.load("../sprites/bright_blue_block.png")
+    def update(self):
+        pass
+
+class GrayBlock(BlockType):
+    """ gray block class """
+    def __init__(self):
+        BlockType.__init__(self)
+        self.image = pygame.image.load("../sprites/gray_block.png")
+    def update(self):
+        pass
+
+class TopLeftStoneBlock(BlockType):
+    """ top left stone block class """
+    def __init__(self):
+        BlockType.__init__(self)
+        self.image = pygame.image.load("../sprites/top_left_brick.png")
+    def update(self):
+        pass
+
+class TopRightStoneBlock(BlockType):
+    """ top right stone block class """
+    def __init__(self):
+        BlockType.__init__(self)
+        self.image = pygame.image.load("../sprites/top_right_brick.png")
+    def update(self):
+        pass
+
+class RightStoneBlock(BlockType):
+    """ right stone block class """
+    def __init__(self):
+        BlockType.__init__(self)
+        self.image = pygame.image.load("../sprites/right_brick.png")
+    def update(self):
+        pass
+
+class LeftStoneBlock(BlockType):
+    """ left stone block class """
+    def __init__(self):
+        BlockType.__init__(self)
+        self.image = pygame.image.load("../sprites/left_brick.png")
+    def update(self):
+        pass
+
+class CollisionBlock(BlockType):
+    """ blank block used to detect collisions """
+    def __init__(self):
+        BlockType.__init__(self)
     def update(self):
         pass
 
@@ -213,20 +272,13 @@ class GarbageCollector(Enemy):
     def __init__(self, x, y):
         Enemy.__init__(self)
         self.rect = Rect(x, y, 70, 70)
-        self.hitbox = HitBox(x, y, 70, 70) # used to patrol
-        self.counter = 1 # used for alternating images
+        self.counter = 0 # used for alternating sprite images
         self.frame_counter = 0 # used for counting frame rate
 
         self.xvel = 0
         self.yvel = 0
         self.onGround = False
-
-        #self.group = pygame.sprite.group()
-
-        #self.patrol_radius = Rect(x, y, 140, 70)
         self.reverse = False
-        #self.value = 0 # trying this out
-
 
         # establish list of sprite images
         self.images = ['1.png', '2.png', '3.png', '4.png']
@@ -234,36 +286,20 @@ class GarbageCollector(Enemy):
             self.images[index] =  "../sprites/garbage_collector/" + x
         self.image = pygame.image.load(self.images[0]) # start on first image
 
-    def update(self, platforms):
+    def update(self, platforms, blank_platforms, blocks, entities):
         """ update garbage collector """
         self.frame_counter += 1
         if self.frame_counter == GARBAGE_COLLECTOR_MAX_FRAMES:
             self.frame_counter = 0
             self.image = pygame.image.load(self.images[self.counter])
+            if self.reverse:
+                self.image = transform.flip(self.image, 1, 0)
             self.counter = (self.counter + 1) % len(self.images)
 
-        #if self.onGround:
-        #if self.value == "right":
-        #if pygame.sprite.collide_rect(self.patrol_radius, platforms, True)  
-        #if pygame.sprite.collide_rect(self.patrol_radius, platforms):
-        #for p in platforms:
-        #    if self.patrol_radius.bottom == p.rect.top:
-        #        self.xvel = -1
-        #    else:
-        #        self.xvel = 1
-            #self.yvel = 0
-
-        for p in platforms:
-            if pygame.sprite.collide_rect(self.hitbox, p):
-                self.xvel = 1
-                continue
-            self.xvel = -1
-            break
-
-        #if self.reverse == False:
-        #    self.xvel = 1
-        #else:
-        #    self.xvel = -1
+        if not self.reverse:
+            self.xvel = 2
+        else:
+            self.xvel = -2
 
          # only accelerate with gravity if in the air
         if not self.onGround:
@@ -272,49 +308,45 @@ class GarbageCollector(Enemy):
             if self.yvel > 100:
                 self.yvel = 100
 
+        # increment in x direction
+        self.rect.left += self.xvel
+
         # do x-axis collision
-        self.collide(self.xvel, 0, platforms)
+        self.collide(self.xvel, 0, platforms, blocks, entities)
 
         # increment in y direction
         self.rect.top += self.yvel
         self.onGround = False;
 
         # do y-axis collision
-        self.collide(self.yvel, 0, platforms)
-        #self.xvel = -1
+        self.collide(0, self.yvel, platforms, blocks, entities)
 
-        # increment in x direction
-        self.rect.left += self.xvel
-        
-        
+        # handle collisions for blank collision blocks
+        for p in blank_platforms:
+            if pygame.sprite.collide_rect(self, p):
+                self.reverse = not self.reverse
 
-    def collide(self, xvel, yvel, platforms):
+    def collide(self, xvel, yvel, platforms, blocks, entities):
         """ handles garbage collector collision """
-
         for p in platforms:
             if pygame.sprite.collide_rect(self, p):
-                    #if isinstance(p, ExitBlock):
-                    #    pygame.event.post(pygame.event.Event(QUIT))
-                    #if xvel < 0:
-                        #self.rect.left = p.rect.right
-                        #print "collide left"
-                if self.yvel > 0:
+                if xvel > 0: # moving right, hit left side of wall
+                    self.rect.right = p.rect.left
+                    if p in blocks:
+                        p.kill()
+                        blocks.remove(p)
+                        entities.remove(p)
+                        platforms.remove(p)
+                if xvel < 0: # moving left, hit right side of wall
+                    self.rect.left = p.rect.right
+                    if p in blocks:
+                        p.kill()
+                        blocks.remove(p)
+                        entities.remove(p)
+                        platforms.remove(p)
+                if yvel > 0: # moving down, hit top of wall
                     self.rect.bottom = p.rect.top
                     self.onGround = True
                     self.yvel = 0
-                    #print "collide bottom"
-                    #self.value = "bottom"
-                    #return self.value
-                #elif self.xvel > 0:
-                #    self.rect.right = p.rect.left
-                    #print "collide right"
-                    #self.value = "right"
-                    #return self.value
-
-                #if yvel < 0:
-                #    self.rect.top = p.rect.bottom
-                #    self.onGround = False
-                #    print "collide top"
-                #return True
-        #print "no collide"
-        #return self.value
+                if yvel < 0: # moving up, hit bottom side of wall
+                    self.rect.top = p.rect.bottom

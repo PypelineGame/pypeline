@@ -35,41 +35,85 @@ def get_enemies(level_num):
 
 def build_level(*args):
     """ build level passed in """
-
     # unpackage arguments
-    level, enemies, platforms, blocks, entities,\
-    Platform, block_types = (x for x in args)
+    level, enemies, enemy_sprites, platforms, blocks, entities,\
+    Platform, block_types, collision_blocks,\
+    collision_block_sprites, indestructibles = (x for x in args)
 
     # unpackage block_types
-    BaigeBlock, MossyBlock, BaigeRoundBlock = (x for x in block_types)
+    BaigeBlock, LeftStoneBlock, RightStoneBlock,\
+    BlueBlock, GrayBlock, BrightBlueBlock, BrownBlock,\
+    TopRightStoneBlock, TopLeftStoneBlock, CollisionBlock = (x for x in block_types)
 
     x, y = 0, 0
     # build the level
     for row in level:
         for col in row:
             if col != " ":
-                if col == "B":
+                if col == "E":
                     which_block = BaigeBlock
-                elif col == "M":
-                    which_block = MossyBlock
+                    p = Platform(x, y, which_block)
+                    platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
+                elif col == "C":
+                    which_block = BrownBlock
+                    p = Platform(x, y, which_block)
+                    platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
+                elif col == "A":
+                    which_block = BlueBlock
+                    p = Platform(x, y, which_block)
+                    platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
+                elif col == "B":
+                    which_block = BrightBlueBlock
+                    p = Platform(x, y, which_block)
+                    platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
+                elif col == "D":
+                    which_block = GrayBlock
+                    p = Platform(x, y, which_block)
+                    platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
+                elif col == "L":
+                    which_block = TopLeftStoneBlock
+                    p = Platform(x, y, which_block)
+                    indestructibles.add(p)
+                    entities.add(p)
+                    platforms.append(p)
                 elif col == "R":
-                    which_block = BaigeRoundBlock
-                p = Platform(x, y, which_block)
-                platforms.append(p)
-                blocks.add(p)
-                entities.add(p)
+                    which_block = TopRightStoneBlock
+                    p = Platform(x, y, which_block)
+                    indestructibles.add(p)
+                    entities.add(p)
+                    platforms.append(p)
+                elif col == "M":
+                    which_block = LeftStoneBlock
+                    p = Platform(x, y, which_block)
+                    platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
+                elif col == "N":
+                    which_block = RightStoneBlock
+                    p = Platform(x, y, which_block)
+                    platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
+                elif col == "O":
+                    which_block = CollisionBlock
+                    p = BlankPlatform(x, y, which_block)
+                    collision_blocks.append(p)
+                    entities.add(p)
             x += 32 # index by 32 bits
         y += 32
         x = 0
 
-    # add enemies to list of entities
-    for enemy in enemies:
-
-        #if e[0] == GARBAGE_COLLECTOR:
-        #    enemy = GarbageCollector(e[1], e[2])
+    for enemy in get_enemies(level):
+        # re-calls enemy's constructor
+        enemy = type(enemy)(enemy.rect.x, enemy.rect.y)
         entities.add(enemy)
+        enemy_sprites.add(enemy)
+        enemies.append(enemy)
 
-    return platforms, blocks, entities, enemies
+    return platforms, blocks, entities, enemies,\
+    enemy_sprites, collision_block_sprites, indestructibles
+
+def InsertPlatform(p, platforms, blocks, entities):
+    platforms.append(p)
+    blocks.add(p)
+    entities.add(p)
+    return platforms, blocks, entities
 
 def getFont(name = None, size = 20):
    '''Create a font object'''
@@ -93,7 +137,8 @@ def bullet_collision(*args):
     """ handles bullet collision """
 
     # unpackage arguments
-    bullets, blocks, platforms, entities = (x for x in args)
+    bullets, blocks, platforms, entities,\
+    enemies, enemy_sprites, indestructibles = (x for x in args)
 
     # See if it hit a block
     block_hit_list, bullet_hit_list = [], []
@@ -109,7 +154,24 @@ def bullet_collision(*args):
             blocks.remove(block)
             entities.remove(block)
 
-    # remove each bullet that hits a block
+    # See if we hit an enemy
+    enemy_hit_list = []
+    for bullet in bullets:
+        hit_enemy = sprite.spritecollide(bullet, enemy_sprites, False)
+        enemy_hit_list += hit_enemy
+        if bool(hit_enemy):
+            bullets.remove(bullet)
+            entities.remove(bullet)
+
+    # If we hit an enemy, destroy it (unless garbage collector)
+
+    # See if we hit an indestructible block
+    for bullet in bullets:
+        if bool(sprite.spritecollide(bullet, indestructibles, False)):
+            bullets.remove(bullet)
+            entities.remove(bullet)
+
+    # remove each bullet that hits a block or enemy
     for bullet in bullet_hit_list:
             bullets.remove(bullet)
             entities.remove(bullet)
@@ -120,29 +182,37 @@ def bullet_collision(*args):
             bullets.remove(bullet)
             entities.remove(bullet)
 
-    return bullets, entities, platforms, blocks
+    return bullets, entities, platforms, blocks, enemies, enemy_sprites
 
 def player_has_died(*args):
     """ respawn player and rebuild layer if player dies """
 
     # unpackage arguments
     screen, player, level, platforms, bullets, blocks,\
-    entities, enemies, text, Platform, block_types = (x for x in args)
+    entities, enemies, enemy_sprites, text, Platform,\
+    block_types, collision_blocks, collision_block_sprites,\
+    indestructibles = (x for x in args)
 
     # reset sprites and re-add player to game
     platforms = []
-    blocks.empty()
+    indestructibles.empty()
     entities.empty()
+    blocks.empty()
     bullets.empty()
+    enemy_sprites.empty()
+    enemies = []
     entities.add(player)
 
+    # build up arg list
+    args = level, enemies, enemy_sprites, platforms, blocks,\
+    entities, Platform, block_types, collision_blocks,\
+    collision_block_sprites, indestructibles
     # rebuild level
-    args = level, enemies, platforms, blocks,\
-    entities, Platform, block_types #ExitBlock
-    platforms, blocks, entities, enemies = build_level(*args)
+    platforms, blocks, entities, enemies, enemy_sprites,\
+    collision_block_sprites, indestructibles = build_level(*args)
 
     # respawn player at these coordinates
-    x, y = 32, 32
+    x, y = 64, 32
 
     # render you died text
     bodylines = [
@@ -154,4 +224,5 @@ def player_has_died(*args):
             forecolour = WHITE,
             backcolour = BLACK )
     time.sleep(1)
-    return platforms, blocks, entities, enemies, x, y
+    return platforms, blocks, collision_blocks, collision_block_sprites,\
+    entities, enemies, enemy_sprites, x, y, indestructibles
