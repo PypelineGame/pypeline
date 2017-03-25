@@ -42,5 +42,5 @@ level_1 = [
 
 # Generate level 1 enemies
 level_1_enemies = [
-GarbageCollector(400,555),
+GarbageCollector(121,264),
 ]

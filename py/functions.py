@@ -164,6 +164,11 @@ def bullet_collision(*args):
             entities.remove(bullet)
 
     # If we hit an enemy, destroy it (unless garbage collector)
+    for enemy in enemy_hit_list:
+        if type(enemy).__name__ != "GarbageCollector":
+            enemies.remove(enemy)
+            enemy_sprites.remove(enemy)
+            entities.remove(enemy)
 
     # See if we hit an indestructible block
     for bullet in bullets:
@@ -201,7 +206,7 @@ def player_has_died(*args):
     bullets.empty()
     enemy_sprites.empty()
     enemies = []
-    entities.add(player)
+    
 
     # build up arg list
     args = level, enemies, enemy_sprites, platforms, blocks,\
@@ -212,7 +217,15 @@ def player_has_died(*args):
     collision_block_sprites, indestructibles = build_level(*args)
 
     # respawn player at these coordinates
+
+    player.kill()
+    # level 1 spawn coordinates
+    #if(level == 1):
     x, y = 64, 32
+    player = Player(x, y)
+    entities.add(player)
+
+    player.health = 100
 
     # render you died text
     bodylines = [
@@ -224,5 +237,14 @@ def player_has_died(*args):
             forecolour = WHITE,
             backcolour = BLACK )
     time.sleep(1)
-    return platforms, blocks, collision_blocks, collision_block_sprites,\
-    entities, enemies, enemy_sprites, x, y, indestructibles
+    return player, platforms, blocks, collision_blocks, collision_block_sprites,\
+    entities, enemies, enemy_sprites, indestructibles
+
+def healthBar(player_health, screen):
+    if player_health > 75:
+        player_health_color = GREEN
+    elif player_health > 50:
+        player_health_color = YELLOW
+    else:
+        player_health_color = RED
+    pygame.draw.rect(screen, player_health_color, (660, 25, player_health, 25))

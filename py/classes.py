@@ -19,6 +19,8 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
+GREEN = (120, 100, 25)
+YELLOW = (60, 100, 50)
 
 # Define display and camera flags
 DISPLAY = (WIN_WIDTH, WIN_HEIGHT)
@@ -60,8 +62,19 @@ class Player(Entity):
         self.image.convert()
         self.rect = Rect(x, y, 32, 32)
         self.height = 32
+        self.health = 100
+        self.melee_attack = 25
+        self.range_attack = 50
+        self.num_of_bullets = 10
 
-    def update(self, up, down, left, right, running, platforms):
+    def damage(self, attack):
+        self.health -= attack
+
+    def update(self, up, down, left, right, running, platforms, enemies, enemy_sprites, bullets):
+        hit_enemies = sprite.spritecollide(self, enemy_sprites, False)
+        for enemy in hit_enemies:
+            self.damage(enemy.attack)
+
         if up:
             # only jump if on the ground
             if self.onGround: self.yvel -= 10
@@ -255,14 +268,20 @@ class Enemy(Entity):
         Entity.__init__(self)
         self.xvel = 0
         self.yvel = 0
+        self.attack = 0
 
+"""
 class HitBox(Entity):
-    """ hitbox object """
+"""
+""" hitbox object """
+"""
     def __init__(self, x1, y1, x2, y2):
         Entity.__init__(self)
         self.xvel = 0
         self.yvel = 0
         self.rect = Rect(x1, y1, x2, y2)
+"""
+
 
 """                                 Enemies                                 """
 
@@ -279,6 +298,7 @@ class GarbageCollector(Enemy):
         self.yvel = 0
         self.onGround = False
         self.reverse = False
+        self.attack = 5
 
         # establish list of sprite images
         self.images = ['1.png', '2.png', '3.png', '4.png']

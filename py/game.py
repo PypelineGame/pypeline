@@ -18,6 +18,9 @@ def main():
     pygame.font.init()
     load = pygame.display.set_mode((500,80),pygame.NOFRAME)
     _background = pygame.Surface(load.get_size())
+    
+    #healthbar = pygame.Surface((WIN_WIDTH/4, WIN_HEIGHT/4))
+
     _background.fill((0,0,0))
     load.blit(_background, (0,0))
     load.blit(pygame.font.Font(None, 72)\
@@ -27,6 +30,8 @@ def main():
 
     print ("Game loaded.")
     screen = pygame.display.set_mode(DISPLAY, FLAGS, DEPTH)
+
+
     timer = pygame.time.Clock()
 
     # definitions
@@ -40,11 +45,14 @@ def main():
     blocks = pygame.sprite.Group()
     enemy_sprites = pygame.sprite.Group()
     collision_block_sprites = pygame.sprite.Group()
+    indestructibles = pygame.sprite.Group()
     player = Player(64, 135)
     entities.add(player) # adds player to the list of entities
     platforms = []
     collision_blocks = []
-    indestructibles = pygame.sprite.Group()
+
+    healthBar(player.health, bg)
+
 
     # create list of different block types
     block_types = [
@@ -52,7 +60,7 @@ def main():
     BlueBlock(), GrayBlock(), BrightBlueBlock(), BrownBlock(),
     TopRightStoneBlock(), TopLeftStoneBlock(), CollisionBlock()
     ]
-    __FPS = 80
+    __FPS = 70
 
     level = get_level(1) # set level
     #enemies = get_enemies(level) # set enemy list
@@ -145,7 +153,7 @@ def main():
         # update bullets, camera, player, and enemies
         bullets.update()
         camera.update(player)
-        player.update(up, down, left, right, running, platforms)
+        player.update(up, down, left, right, running, platforms, enemies, enemy_sprites, bullets)
         for itr in enemies:
             if type(itr).__name__ == "GarbageCollector":
                 itr.update(platforms, collision_blocks, blocks, entities)
@@ -162,19 +170,22 @@ def main():
             bullets, entities, platforms, blocks, enemies, enemy_sprites = bullet_collision(*args)
 
         # if player has fallen off screen or hit an enemy, player has died
-        if player.rect.y > 1000 or sprite.spritecollide(player, enemy_sprites, True):
+        if player.rect.y > 1000 or player.health <= 0:#sprite.spritecollide(player, enemy_sprites, True):
             respawn_text = "Try again n00b..."
             # build argument list
             args = screen, player, level, platforms, bullets,\
             blocks, entities, enemies, enemy_sprites, respawn_text,\
             Platform, block_types, collision_blocks, collision_block_sprites, indestructibles
             # call player_has_died function with *args
-            platforms, blocks, collision_blocks, collision_block_sprites, entities, enemies, enemy_sprites,\
-            player.rect.x, player.rect.y, indestructibles = player_has_died(*args)
+            player, platforms, blocks, collision_blocks, collision_block_sprites,\
+            entities, enemies, enemy_sprites, indestructibles = player_has_died(*args)
             pygame.time.delay(100)
 
+        #healthPoints(WIN_WIDTH/2, WIN_HEIGHT/2, player.health, _background)
+
         # refresh screen at end of each frame
-        pygame.display.update()
+        #pygame.display.update()
+        pygame.display.flip()
 
     # game has ended
     pygame.quit()
