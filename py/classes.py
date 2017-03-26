@@ -7,6 +7,7 @@ from pygame import *
 # import additional python modules
 from math import sqrt
 from random import randrange
+from copy import copy
 
 # Define screen borders
 WIN_WIDTH = 800
@@ -62,7 +63,7 @@ class Player(Entity):
         self.image = Surface((32,32))
         self.image.fill(Color("#0000FF"))
         self.image.convert()
-        self.rect = Rect(x, y, 32, 32)
+        self.rect = Rect(x, y, 31.5, 31.5)
         self.height = 32
         self.health = PLAYER_STARTER_HEALTH
         self.melee_attack = 25
@@ -292,7 +293,7 @@ class GarbageCollector(Enemy):
 
     def __init__(self, x, y):
         Enemy.__init__(self)
-        self.rect = Rect(x, y, 70, 70)
+        self.rect = Rect(x, y, 69.5, 69.5)
         self.counter = 0 # used for alternating sprite images
         self.frame_counter = 0 # used for counting frame rate
 
@@ -300,7 +301,7 @@ class GarbageCollector(Enemy):
         self.yvel = 0
         self.onGround = False
         self.reverse = False
-        self.attack = 1
+        self.attack = 10
 
         # establish list of sprite images
         self.images = ['1.png', '2.png', '3.png', '4.png']
@@ -325,7 +326,7 @@ class GarbageCollector(Enemy):
 
          # only accelerate with gravity if in the air
         if not self.onGround:
-            self.yvel += 0.6 # turn around insted
+            self.yvel += 0.4 # increase falling distance
              # max falling speed
             if self.yvel > 100:
                 self.yvel = 100

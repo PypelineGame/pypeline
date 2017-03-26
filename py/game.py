@@ -5,33 +5,16 @@ from functions import *
 import levels
 from classes import *
 
-
 import time, os, sys
 
 def main():
     global cameraX, cameraY
     pygame.init()
 
-    # display loading splash screen
-    print ("Loading game...")
-    os.environ['SDL_VIDEO_CENTERED'] = '1'
-    pygame.font.init()
-    load = pygame.display.set_mode((500,80),pygame.NOFRAME)
-    _background = pygame.Surface(load.get_size())
-    
-    #healthbar = pygame.Surface((WIN_WIDTH/4, WIN_HEIGHT/4))
-
-    _background.fill((0,0,0))
-    load.blit(_background, (0,0))
-    load.blit(pygame.font.Font(None, 72)\
-    .render('Loading...', 1, (255,255,255)),(90,10))
-    pygame.display.update()
-    time.sleep(1)
-
     print ("Game loaded.")
+    os.environ['SDL_VIDEO_CENTERED'] = '1'
     screen = pygame.display.set_mode(DISPLAY, FLAGS, DEPTH)
-
-
+    hud = pygame.display.set_mode(DISPLAY, FLAGS, DEPTH)
     timer = pygame.time.Clock()
 
     # definitions
@@ -46,10 +29,13 @@ def main():
     enemy_sprites = pygame.sprite.Group()
     collision_block_sprites = pygame.sprite.Group()
     indestructibles = pygame.sprite.Group()
+
     player = Player(64, 135)
     entities.add(player) # adds player to the list of entities
+
     platforms = []
     collision_blocks = []
+    enemies = []
 
      # create list of different block types
     block_types = [
@@ -57,18 +43,18 @@ def main():
     BlueBlock(), GrayBlock(), BrightBlueBlock(), BrownBlock(),
     TopRightStoneBlock(), TopLeftStoneBlock(), CollisionBlock()
     ]
-    __FPS = 70
 
-    level = get_level(1) # set level
-    #enemies = get_enemies(level) # set enemy list
-    enemies = []
-    # add enemies to sprite list
+    __FPS = 60
 
-    # build arg list
-    args = level, enemies, enemy_sprites, platforms, blocks,\
+    current_level = 1 # start at level 1
+    level = get_level(current_level)
+
+    # pack arg list to build level
+    args = current_level, level, enemies, enemy_sprites, platforms, blocks,\
     entities, Platform, block_types, collision_blocks,\
     collision_block_sprites, indestructibles
-    # build level
+
+    # build level and unpack return values
     platforms, blocks, entities, enemies,\
     enemy_sprites, collision_block_sprites, indestructibles = build_level(*args)
 
@@ -76,60 +62,54 @@ def main():
     total_level_width  = len(level[0])*32
     total_level_height = len(level)*32
     camera = Camera(complex_camera, total_level_width, total_level_height)
-    playtime = 0 # keeps track of play time in seconds
+
+    elapsed_playtime = 0 # keeps track of play time in seconds
+    current_life_playtime = 0
+    MAX_PLAYTIME_PER_LEVEL = [0, 100, 220] # max time allowed before time runs out per level
 
     # main game loop
     main_loop = True
+    game_over = False
     while main_loop:
 
-
-        # handle fps and playtime counter
+        # handle fps and elapsed_playtime counter
         fps = timer.tick(__FPS) # max fps
-        playtime += fps / 1000.0 # add second to playtime
-        text_display = "{0:.2f}fps    {1:.2f}s".format(timer.get_fps(), playtime)
+        elapsed_playtime += fps / 1000.0
+        current_life_playtime += fps / 1000.0
+        time_remaining = float(MAX_PLAYTIME_PER_LEVEL[current_level]-current_life_playtime)
+
+        # display fps and playtime on window
+        text_display = "{0:.2f}fps    {1:.1f}s".format(timer.get_fps(), elapsed_playtime)
         pygame.display.set_caption(text_display)
 
         # event handler
         for e in pygame.event.get():
-            if e.type == QUIT:
+            if e.type == QUIT or (e.type == KEYDOWN and e.key == K_ESCAPE):
+                game_over = True
                 main_loop = False
-
-            if e.type == KEYDOWN and e.key == K_ESCAPE:
-                main_loop = False
-
             if e.type == KEYDOWN and e.key == K_w:
                 up = True
-
             if e.type == KEYDOWN and e.key == K_s:
                 down = True
-
             if e.type == KEYDOWN and e.key == K_a:
                 left = True
-
             if e.type == KEYDOWN and e.key == K_d:
                 right = True
-
             if e.type == KEYDOWN and e.key == K_LSHIFT:
                 running = True
-
             if e.type == KEYUP and e.key == K_w:
                 up = False
-
             if e.type == KEYUP and e.key == K_s:
                 down = False
-
             if e.type == KEYUP and e.key == K_d:
                 right = False
-
             if e.type == KEYUP and e.key == K_a:
                 left = False
-
             if e.type == KEYUP and e.key == K_LSHIFT:
                 running = False
-
-            # fire on left mouse click or space bar
             if (e.type == pygame.MOUSEBUTTONDOWN and e.button == 1) or\
             (e.type == KEYUP and e.key == K_SPACE):
+                # fire on left mouse click or space bar
                 bullet = Bullet(pygame.mouse.get_pos(),\
                 [player.rect.x, player.rect.y, player.height], camera.state)
                 # spawns bullet at the center of the player
@@ -138,9 +118,8 @@ def main():
                 # adds bullet to list of bullets and list of entities
                 entities.add(bullet)
                 bullets.add(bullet)
-
-            # if right click, print mouse coordinates for testing purposes
             if e.type == pygame.MOUSEBUTTONDOWN and e.button == 3:
+                # if right click, print mouse coordinates for testing purposes
                 print(pygame.mouse.get_pos())
 
         # draw background
@@ -168,28 +147,34 @@ def main():
             bullets, entities, platforms, blocks, enemies, enemy_sprites = bullet_collision(*args)
 
         # if player has fallen off screen or hit an enemy, player has died
-        if player.rect.y > 1000 or player.health <= 0:#sprite.spritecollide(player, enemy_sprites, True):
-            respawn_text = "Try again n00b..."
+        if player.rect.y > 1000 or player.health <= 0 or time_remaining <= 0:
+            respawn_text = "Try again bruh..."
             # build argument list
-            args = screen, player, level, platforms, bullets,\
+            args = screen, player, level, current_level, platforms, bullets,\
             blocks, entities, enemies, enemy_sprites, respawn_text,\
             Platform, block_types, collision_blocks, collision_block_sprites, indestructibles
             # call player_has_died function with *args
             player, platforms, blocks, collision_blocks, collision_block_sprites,\
             entities, enemies, enemy_sprites, indestructibles = player_has_died(*args)
-            pygame.time.delay(100)
+            current_life_playtime = 0
 
-        #healthPoints(WIN_WIDTH/2, WIN_HEIGHT/2, player.health, _background)
+        # display player healthbar and timer
+        healthBar(player.health, screen)
+        display_timer_text = "%.1f" % time_remaining + "s"
+        #display_timer_text = str(MAX_PLAYTIME_PER_LEVEL[current_level]-elapsed_playtime)
+        displayTimer(screen, display_timer_text)
+
+
+
 
         # refresh screen at end of each frame
-        healthBar(player.health, screen)
         #pygame.display.update()
         pygame.display.flip()
 
-
-    # game has ended
+    # draw game over and end the game
+    gameOver(screen)
     pygame.quit()
-    raise SystemExit, "Game terminated..\nTotal Runtime: " + str(playtime) + "s."
+    raise SystemExit, "Game terminated..\nTotal Runtime: " + str(elapsed_playtime) + "s."
 
 if __name__ == "__main__":
     main()

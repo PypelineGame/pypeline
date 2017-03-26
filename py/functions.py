@@ -26,17 +26,21 @@ def get_level(level_num):
     """ retrieve levels """
     if level_num == 1:
         return levels.level_1
+    elif level_num == 2:
+        return levels.level_2
     else:
         return
 
 def get_enemies(level_num):
-    #if(level_num == 1):
-    return levels.level_1_enemies
+    if level_num == 1:
+        return levels.level_1_enemies
+    elif level_num == 2:
+        return levels.level_2_enemies
 
 def build_level(*args):
     """ build level passed in """
     # unpackage arguments
-    level, enemies, enemy_sprites, platforms, blocks, entities,\
+    current_level, level, enemies, enemy_sprites, platforms, blocks, entities,\
     Platform, block_types, collision_blocks,\
     collision_block_sprites, indestructibles = (x for x in args)
 
@@ -99,7 +103,7 @@ def build_level(*args):
         y += 32
         x = 0
 
-    for enemy in get_enemies(level):
+    for enemy in get_enemies(current_level):
         # re-calls enemy's constructor
         enemy = type(enemy)(enemy.rect.x, enemy.rect.y)
         entities.add(enemy)
@@ -114,24 +118,6 @@ def InsertPlatform(p, platforms, blocks, entities):
     blocks.add(p)
     entities.add(p)
     return platforms, blocks, entities
-
-def getFont(name = None, size = 20):
-   '''Create a font object'''
-   font = pygame.font.Font(name, size)
-   return font
-
-# Render the text
-def putText(screen, fontOBJ, message = "Test", position = (10,10),
-            forecolour = BLACK, backcolour = WHITE):
-   '''Create a font object'''
-   antialias = True
-   text = fontOBJ.render(message, antialias, forecolour, backcolour)
-   # Create a rectangle
-   textRect = text.get_rect()
-   textRect.topleft = position
-   # Blit the text
-   screen.blit(text, textRect)
-   pygame.display.update()
 
 def bullet_collision(*args):
     """ handles bullet collision """
@@ -193,8 +179,8 @@ def player_has_died(*args):
     """ respawn player and rebuild layer if player dies """
 
     # unpackage arguments
-    screen, player, level, platforms, bullets, blocks,\
-    entities, enemies, enemy_sprites, text, Platform,\
+    screen, player, level, current_level, platforms, bullets, blocks,\
+    entities, enemies, enemy_sprites, respawn_text, Platform,\
     block_types, collision_blocks, collision_block_sprites,\
     indestructibles = (x for x in args)
 
@@ -206,10 +192,9 @@ def player_has_died(*args):
     bullets.empty()
     enemy_sprites.empty()
     enemies = []
-    
 
     # build up arg list
-    args = level, enemies, enemy_sprites, platforms, blocks,\
+    args = current_level, level, enemies, enemy_sprites, platforms, blocks,\
     entities, Platform, block_types, collision_blocks,\
     collision_block_sprites, indestructibles
     # rebuild level
@@ -217,39 +202,62 @@ def player_has_died(*args):
     collision_block_sprites, indestructibles = build_level(*args)
 
     # respawn player at these coordinates
-
     player.kill()
     # level 1 spawn coordinates
-    #if(level == 1):
-    x, y = 64, 32
+    if current_level == 1:
+        x, y = 64, 32
+    else:
+        x, y = 72, 72
     player = Player(x, y)
     entities.add(player)
 
-    player.health = PLAYER_STARTER_HEALTH
+    font = pygame.font.Font(None, 36)
+    text = font.render(respawn_text, True, WHITE)
+    text_rect = text.get_rect()
+    text_x = screen.get_width() / 2 - text_rect.width / 2
+    text_y = screen.get_height() / 2 - text_rect.height / 2
+    screen.blit(text, [text_x, text_y])
 
-    # render you died text
-    bodylines = [
-        [(140, 100), text]]
-    bodyfont = getFont(None, 22)
-    for line in bodylines:
-       position, text = line
-       putText(screen, bodyfont, text, position,
-            forecolour = WHITE,
-            backcolour = BLACK )
-    time.sleep(1)
     return player, platforms, blocks, collision_blocks, collision_block_sprites,\
     entities, enemies, enemy_sprites, indestructibles
 
 def healthBar(player_health, screen):
+    """ displays player's health bar at top right of screen """
     if player_health > PLAYER_STARTER_HEALTH * 0.75:
         player_health_color = GREEN
-    elif player_health > PLAYER_STARTER_HEALTH * 0.40:
+    elif player_health > PLAYER_STARTER_HEALTH* 0.40:
         player_health_color = YELLOW
-    else:# player_health > PLAYER_STARTER_HEALTH * 0.25:
+    else:
         player_health_color = RED
     """ pygame.draw.rect(screen, color, (x,y,width,height), thickness) """
     pygame.draw.rect(screen, player_health_color, (549,25,player_health,25), 0)
     pygame.draw.rect(screen, WHITE, (549,25,PLAYER_STARTER_HEALTH,25), 3)
-    #pygame.draw.rect(screen, WHITE, (549,25,549,25), 0)
-    #pygame.draw.rect(screen, player_health_color, (660, 25, player_health, 25))
-    #pygame.display.update()
+    font = pygame.font.Font(None, 18)
+    text = font.render("HP", True, player_health_color)
+    text_rect = text.get_rect()
+    text_x = 549
+    text_y = screen.get_height() / 10 - text_rect.height / 2
+    screen.blit(text, [text_x, text_y])
+
+def gameOver(screen):
+    """ displays gameover message in center of screen """
+    font = pygame.font.Font(None, 36)
+    text = font.render("Game Over", True, WHITE)
+    text_rect = text.get_rect()
+    text_x = screen.get_width() / 2 - text_rect.width / 2
+    text_y = screen.get_height() / 2 - text_rect.height / 2
+    screen.blit(text, [text_x, text_y])
+    pygame.display.flip()
+    pygame.time.delay(600)
+
+def displayTimer(screen, time_left):
+    """ displays countdown timer """
+    font = pygame.font.Font(None, 24)
+    text = font.render(time_left, True, WHITE)
+    text_rect = text.get_rect()
+    text_x = screen.get_width() / 16 - text_rect.width / 2
+    text_y = screen.get_height() / 16 - 10
+    text_width, text_height = text_x, 17
+    #pygame.draw.rect(screen, BLACK, (text_x-2,text_y-2,text_rect.width+2,text_height), 0)
+    #pygame.draw.rect(screen, WHITE, (text_x-2,text_y-2,text_rect.width+2,text_height), 2)
+    screen.blit(text, [text_x, text_y])
