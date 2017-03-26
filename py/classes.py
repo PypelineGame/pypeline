@@ -14,13 +14,15 @@ WIN_HEIGHT = 640
 HALF_WIDTH = int(WIN_WIDTH / 2)
 HALF_HEIGHT = int(WIN_HEIGHT / 2)
 
+PLAYER_STARTER_HEALTH = 200
+
 # Define some colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
-GREEN = (120, 100, 25)
-YELLOW = (60, 100, 50)
+GREEN = (0, 255, 0)
+YELLOW = (255, 255, 0)
 
 # Define display and camera flags
 DISPLAY = (WIN_WIDTH, WIN_HEIGHT)
@@ -62,7 +64,7 @@ class Player(Entity):
         self.image.convert()
         self.rect = Rect(x, y, 32, 32)
         self.height = 32
-        self.health = 100
+        self.health = PLAYER_STARTER_HEALTH
         self.melee_attack = 25
         self.range_attack = 50
         self.num_of_bullets = 10
@@ -298,7 +300,7 @@ class GarbageCollector(Enemy):
         self.yvel = 0
         self.onGround = False
         self.reverse = False
-        self.attack = 5
+        self.attack = 1
 
         # establish list of sprite images
         self.images = ['1.png', '2.png', '3.png', '4.png']

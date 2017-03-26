@@ -51,10 +51,7 @@ def main():
     platforms = []
     collision_blocks = []
 
-    healthBar(player.health, bg)
-
-
-    # create list of different block types
+     # create list of different block types
     block_types = [
     BaigeBlock(), LeftStoneBlock(), RightStoneBlock(),\
     BlueBlock(), GrayBlock(), BrightBlueBlock(), BrownBlock(),
@@ -84,6 +81,7 @@ def main():
     # main game loop
     main_loop = True
     while main_loop:
+
 
         # handle fps and playtime counter
         fps = timer.tick(__FPS) # max fps
@@ -184,8 +182,10 @@ def main():
         #healthPoints(WIN_WIDTH/2, WIN_HEIGHT/2, player.health, _background)
 
         # refresh screen at end of each frame
+        healthBar(player.health, screen)
         #pygame.display.update()
         pygame.display.flip()
+
 
     # game has ended
     pygame.quit()

@@ -225,7 +225,7 @@ def player_has_died(*args):
     player = Player(x, y)
     entities.add(player)
 
-    player.health = 100
+    player.health = PLAYER_STARTER_HEALTH
 
     # render you died text
     bodylines = [
@@ -241,10 +241,15 @@ def player_has_died(*args):
     entities, enemies, enemy_sprites, indestructibles
 
 def healthBar(player_health, screen):
-    if player_health > 75:
+    if player_health > PLAYER_STARTER_HEALTH * 0.75:
         player_health_color = GREEN
-    elif player_health > 50:
+    elif player_health > PLAYER_STARTER_HEALTH * 0.40:
         player_health_color = YELLOW
-    else:
+    else:# player_health > PLAYER_STARTER_HEALTH * 0.25:
         player_health_color = RED
-    pygame.draw.rect(screen, player_health_color, (660, 25, player_health, 25))
+    """ pygame.draw.rect(screen, color, (x,y,width,height), thickness) """
+    pygame.draw.rect(screen, player_health_color, (549,25,player_health,25), 0)
+    pygame.draw.rect(screen, WHITE, (549,25,PLAYER_STARTER_HEALTH,25), 3)
+    #pygame.draw.rect(screen, WHITE, (549,25,549,25), 0)
+    #pygame.draw.rect(screen, player_health_color, (660, 25, player_health, 25))
+    #pygame.display.update()
