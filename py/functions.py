@@ -47,7 +47,8 @@ def build_level(*args):
     # unpackage block_types
     BaigeBlock, LeftStoneBlock, RightStoneBlock,\
     BlueBlock, GrayBlock, BrightBlueBlock, BrownBlock,\
-    TopRightStoneBlock, TopLeftStoneBlock, CollisionBlock = (x for x in block_types)
+    TopRightStoneBlock, TopLeftStoneBlock, CollisionBlock,\
+    ExitBlock = (x for x in block_types)
 
     x, y = 0, 0
     # build the level
@@ -96,6 +97,11 @@ def build_level(*args):
                     platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
                 elif col == "O":
                     which_block = CollisionBlock
+                    p = BlankPlatform(x, y, which_block)
+                    collision_blocks.append(p)
+                    entities.add(p)
+                elif col == "X":
+                    which_block = ExitBlock
                     p = BlankPlatform(x, y, which_block)
                     collision_blocks.append(p)
                     entities.add(p)
@@ -175,14 +181,14 @@ def bullet_collision(*args):
 
     return bullets, entities, platforms, blocks, enemies, enemy_sprites
 
-def player_has_died(*args):
+def reset_level(*args):
     """ respawn player and rebuild layer if player dies """
 
     # unpackage arguments
     screen, player, level, current_level, platforms, bullets, blocks,\
     entities, enemies, enemy_sprites, respawn_text, Platform,\
     block_types, collision_blocks, collision_block_sprites,\
-    indestructibles = (x for x in args)
+    indestructibles, SPAWN_POINT_LEVEL = (x for x in args)
 
     # reset sprites and re-add player to game
     platforms = []
@@ -203,20 +209,9 @@ def player_has_died(*args):
 
     # respawn player at these coordinates
     player.kill()
-    # level 1 spawn coordinates
-    if current_level == 1:
-        x, y = 64, 32
-    else:
-        x, y = 72, 72
+    x, y = SPAWN_POINT_LEVEL[current_level][0], SPAWN_POINT_LEVEL[current_level][1]
     player = Player(x, y)
     entities.add(player)
-
-    font = pygame.font.Font(None, 36)
-    text = font.render(respawn_text, True, WHITE)
-    text_rect = text.get_rect()
-    text_x = screen.get_width() / 2 - text_rect.width / 2
-    text_y = screen.get_height() / 2 - text_rect.height / 2
-    screen.blit(text, [text_x, text_y])
 
     return player, platforms, blocks, collision_blocks, collision_block_sprites,\
     entities, enemies, enemy_sprites, indestructibles

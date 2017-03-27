@@ -9,6 +9,8 @@ import time, os, sys
 
 def main():
     global cameraX, cameraY
+    global RESET_LEVEL_FLAG
+    RESET_LEVEL_FLAG = False
     pygame.init()
 
     print ("Game loaded.")
@@ -30,9 +32,6 @@ def main():
     collision_block_sprites = pygame.sprite.Group()
     indestructibles = pygame.sprite.Group()
 
-    player = Player(64, 135)
-    entities.add(player) # adds player to the list of entities
-
     platforms = []
     collision_blocks = []
     enemies = []
@@ -41,10 +40,10 @@ def main():
     block_types = [
     BaigeBlock(), LeftStoneBlock(), RightStoneBlock(),\
     BlueBlock(), GrayBlock(), BrightBlueBlock(), BrownBlock(),
-    TopRightStoneBlock(), TopLeftStoneBlock(), CollisionBlock()
+    TopRightStoneBlock(), TopLeftStoneBlock(), CollisionBlock(), ExitBlock()
     ]
 
-    __FPS = 60
+    __FPS = 70
 
     current_level = 1 # start at level 1
     level = get_level(current_level)
@@ -66,6 +65,10 @@ def main():
     elapsed_playtime = 0 # keeps track of play time in seconds
     current_life_playtime = 0
     MAX_PLAYTIME_PER_LEVEL = [0, 100, 220] # max time allowed before time runs out per level
+    SPAWN_POINT_LEVEL = [0, (64, 135), (64, 64)] # x,y coordinates for each level spawn
+
+    player = Player(SPAWN_POINT_LEVEL[1][0], SPAWN_POINT_LEVEL[1][1])
+    entities.add(player) # adds player to the list of entities
 
     # main game loop
     main_loop = True
@@ -81,6 +84,18 @@ def main():
         # display fps and playtime on window
         text_display = "{0:.2f}fps    {1:.1f}s".format(timer.get_fps(), elapsed_playtime)
         pygame.display.set_caption(text_display)
+
+        # Resets level
+        if RESET_LEVEL_FLAG == True:
+            # package arguments for reset level
+            current_level += 1
+            args = screen, player, level, current_level, platforms, bullets,\
+            blocks, entities, enemies, enemy_sprites, respawn_text, Platform,\
+            block_types, collision_blocks, collision_block_sprites, indestructibles, SPAWN_POINT_LEVEL
+            # call reset level
+            player, platforms, blocks, collision_blocks, collision_block_sprites,\
+            entities, enemies, enemy_sprites, indestructibles = reset_level(*args)
+            RESET_LEVEL_FLAG = False
 
         # event handler
         for e in pygame.event.get():
@@ -130,7 +145,7 @@ def main():
         # update bullets, camera, player, and enemies
         bullets.update()
         camera.update(player)
-        player.update(up, down, left, right, running, platforms, enemies, enemy_sprites, bullets)
+        player.update(up, down, left, right, running, platforms, enemies, enemy_sprites, bullets, camera)
         for itr in enemies:
             if type(itr).__name__ == "GarbageCollector":
                 itr.update(platforms, collision_blocks, blocks, entities)
@@ -151,11 +166,17 @@ def main():
             respawn_text = "Try again bruh..."
             # build argument list
             args = screen, player, level, current_level, platforms, bullets,\
-            blocks, entities, enemies, enemy_sprites, respawn_text,\
-            Platform, block_types, collision_blocks, collision_block_sprites, indestructibles
+            blocks, entities, enemies, enemy_sprites, respawn_text, Platform,\
+            block_types, collision_blocks, collision_block_sprites, indestructibles, SPAWN_POINT_LEVEL
             # call player_has_died function with *args
             player, platforms, blocks, collision_blocks, collision_block_sprites,\
-            entities, enemies, enemy_sprites, indestructibles = player_has_died(*args)
+            entities, enemies, enemy_sprites, indestructibles = reset_level(*args)
+            font = pygame.font.Font(None, 36)
+            text = font.render(respawn_text, True, WHITE)
+            text_rect = text.get_rect()
+            text_x = screen.get_width() / 2 - text_rect.width / 2
+            text_y = screen.get_height() / 2 - text_rect.height / 2
+            screen.blit(text, [text_x, text_y])
             current_life_playtime = 0
 
         # display player healthbar and timer
@@ -163,9 +184,6 @@ def main():
         display_timer_text = "%.1f" % time_remaining + "s"
         #display_timer_text = str(MAX_PLAYTIME_PER_LEVEL[current_level]-elapsed_playtime)
         displayTimer(screen, display_timer_text)
-
-
-
 
         # refresh screen at end of each frame
         #pygame.display.update()

@@ -14,6 +14,7 @@ WIN_WIDTH = 800
 WIN_HEIGHT = 640
 HALF_WIDTH = int(WIN_WIDTH / 2)
 HALF_HEIGHT = int(WIN_HEIGHT / 2)
+RESET_LEVEL_FLAG = False
 
 PLAYER_STARTER_HEALTH = 200
 
@@ -33,6 +34,7 @@ CAMERA_SLACK = 30
 
 # Define animation frames for classes
 GARBAGE_COLLECTOR_MAX_FRAMES = 8
+PLAYER_DAMAGE_FRAMES = 20
 
 # import our functions
 from functions import *
@@ -57,11 +59,14 @@ class Player(Entity):
     """ Player object """
     def __init__(self, x, y):
         Entity.__init__(self)
-        self.xvel = 0
-        self.yvel = 0
+        self.xvel = 0 # current x velocity
+        self.yvel = 0 # current y velocity
         self.onGround = False
         self.image = Surface((32,32))
         self.image.fill(Color("#0000FF"))
+        self.image_copy = self.image.copy()
+        self.transparent_image = pygame.Surface([32, 32], pygame.SRCALPHA, 32)
+        self.transparent_image = self.transparent_image.convert_alpha()
         self.image.convert()
         self.rect = Rect(x, y, 31.5, 31.5)
         self.height = 32
@@ -69,52 +74,94 @@ class Player(Entity):
         self.melee_attack = 25
         self.range_attack = 50
         self.num_of_bullets = 10
+        self.damage_frame = 0 # counts # of frames until max damage frames
+        self.enemy_collision = False
+        self.knockback_left = False
+        self.knockback_right = False
+        self.flicker = False
 
-    def damage(self, attack):
-        self.health -= attack
+    def damage(self, attack, enemy, camera):
+        """ performs damage reduction on player's HP upon enemy collision """
+        if self.damage_frame >= PLAYER_DAMAGE_FRAMES:
+            self.damage_frame = 0 # resets damage frame counter
+            self.health -= attack
+            self.onGround = False
+            self.yvel -= 10 # causes player to jump
+            self.flicker = True # causes player to flicker
 
-    def update(self, up, down, left, right, running, platforms, enemies, enemy_sprites, bullets):
-        hit_enemies = sprite.spritecollide(self, enemy_sprites, False)
-        for enemy in hit_enemies:
-            self.damage(enemy.attack)
+    def update(self, up, down, left, right, running, platforms, enemies, enemy_sprites, bullets, camera):
+        """ updates the player on every frame of main game loop """
+        self.damage_frame += 1 # increments damage_frame every frame of game
 
-        if up:
-            # only jump if on the ground
-            if self.onGround: self.yvel -= 10
-        if down:
-            pass
-        if left:
-            if running:
-                self.xvel = -6
+        # flicker player when player is knocked back
+        if self.flicker:
+            if self.image is self.transparent_image:
+                self.image = self.image_copy
             else:
-                self.xvel = -5
-        if right:
-            if running:
-                self.xvel = 6
-            else:
-                self.xvel = 5
+                self.image = self.transparent_image
+
+        # handle knock back collision
+        for enemy in enemies:
+            if pygame.sprite.collide_rect(self, enemy):
+                self.enemy_collision = True
+                self.damage(enemy.attack, enemy, camera)
+                if self.xvel <= 0:
+                    self.knockback_right = True
+                elif self.xvel > 0:
+                    self.knockback_left = True
+
+        # perform knock back collision
+        if self.enemy_collision == True:
+            if self.knockback_left:
+                self.xvel = -8
+            if self.knockback_right:
+                self.xvel = 8
+            if PLAYER_DAMAGE_FRAMES <= self.damage_frame:
+                self.enemy_collision = False
+                self.knockback_left = False
+                self.knockback_right = False
+                self.flicker = False
+                self.image = self.image_copy
+
+        # handle player movements
+        else:
+            if up:
+                # only jump if on the ground
+                if self.onGround: self.yvel -= 10
+            if down:
+                pass # we can eventually implement crouching
+            if left:
+                if running:
+                    self.xvel = -6
+                else:
+                    self.xvel = -5
+            if right:
+                if running:
+                    self.xvel = 6
+                else:
+                    self.xvel = 5
+            if not(left or right):
+                self.xvel = 0
+
         # only accelerate with gravity if in the air
         if not self.onGround:
-            self.yvel += 0.6
-             # max falling speed
+            self.yvel += 0.6 # increment falling velocity
             if self.yvel > 100:
-                self.yvel = 100
-        if not(left or right):
-            self.xvel = 0
-        # increment in x direction
-        self.rect.left += self.xvel
-        # do x-axis collisions
-        self.collide(self.xvel, 0, platforms)
-        # increment in y direction
-        self.rect.top += self.yvel
-        # assuming we're in the air
-        self.onGround = False;
-        # do y-axis collisions
-        self.collide(0, self.yvel, platforms)
+                self.yvel = 100 # max falling speed
+
+        self.rect.left += self.xvel # Modifies player's position in X direction
+        self.collide(self.xvel, 0, platforms) # do x-axis collisions
+
+        self.rect.top += self.yvel # Modifies player's position in Y direction
+        self.onGround = False; # assuming we're in the air
+        self.collide(0, self.yvel, platforms) # do y-axis collisions
+
     def collide(self, xvel, yvel, platforms):
-        """ handles platform collision """
+        """ handles platform collision for player """
         for p in platforms:
             if pygame.sprite.collide_rect(self, p):
+                if isinstance(p, ExitBlock):
+                    RESET_LEVEL_FLAG = True
                 if xvel > 0:
                     self.rect.right = p.rect.left
                 if xvel < 0:
@@ -168,6 +215,9 @@ class Platform(Entity):
         self.image = BlockType.image
     def update(self):
         pass
+
+
+
 
 class BlankPlatform(Entity):
     """ Generates an invisible 32x32 platform at x,y with a given BlockType """
@@ -265,6 +315,13 @@ class CollisionBlock(BlockType):
     def update(self):
         pass
 
+class ExitBlock(BlockType):
+    """ invisible block used to detect level endings """
+    def __init__(self):
+        BlockType.__init__(self)
+    def update(self):
+        pass
+
 class Enemy(Entity):
     """ Abstract enemy object """
     def __init__(self):
@@ -272,19 +329,6 @@ class Enemy(Entity):
         self.xvel = 0
         self.yvel = 0
         self.attack = 0
-
-"""
-class HitBox(Entity):
-"""
-""" hitbox object """
-"""
-    def __init__(self, x1, y1, x2, y2):
-        Entity.__init__(self)
-        self.xvel = 0
-        self.yvel = 0
-        self.rect = Rect(x1, y1, x2, y2)
-"""
-
 
 """                                 Enemies                                 """
 
@@ -373,3 +417,5 @@ class GarbageCollector(Enemy):
                     self.yvel = 0
                 if yvel < 0: # moving up, hit bottom side of wall
                     self.rect.top = p.rect.bottom
+
+"""                              end of Enemies                              """
