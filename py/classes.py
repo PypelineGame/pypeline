@@ -86,8 +86,8 @@ class Player(Entity):
         if self.damage_frame >= PLAYER_DAMAGE_FRAMES:
             self.damage_frame = 0 # resets damage frame counter
             self.health -= attack
-            self.onGround = False
-            self.yvel -= 10 # causes player to jump
+            if self.yvel >= 0:
+                self.yvel -= 10 # causes player to jump if player is on ground
             self.flicker = True # causes player to flicker
 
     def update(self, up, down, left, right, running, platforms, enemies, enemy_sprites, bullets, camera):
@@ -106,6 +106,7 @@ class Player(Entity):
             if pygame.sprite.collide_rect(self, enemy):
                 self.enemy_collision = True
                 self.damage(enemy.attack, enemy, camera)
+                # enable knock-back left or knock-back right
                 if self.xvel <= 0:
                     self.knockback_right = True
                 elif self.xvel > 0:
@@ -117,6 +118,7 @@ class Player(Entity):
                 self.xvel = -8
             if self.knockback_right:
                 self.xvel = 8
+            # end knock back once we reach specified frames
             if PLAYER_DAMAGE_FRAMES <= self.damage_frame:
                 self.enemy_collision = False
                 self.knockback_left = False
@@ -144,7 +146,7 @@ class Player(Entity):
             if not(left or right):
                 self.xvel = 0
 
-        # only accelerate with gravity if in the air
+        # only accelerate with gravity if in the air and no knockback
         if not self.onGround:
             self.yvel += 0.6 # increment falling velocity
             if self.yvel > 100:
@@ -433,9 +435,9 @@ class PySnake(Enemy):
         self.health = 100
 
         # establish list of sprite images
-        self.images = ['1.png', '2.png', '3.png', '4.png']
+        self.images = ['1.png', '2.png', '3.png', '4.png', '5.png', '6.png', '7.png', '8.png', '9.png', '10.png', '11.png', '12.png']
         for index, x in enumerate(self.images):
-            self.images[index] =  "../sprites/PySnake/" + x
+            self.images[index] =  "../sprites/PySnake/green_snake/" + x
         self.image = pygame.image.load(self.images[0]) # start on first image
 
     def update(self, platforms, blank_platforms, blocks, entities):
