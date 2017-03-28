@@ -156,7 +156,7 @@ class Player(Entity):
         self.rect.left += self.xvel # Modifies player's position in X direction
 
         """ x collision is currently commented out; not sure why its bugging out? """
-        #self.collide(self.xvel, 0, platforms) # do x-axis collisions
+        self.collide(self.xvel, 0, platforms) # do x-axis collisions
 
         self.rect.top += self.yvel # Modifies player's position in Y direction
         self.onGround = False; # assuming we're in the air
@@ -172,6 +172,7 @@ class Player(Entity):
     def collide(self, xvel, yvel, platforms):
         """ handles platform collision for player """
         for p in platforms:
+            if pygame.sprite.collide_rect(self, p):
                 if xvel > 0:
                     self.rect.right = p.rect.left
                 if xvel < 0:
