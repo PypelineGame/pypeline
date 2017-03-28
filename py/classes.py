@@ -88,6 +88,7 @@ class Player(Entity):
             self.health -= attack
             if self.yvel >= 0:
                 self.yvel -= 10 # causes player to jump if player is on ground
+                self.onGround = False
             self.flicker = True # causes player to flicker
 
     def update(self, up, down, left, right, running, platforms, enemies, enemy_sprites, bullets, camera, collision_blocks):
@@ -107,7 +108,7 @@ class Player(Entity):
                 self.enemy_collision = True
                 self.damage(enemy.attack, enemy, camera)
                 # enable knock-back left or knock-back right
-                if self.xvel <= 0:
+                if self.xvel <= 0: # defaults to knock-back left
                     self.knockback_right = True
                 elif self.xvel > 0:
                     self.knockback_left = True
@@ -153,7 +154,9 @@ class Player(Entity):
                 self.yvel = 100 # max falling speed
 
         self.rect.left += self.xvel # Modifies player's position in X direction
-        self.collide(self.xvel, 0, platforms) # do x-axis collisions
+
+        """ x collision is currently commented out; not sure why its bugging out? """
+        #self.collide(self.xvel, 0, platforms) # do x-axis collisions
 
         self.rect.top += self.yvel # Modifies player's position in Y direction
         self.onGround = False; # assuming we're in the air
@@ -175,8 +178,8 @@ class Player(Entity):
                     self.rect.left = p.rect.right
                 if yvel > 0:
                     self.rect.bottom = p.rect.top
-                    self.onGround = True
                     self.yvel = 0
+                    self.onGround = True
                 if yvel < 0:
                     self.rect.top = p.rect.bottom
 
@@ -229,6 +232,7 @@ class BlankPlatform(Entity):
         Entity.__init__(self)
         self.rect = Rect(x, y, 32, 32)
         self.image = pygame.Surface([32, 32], pygame.SRCALPHA, 32)
+        # SRC ALPHA BUG IS PROBABLY HERE ^^^
         self.image = self.image.convert_alpha()
     def update(self):
         pass

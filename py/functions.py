@@ -114,7 +114,7 @@ def build_level(*args):
         enemies.append(enemy)
 
     return platforms, blocks, entities, enemies,\
-    enemy_sprites, collision_block_sprites, indestructibles
+    enemy_sprites, collision_block_sprites, indestructibles, collision_blocks
 
 def InsertPlatform(p, platforms, blocks, entities):
     platforms.append(p)
@@ -208,10 +208,10 @@ def reset_level(*args):
     args = current_level, level, enemies, enemy_sprites, platforms, blocks,\
     entities, Platform, block_types, collision_blocks,\
     collision_block_sprites, indestructibles
-    
+
     # rebuild level
     platforms, blocks, entities, enemies, enemy_sprites,\
-    collision_block_sprites, indestructibles = build_level(*args)
+    collision_block_sprites, indestructibles, collision_blocks = build_level(*args)
 
     # respawn player at these coordinates
     player.kill()

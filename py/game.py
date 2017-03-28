@@ -54,8 +54,8 @@ def main():
     collision_block_sprites, indestructibles
 
     # build level and unpack return values
-    platforms, blocks, entities, enemies,\
-    enemy_sprites, collision_block_sprites, indestructibles = build_level(*args)
+    platforms, blocks, entities, enemies, enemy_sprites,\
+    collision_block_sprites, indestructibles, collision_blocks = build_level(*args)
 
     # generate size of level and set camera
     total_level_width  = len(level[0])*32
@@ -85,20 +85,24 @@ def main():
         text_display = "{0:.2f}fps    {1:.1f}s".format(timer.get_fps(), elapsed_playtime)
         pygame.display.set_caption(text_display)
 
-        # Resets level
         if RESET_LEVEL_FLAG == True:
-            # package arguments for reset level
+            # moves to next level
             current_level += 1
+            current_life_playtime = 0
+            RESET_LEVEL_FLAG = False
+            level = get_level(current_level)
+            # package arguments for reset level
             args = screen, player, level, current_level, platforms, bullets,\
             blocks, entities, enemies, enemy_sprites, respawn_text, Platform,\
             block_types, collision_blocks, collision_block_sprites, indestructibles, SPAWN_POINT_LEVEL
             # call reset level
             player, platforms, blocks, collision_blocks, collision_block_sprites,\
             entities, enemies, enemy_sprites, indestructibles = reset_level(*args)
-
-            # might need to reset camera to be the width and height of the new level
-
-            RESET_LEVEL_FLAG = False
+            # reset camera
+            total_level_width  = len(level[0])*32
+            total_level_height = len(level)*32
+            camera = Camera(complex_camera, total_level_width, total_level_height)
+            
 
         # event handler
         for e in pygame.event.get():
