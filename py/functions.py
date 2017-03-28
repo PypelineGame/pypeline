@@ -24,18 +24,11 @@ def complex_camera(camera, target_rect):
 
 def get_level(level_num):
     """ retrieve levels """
-    if level_num == 1:
-        return levels.level_1
-    elif level_num == 2:
-        return levels.level_2
-    else:
-        return
+    return levels.get_levels[level_num]
 
 def get_enemies(level_num):
-    if level_num == 1:
-        return levels.level_1_enemies
-    elif level_num == 2:
-        return levels.level_2_enemies
+    """ retreieve enemies """
+    return levels.get_enemies[level_num]
 
 def build_level(*args):
     """ build level passed in """
@@ -77,12 +70,14 @@ def build_level(*args):
                     platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
                 elif col == "L":
                     which_block = TopLeftStoneBlock
+                    # add indestructible manually to sprite lists
                     p = Platform(x, y, which_block)
                     indestructibles.add(p)
                     entities.add(p)
                     platforms.append(p)
                 elif col == "R":
                     which_block = TopRightStoneBlock
+                    # add indestructible manually to sprite lists
                     p = Platform(x, y, which_block)
                     indestructibles.add(p)
                     entities.add(p)
@@ -97,11 +92,13 @@ def build_level(*args):
                     platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
                 elif col == "O":
                     which_block = CollisionBlock
+                    # add collision block manually to sprite lists
                     p = BlankPlatform(x, y, which_block)
                     collision_blocks.append(p)
                     entities.add(p)
                 elif col == "X":
                     which_block = ExitBlock
+                    # add exit block manually to sprite lists
                     p = BlankPlatform(x, y, which_block)
                     collision_blocks.append(p)
                     entities.add(p)
@@ -194,7 +191,7 @@ def reset_level(*args):
 
     # unpackage arguments
     screen, player, level, current_level, platforms, bullets, blocks,\
-    entities, enemies, enemy_sprites, respawn_text, Platform,\
+    entities, enemies, enemy_sprites, Platform,\
     block_types, collision_blocks, collision_block_sprites,\
     indestructibles, SPAWN_POINT_LEVEL = (x for x in args)
 
@@ -207,10 +204,11 @@ def reset_level(*args):
     enemy_sprites.empty()
     enemies = []
 
-    # build up arg list
+    # build up arg list for build_level function
     args = current_level, level, enemies, enemy_sprites, platforms, blocks,\
     entities, Platform, block_types, collision_blocks,\
     collision_block_sprites, indestructibles
+    
     # rebuild level
     platforms, blocks, entities, enemies, enemy_sprites,\
     collision_block_sprites, indestructibles = build_level(*args)

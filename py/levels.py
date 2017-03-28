@@ -18,6 +18,9 @@
 
 from classes import *
 
+""" lists to store levels and enemies """
+get_levels, get_enemies = [0], [0] # init first index to 0
+
 level_1 = [
 "LR                                                                                                                                                                                                                                                                                                                                                                                          ",
 "LR                                                                                                                                                                                                                                                                                                                                                                                         B",
@@ -34,18 +37,21 @@ level_1 = [
 "LR                                                                                                                                                                                                                                                                                                                                                                                         B",
 "LR                                                                                                                                                                                                                                                                                                                                                                                         B",
 "LR                                                                                                                                                                                                                                                                                                                                                                                         B",
-"LR                                                                                                                                                                                                                                                                                                                                                                                         B",
-"LR                                                                                                                                                                                                                                                                                                                                                                                         B",
-"LR    	                                                                                                                                                                                                                                                                                                                                                                                             B",
-"LR                                                                                                                                                                                                                                                                                                                                                                                B",
-"LRO                                   O                                           O                                                                                                                                                                                                                                          B",
-"LRBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"]
+"LR                                                                                        XLR                                                                                                                                                                                                                                                                                              B",
+"LR                                                                                        XLR                                                                                                                                                                                                                                                                                              B",
+"LR    	                                                                                   XLR                                                                                                                                                                                                                                                                                              B",
+"LR                                                                                        XLR                                                                                                                                                                                                                                                                                              B",
+"LRO                                   O                                           O       XLR                                                                                                                                                                                                                                                                                              B",
+"LRBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"]
 
 # Generate level 1 enemies
 level_1_enemies = [
 GarbageCollector(821,264), PySnake(450, 268)
 ]
 
+# add enemies/levels to list
+get_levels.append(level_1)
+get_enemies.append(level_1_enemies)
 
 level_2 = [
 "DD                                                                                                                                                                                                                                                                                                                                                                                          ",
@@ -73,3 +79,7 @@ level_2 = [
 # Generate level 2 enemies
 level_2_enemies = [
 ]
+
+# add enemies/levels to list
+get_levels.append(level_2)
+get_enemies.append(level_2_enemies)

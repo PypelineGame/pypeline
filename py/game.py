@@ -95,6 +95,9 @@ def main():
             # call reset level
             player, platforms, blocks, collision_blocks, collision_block_sprites,\
             entities, enemies, enemy_sprites, indestructibles = reset_level(*args)
+
+            # might need to reset camera to be the width and height of the new level
+
             RESET_LEVEL_FLAG = False
 
         # event handler
@@ -145,7 +148,7 @@ def main():
         # update bullets, camera, player, and enemies
         bullets.update()
         camera.update(player)
-        player.update(up, down, left, right, running, platforms, enemies, enemy_sprites, bullets, camera)
+        player.update(up, down, left, right, running, platforms, enemies, enemy_sprites, bullets, camera, collision_blocks)
         for itr in enemies:
             if type(itr).__name__ == "GarbageCollector" or type(itr).__name__== "PySnake":
                 itr.update(platforms, collision_blocks, blocks, entities)
@@ -163,16 +166,15 @@ def main():
 
         # if player has fallen off screen or hit an enemy, player has died
         if player.rect.y > 1000 or player.health <= 0 or time_remaining <= 0:
-            respawn_text = "Try again bruh..."
             # build argument list
             args = screen, player, level, current_level, platforms, bullets,\
-            blocks, entities, enemies, enemy_sprites, respawn_text, Platform,\
+            blocks, entities, enemies, enemy_sprites, Platform,\
             block_types, collision_blocks, collision_block_sprites, indestructibles, SPAWN_POINT_LEVEL
             # call player_has_died function with *args
             player, platforms, blocks, collision_blocks, collision_block_sprites,\
             entities, enemies, enemy_sprites, indestructibles = reset_level(*args)
             font = pygame.font.Font(None, 36)
-            text = font.render(respawn_text, True, WHITE)
+            text = font.render("Try again bruh...", True, WHITE)
             text_rect = text.get_rect()
             text_x = screen.get_width() / 2 - text_rect.width / 2
             text_y = screen.get_height() / 2 - text_rect.height / 2

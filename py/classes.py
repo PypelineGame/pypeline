@@ -90,7 +90,7 @@ class Player(Entity):
                 self.yvel -= 10 # causes player to jump if player is on ground
             self.flicker = True # causes player to flicker
 
-    def update(self, up, down, left, right, running, platforms, enemies, enemy_sprites, bullets, camera):
+    def update(self, up, down, left, right, running, platforms, enemies, enemy_sprites, bullets, camera, collision_blocks):
         """ updates the player on every frame of main game loop """
         self.damage_frame += 1 # increments damage_frame every frame of game
 
@@ -159,12 +159,16 @@ class Player(Entity):
         self.onGround = False; # assuming we're in the air
         self.collide(0, self.yvel, platforms) # do y-axis collisions
 
+        # handles level changing
+        for c in collision_blocks:
+            if pygame.sprite.collide_rect(self, c):
+                if isinstance(c, ExitBlock):
+                    RESET_LEVEL_FLAG = True
+                    print "NEXT LEVEL"
+
     def collide(self, xvel, yvel, platforms):
         """ handles platform collision for player """
         for p in platforms:
-            if pygame.sprite.collide_rect(self, p):
-                if isinstance(p, ExitBlock):
-                    RESET_LEVEL_FLAG = True
                 if xvel > 0:
                     self.rect.right = p.rect.left
                 if xvel < 0:
