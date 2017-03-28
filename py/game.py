@@ -147,7 +147,7 @@ def main():
         camera.update(player)
         player.update(up, down, left, right, running, platforms, enemies, enemy_sprites, bullets, camera)
         for itr in enemies:
-            if type(itr).__name__ == "GarbageCollector":
+            if type(itr).__name__ == "GarbageCollector" or type(itr).__name__== "PySnake":
                 itr.update(platforms, collision_blocks, blocks, entities)
             else:
                 itr.update()
@@ -192,7 +192,7 @@ def main():
     # draw game over and end the game
     gameOver(screen)
     pygame.quit()
-    raise SystemExit, "Game terminated..\nTotal Runtime: " + str(elapsed_playtime) + "s."
+    #raise SystemExit, "Game terminated..\nTotal Runtime: " + str(elapsed_playtime) + "s."
 
 if __name__ == "__main__":
     main()

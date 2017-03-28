@@ -158,9 +158,17 @@ def bullet_collision(*args):
     # If we hit an enemy, destroy it (unless garbage collector)
     for enemy in enemy_hit_list:
         if type(enemy).__name__ != "GarbageCollector":
-            enemies.remove(enemy)
-            enemy_sprites.remove(enemy)
-            entities.remove(enemy)
+            if type(enemy).__name__== "PySnake":
+                if enemy.health <= 0:
+                    enemies.remove(enemy)
+                    enemy_sprites.remove(enemy)
+                    entities.remove(enemy)
+                else:
+                    enemy.health -= 20
+            else:
+                enemies.remove(enemy)
+                enemy_sprites.remove(enemy)
+                entities.remove(enemy)
 
     # See if we hit an indestructible block
     for bullet in bullets:
