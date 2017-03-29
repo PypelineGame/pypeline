@@ -36,10 +36,13 @@ CAMERA_SLACK = 30
 
 # Define animation frames for classes
 GARBAGE_COLLECTOR_MAX_FRAMES = 8
+MAX_HEALTH_FRAMES = 210
 PYSNAKE_MAX_FRAMES = 8
+
 PLAYER_DAMAGE_FRAMES = 20
 PLAYER_MAX_RUN_FRAMES = 8
-MAX_HEALTH_FRAMES = 210
+PLAYER_MAX_STANDING_FRAMES = 16
+
 
 # import our functions
 from functions import *
@@ -73,15 +76,16 @@ class Player(Entity):
         self.transparent_image = pygame.Surface([32, 32], pygame.SRCALPHA, 32)
         self.transparent_image = self.transparent_image.convert_alpha()
         self.image.convert()
-        self.rect = Rect(x, y, 55.5, 44.5)
+        self.rect = Rect(x, y, 60, 60)
         self.height = 32
         self.health = PLAYER_STARTER_HEALTH
         self.melee_attack, self.range_attack, self.num_of_bullets = 25, 50, 10
         self.damage_frame = 0 # counts # of frames until max damage frames
         self.enemy_collision, self.knockback_left, self.knockback_right, self.flicker = False, False, False, False
         self.frame_counter, self.counter = 0, 0
-        self.running = ['../sprites/player/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8]]
-        self.images = self.running # will be empty list []
+        self.running = ['../sprites/player/running/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8]]
+        self.standing = ['../sprites/player/standing/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9]]
+        self.images = []
 
     def damage(self, attack, enemy, camera):
         """ performs damage reduction on player's HP upon enemy collision """
@@ -96,13 +100,7 @@ class Player(Entity):
     def update(self, up, down, left, right, running, platforms, enemies, enemy_sprites, bullets, camera, collision_blocks, RESET_LEVEL_FLAG, entities):
         """ updates the player on every frame of main game loop """
         self.damage_frame += 1 # increments damage_frame every frame of game
-        self.frame_counter += 1
-        # switch frames
-        if self.frame_counter >= PLAYER_MAX_RUN_FRAMES:
-            self.frame_counter = 0
-            self.image = pygame.image.load(self.images[self.counter])
-            self.counter = (self.counter + 1) % len(self.images)
-
+        self.frame_counter += 1 # increments frame counter
 
         # flicker player when player is knocked back
         if self.flicker:
@@ -139,23 +137,49 @@ class Player(Entity):
         # handle player movements
         else:
             if up:
+                if self.images != self.running:
+                    self.frame_counter, self.counter = 0, 0
+                self.images = self.running
                 # only jump if on the ground
                 if self.onGround: self.yvel -= 10
             if down:
+                if self.images != self.standing:
+                    self.frame_counter, self.counter = 0, 0
+                self.images = self.standing
                 pass # we can eventually implement crouching
             if left:
+                if self.images != self.running:
+                    self.frame_counter, self.counter = 0, 0
+                self.images = self.running
                 if running:
                     self.xvel = -6
                 else:
                     self.xvel = -5
             if right:
+                if self.images != self.running:
+                    self.frame_counter, self.counter = 0, 0
                 self.images = self.running
+                #self.rect.inflate_ip(55, 45)
                 if running:
                     self.xvel = 6
                 else:
                     self.xvel = 5
             if not(left or right):
+                if self.images != self.standing:
+                    self.frame_counter, self.counter = 0, 0
+                self.images = self.standing
                 self.xvel = 0
+
+        # switch frames
+        if self.images == self.running and self.frame_counter >= PLAYER_MAX_RUN_FRAMES:
+            #pygame.transform.scale(self.image, (55, 45), self.image)
+            self.frame_counter = 0
+            self.image = pygame.image.load(self.images[self.counter])
+            self.counter = (self.counter + 1) % len(self.images)
+        elif self.images == self.standing and self.frame_counter >= PLAYER_MAX_STANDING_FRAMES:
+            self.frame_counter = 0
+            self.image = pygame.image.load(self.images[self.counter])
+            self.counter = (self.counter + 1) % len(self.images)
 
         # only accelerate with gravity if in the air and no knockback
         if not self.onGround:
