@@ -40,7 +40,7 @@ def main():
     block_types = [
     BaigeBlock(), LeftStoneBlock(), RightStoneBlock(),\
     BlueBlock(), GrayBlock(), BrightBlueBlock(), BrownBlock(),
-    TopRightStoneBlock(), TopLeftStoneBlock(), CollisionBlock(), ExitBlock()
+    TopRightStoneBlock(), TopLeftStoneBlock(), CollisionBlock()
     ]
 
     __FPS = 70
@@ -93,7 +93,7 @@ def main():
             level = get_level(current_level)
             # package arguments for reset level
             args = screen, player, level, current_level, platforms, bullets,\
-            blocks, entities, enemies, enemy_sprites, respawn_text, Platform,\
+            blocks, entities, enemies, enemy_sprites, Platform,\
             block_types, collision_blocks, collision_block_sprites, indestructibles, SPAWN_POINT_LEVEL
             # call reset level
             player, platforms, blocks, collision_blocks, collision_block_sprites,\
@@ -149,10 +149,13 @@ def main():
             for x in range(32):
                 screen.blit(bg, (x * 32, y * 32))
 
-        # update bullets, camera, player, and enemies
+        # update bullets, camera, player
         bullets.update()
         camera.update(player)
-        player.update(up, down, left, right, running, platforms, enemies, enemy_sprites, bullets, camera, collision_blocks)
+        args = up, down, left, right, running, platforms, enemies, enemy_sprites, bullets, camera, collision_blocks, RESET_LEVEL_FLAG
+        if player.update(*args) == "Reset Level":
+            RESET_LEVEL_FLAG = True
+        # update enemies
         for itr in enemies:
             if type(itr).__name__ == "GarbageCollector" or type(itr).__name__== "PySnake":
                 itr.update(platforms, collision_blocks, blocks, entities)
@@ -188,8 +191,10 @@ def main():
         # display player healthbar and timer
         healthBar(player.health, screen)
         display_timer_text = "%.1f" % time_remaining + "s"
-        #display_timer_text = str(MAX_PLAYTIME_PER_LEVEL[current_level]-elapsed_playtime)
         displayTimer(screen, display_timer_text)
+        for enemy in enemies:
+            if type(enemy).__name__ != "GarbageCollector":
+                enemyHealthBar(enemy.health, enemy, screen)
 
         # refresh screen at end of each frame
         #pygame.display.update()
@@ -198,7 +203,8 @@ def main():
     # draw game over and end the game
     gameOver(screen)
     pygame.quit()
-    #raise SystemExit, "Game terminated..\nTotal Runtime: " + str(elapsed_playtime) + "s."
+    #raise SystemExit
+    print "Game terminated..\nTotal Runtime: " + str(elapsed_playtime) + "s."
 
 if __name__ == "__main__":
     main()

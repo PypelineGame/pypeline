@@ -68,7 +68,7 @@ level_2 = [
 "DD                                                                                                                                                                                                                                                                                                                                                                                         B",
 "DD                                                                                                                                                                                                                                                                                                                                                                                         B",
 "DD                                                                                                                                                                                                                                                                                                                                                                                         B",
-"DD          DABEC                                                                                                                                                                                                                                                                                                                                                                          B",
+"DD          DABECDABDABDABD                                                                                                                                                                                                                                                                                                                                                                B",
 "DD        DABEC                                                                                                                                                                                                                                                                                                                                                                            B",
 "DD       DABEC                                                                                                                                                                                                                                                                                                                                                                             B",
 "DD    DABEC                                                                                                                                                                                                                                                                                                                                                                                B",
@@ -77,7 +77,7 @@ level_2 = [
 ]
 
 # Generate level 2 enemies
-level_2_enemies = [
+level_2_enemies = [PySnake(463, 305)
 ]
 
 # add enemies/levels to list

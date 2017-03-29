@@ -40,8 +40,7 @@ def build_level(*args):
     # unpackage block_types
     BaigeBlock, LeftStoneBlock, RightStoneBlock,\
     BlueBlock, GrayBlock, BrightBlueBlock, BrownBlock,\
-    TopRightStoneBlock, TopLeftStoneBlock, CollisionBlock,\
-    ExitBlock = (x for x in block_types)
+    TopRightStoneBlock, TopLeftStoneBlock, CollisionBlock = (x for x in block_types)
 
     x, y = 0, 0
     # build the level
@@ -95,12 +94,13 @@ def build_level(*args):
                     # add collision block manually to sprite lists
                     p = BlankPlatform(x, y, which_block)
                     collision_blocks.append(p)
+                    collision_block_sprites.add(p)
                     entities.add(p)
                 elif col == "X":
-                    which_block = ExitBlock
                     # add exit block manually to sprite lists
-                    p = BlankPlatform(x, y, which_block)
+                    p = ExitBlock(x, y)
                     collision_blocks.append(p)
+                    collision_block_sprites.add(p)
                     entities.add(p)
             x += 32 # index by 32 bits
         y += 32
@@ -201,6 +201,8 @@ def reset_level(*args):
     entities.empty()
     blocks.empty()
     bullets.empty()
+    collision_blocks = []
+    collision_block_sprites.empty()
     enemy_sprites.empty()
     enemies = []
 
@@ -239,6 +241,18 @@ def healthBar(player_health, screen):
     text_x = 549
     text_y = screen.get_height() / 10 - text_rect.height / 2
     screen.blit(text, [text_x, text_y])
+
+def enemyHealthBar(enemy_health, enemy, screen):
+    """ displays player's health bar at top right of screen """
+    if enemy_health > PLAYER_STARTER_HEALTH * 0.75:
+        enemy_health_color = GREEN
+    elif enemy_health > PLAYER_STARTER_HEALTH* 0.40:
+        enemy_health_color = YELLOW
+    else:
+        enemy_health_color = RED
+    """ pygame.draw.rect(screen, color, (x,y,width,height), thickness) """
+    pygame.draw.rect(screen, enemy_health_color, (enemy.rect.top,enemy.rect.top + 5,enemy_health,25), 0)
+    pygame.draw.rect(screen, WHITE, (enemy.rect.top,enemy.rect.top+5,100,25), 3)
 
 def gameOver(screen):
     """ displays gameover message in center of screen """

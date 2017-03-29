@@ -91,7 +91,7 @@ class Player(Entity):
                 self.onGround = False
             self.flicker = True # causes player to flicker
 
-    def update(self, up, down, left, right, running, platforms, enemies, enemy_sprites, bullets, camera, collision_blocks):
+    def update(self, up, down, left, right, running, platforms, enemies, enemy_sprites, bullets, camera, collision_blocks, RESET_LEVEL_FLAG):
         """ updates the player on every frame of main game loop """
         self.damage_frame += 1 # increments damage_frame every frame of game
 
@@ -165,9 +165,8 @@ class Player(Entity):
         # handles level changing
         for c in collision_blocks:
             if pygame.sprite.collide_rect(self, c):
-                if isinstance(c, ExitBlock):
-                    RESET_LEVEL_FLAG = True
-                    print "NEXT LEVEL"
+                if type(c).__name__ == "ExitBlock":#isinstance(c, ExitBlock):
+                    return "Reset Level"
 
     def collide(self, xvel, yvel, platforms):
         """ handles platform collision for player """
@@ -326,8 +325,12 @@ class CollisionBlock(BlockType):
 
 class ExitBlock(BlockType):
     """ invisible block used to detect level endings """
-    def __init__(self):
+    def __init__(self, x, y):
         BlockType.__init__(self)
+        self.rect = Rect(x, y, 32, 32)
+        self.image = pygame.Surface([32, 32], pygame.SRCALPHA, 32)
+        # SRC ALPHA BUG IS PROBABLY HERE ^^^
+        self.image = self.image.convert_alpha()
     def update(self):
         pass
 
