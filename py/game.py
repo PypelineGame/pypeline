@@ -161,11 +161,16 @@ def main():
             RESET_LEVEL_FLAG = True
 
         # update enemies
-        for itr in enemies:
-            if type(itr).__name__ == "GarbageCollector" or type(itr).__name__== "PySnake":
-                itr.update(platforms, collision_blocks, blocks, entities)
+        for enemy in enemies:
+            # count frames to stop displaying healthbar
+            enemy.health_counter += 1
+            if enemy.health_counter >= MAX_HEALTH_FRAMES:
+                enemy.health_counter = 0
+                enemy.healthTrigger = False
+            if type(enemy).__name__ == "GarbageCollector" or type(enemy).__name__== "PySnake":
+                enemy.update(platforms, collision_blocks, blocks, entities)
             else:
-                itr.update()
+                enemy.update()
 
         # update any additional entities
         for e in entities:
@@ -214,10 +219,11 @@ def main():
         displayTimer(screen, "%.1f" % time_remaining + "s", current_score)
         displayLives(screen, lives)
         for enemy in enemies:
-            if type(enemy).__name__ != "GarbageCollector":
-                enemyHealthBar(enemy.health, enemy, screen, camera.state)
-            else:
-                garbageCollectorHealthBar(enemy, screen, camera.state)
+            if enemy.healthTrigger == True:
+                if type(enemy).__name__ != "GarbageCollector":
+                    enemyHealthBar(enemy.health, enemy, screen, camera.state)
+                else:
+                    garbageCollectorHealthBar(enemy, screen, camera.state)
         # refresh screen at end of each frame
         #pygame.display.update()
         pygame.display.flip()

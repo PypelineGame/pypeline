@@ -38,6 +38,7 @@ CAMERA_SLACK = 30
 GARBAGE_COLLECTOR_MAX_FRAMES = 8
 PYSNAKE_MAX_FRAMES = 8
 PLAYER_DAMAGE_FRAMES = 20
+MAX_HEALTH_FRAMES = 210
 
 # import our functions
 from functions import *
@@ -347,6 +348,8 @@ class Enemy(Entity):
         self.onGround = False
         self.frame_counter = 0
         self.counter = 0
+        self.health_counter = 0
+        self.healthTrigger = False
 
 """                                 Enemies                                 """
 
@@ -362,7 +365,6 @@ class GarbageCollector(Enemy):
 
         # establish list of sprite images
         self.images = ['../sprites/garbage_collector/' + str(x) + '.png' for x in [1, 2, 3, 4]]
-
         self.image = pygame.image.load(self.images[0]) # start on first images
 
     def update(self, platforms, blank_platforms, blocks, entities):
@@ -376,6 +378,9 @@ class GarbageCollector(Enemy):
             if self.reverse:
                 self.image = transform.flip(self.image, 1, 0)
             self.counter = (self.counter + 1) % len(self.images)
+
+        # count frames to display healthbar
+        self.health_counter += 1
 
         # set velocity
         if not self.reverse:

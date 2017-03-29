@@ -154,6 +154,7 @@ def bullet_collision(*args):
 
     # If we hit an enemy, destroy it (unless garbage collector)
     for enemy in enemy_hit_list:
+        enemy.healthTrigger = True
         if type(enemy).__name__ != "GarbageCollector":
             if type(enemy).__name__== "PySnake":
                 if enemy.health <= 0:
