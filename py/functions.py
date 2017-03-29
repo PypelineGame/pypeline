@@ -242,17 +242,27 @@ def healthBar(player_health, screen):
     text_y = screen.get_height() / 10 - text_rect.height / 2
     screen.blit(text, [text_x, text_y])
 
-def enemyHealthBar(enemy_health, enemy, screen):
-    """ displays player's health bar at top right of screen """
-    if enemy_health > PLAYER_STARTER_HEALTH * 0.75:
+def enemyHealthBar(enemy_health, enemy, screen, camera_state):
+    """ displays health bar above enemy """
+    if enemy_health > enemy.max_health * 0.75:
         enemy_health_color = GREEN
-    elif enemy_health > PLAYER_STARTER_HEALTH* 0.40:
+    elif enemy_health > enemy.max_health * 0.40:
         enemy_health_color = YELLOW
     else:
         enemy_health_color = RED
     """ pygame.draw.rect(screen, color, (x,y,width,height), thickness) """
-    pygame.draw.rect(screen, enemy_health_color, (enemy.rect.top,enemy.rect.top + 5,enemy_health,25), 0)
-    pygame.draw.rect(screen, WHITE, (enemy.rect.top,enemy.rect.top+5,100,25), 3)
+    pygame.draw.rect(screen, enemy_health_color,\
+    (enemy.rect.left + camera_state[0],\
+    enemy.rect.top - enemy.rect.height + camera_state[1] + 35, enemy_health, 10), 0)
+    pygame.draw.rect(screen, WHITE,\
+    (enemy.rect.left + camera_state[0],\
+    enemy.rect.top - enemy.rect.height + camera_state[1] + 35, enemy.max_health, 10), 1)
+
+def garbageCollectorHealthBar(enemy, screen, camera_state):
+    """ displays garbage collectors health bar """
+    pygame.draw.rect(screen, WHITE,\
+    (enemy.rect.x + camera_state[0],\
+    enemy.rect.top-enemy.rect.height + camera_state[1] + 35, 75,10), 0)
 
 def gameOver(screen):
     """ displays gameover message in center of screen """
@@ -266,13 +276,27 @@ def gameOver(screen):
     pygame.time.delay(600)
 
 def displayTimer(screen, time_left):
-    """ displays countdown timer """
+    """ displays countdown timer and score """
+    # display timer text
     font = pygame.font.Font(None, 24)
-    text = font.render(time_left, True, WHITE)
+    text = font.render('Timer: ', True, WHITE)
     text_rect = text.get_rect()
-    text_x = screen.get_width() / 16 - text_rect.width / 2
+    text_x = screen.get_width() / 8 - text_rect.width / 2 - 43 # + text_rect.width - 40
     text_y = screen.get_height() / 16 - 10
     text_width, text_height = text_x, 17
-    #pygame.draw.rect(screen, BLACK, (text_x-2,text_y-2,text_rect.width+2,text_height), 0)
-    #pygame.draw.rect(screen, WHITE, (text_x-2,text_y-2,text_rect.width+2,text_height), 2)
     screen.blit(text, [text_x, text_y])
+    # display elapsed timer
+    text = font.render(time_left, True, WHITE)
+    text_rect = text.get_rect()
+    text_x = text_x + 57 #screen.get_width() / 8 - #text_rect.width / 2 + 12 # + text_rect.width - 40
+    text_y = screen.get_height() / 16 - 10
+    text_width, text_height = text_x, 17
+    screen.blit(text, [text_x, text_y])
+    # display score
+    text = font.render('Score: 00000000', True, WHITE)
+    text_rect = text.get_rect()
+    text_x = screen.get_width() / 8 - text_rect.width / 2
+    text_y = screen.get_height() / 16 - 10 - 18
+    text_width, text_height = text_x, 17
+    screen.blit(text, [text_x, text_y])
+

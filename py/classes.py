@@ -25,6 +25,7 @@ RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 GREEN = (0, 255, 0)
 YELLOW = (255, 255, 0)
+PURPLE = (128, 0, 128)
 
 # Define display and camera flags
 DISPLAY = (WIN_WIDTH, WIN_HEIGHT)
@@ -341,6 +342,10 @@ class Enemy(Entity):
         self.xvel = 0
         self.yvel = 0
         self.attack = 0
+        self.reverse = False
+        self.onGround = False
+        self.frame_counter = 0
+        self.counter = 0
 
 """                                 Enemies                                 """
 
@@ -350,31 +355,28 @@ class GarbageCollector(Enemy):
     def __init__(self, x, y):
         Enemy.__init__(self)
         self.rect = Rect(x, y, 69.5, 69.5)
-        self.counter = 0 # used for alternating sprite images
-        self.frame_counter = 0 # used for counting frame rate
 
-        self.xvel = 0
-        self.yvel = 0
-        self.onGround = False
-        self.reverse = False
-        self.attack = 10
+        # establish attack for garbage collector
+        self.attack = 100
 
         # establish list of sprite images
-        self.images = ['1.png', '2.png', '3.png', '4.png']
-        for index, x in enumerate(self.images):
-            self.images[index] =  "../sprites/garbage_collector/" + x
-        self.image = pygame.image.load(self.images[0]) # start on first image
+        self.images = ['../sprites/garbage_collector/' + str(x) + '.png' for x in [1, 2, 3, 4]]
+
+        self.image = pygame.image.load(self.images[0]) # start on first images
 
     def update(self, platforms, blank_platforms, blocks, entities):
         """ update garbage collector """
         self.frame_counter += 1
+        # switch frames
         if self.frame_counter == GARBAGE_COLLECTOR_MAX_FRAMES:
             self.frame_counter = 0
             self.image = pygame.image.load(self.images[self.counter])
+            # reverse frames if enemy is walking in reverse
             if self.reverse:
                 self.image = transform.flip(self.image, 1, 0)
             self.counter = (self.counter + 1) % len(self.images)
 
+        # set velocity
         if not self.reverse:
             self.xvel = 2
         else:
@@ -436,20 +438,16 @@ class PySnake(Enemy):
     def __init__(self, x, y):
         Enemy.__init__(self)
         self.rect = Rect(x, y, 85, 70)
-        self.counter = 0 # used for alternating sprite images
-        self.frame_counter = 0 # used for counting frame rate
 
-        self.xvel = 0
-        self.yvel = 0
-        self.onGround = False
-        self.reverse = False
+        # establishes attack for pysnake
         self.attack = 25
+
+        # max health and health should start at the same constant
+        self.max_health = 100
         self.health = 100
 
         # establish list of sprite images
-        self.images = ['1.png', '2.png', '3.png', '4.png', '5.png', '6.png', '7.png', '8.png', '9.png', '10.png', '11.png', '12.png']
-        for index, x in enumerate(self.images):
-            self.images[index] =  "../sprites/PySnake/green_snake/" + x
+        self.images = ['../sprites/PySnake/green_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
         self.image = pygame.image.load(self.images[0]) # start on first image
 
     def update(self, platforms, blank_platforms, blocks, entities):
@@ -512,3 +510,16 @@ class PySnake(Enemy):
                     self.rect.top = p.rect.bottom
 
 """                              end of Enemies                              """
+
+"""
+        OLD METHOD FOR LOADING IMAGES
+
+        #self.images = ['1.png', '2.png', '3.png', '4.png']
+        #for index, x in enumerate(self.images):
+        #    self.images[index] =  "../sprites/garbage_collector/" + x
+
+        NEW METHOD FOR LOADING IMAGES (one lines fucking rock)
+
+        #self.images = ['../sprites/PySnake/green_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
+
+"""

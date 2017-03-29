@@ -64,7 +64,7 @@ def main():
 
     elapsed_playtime = 0 # keeps track of play time in seconds
     current_life_playtime = 0
-    MAX_PLAYTIME_PER_LEVEL = [0, 100, 220] # max time allowed before time runs out per level
+    MAX_PLAYTIME_PER_LEVEL = [0, 16, 360] # max time allowed before time runs out per level
     SPAWN_POINT_LEVEL = [0, (64, 135), (64, 64)] # x,y coordinates for each level spawn
 
     player = Player(SPAWN_POINT_LEVEL[1][0], SPAWN_POINT_LEVEL[1][1])
@@ -194,7 +194,9 @@ def main():
         displayTimer(screen, display_timer_text)
         for enemy in enemies:
             if type(enemy).__name__ != "GarbageCollector":
-                enemyHealthBar(enemy.health, enemy, screen)
+                enemyHealthBar(enemy.health, enemy, screen, camera.state)
+            else:
+                garbageCollectorHealthBar(enemy, screen, camera.state)
 
         # refresh screen at end of each frame
         #pygame.display.update()
