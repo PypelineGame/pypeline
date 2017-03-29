@@ -64,6 +64,7 @@ def main():
 
     elapsed_playtime = 0 # keeps track of play time in seconds
     current_life_playtime = 0
+    current_score = 0
     MAX_PLAYTIME_PER_LEVEL = [0, 16, 360] # max time allowed before time runs out per level
     SPAWN_POINT_LEVEL = [0, (64, 135), (64, 64)] # x,y coordinates for each level spawn
 
@@ -149,12 +150,15 @@ def main():
             for x in range(32):
                 screen.blit(bg, (x * 32, y * 32))
 
-        # update bullets, camera, player
+        # update bullets, camera
         bullets.update()
         camera.update(player)
+
+        # update player and check if reached next level
         args = up, down, left, right, running, platforms, enemies, enemy_sprites, bullets, camera, collision_blocks, RESET_LEVEL_FLAG
         if player.update(*args) == "Reset Level":
             RESET_LEVEL_FLAG = True
+
         # update enemies
         for itr in enemies:
             if type(itr).__name__ == "GarbageCollector" or type(itr).__name__== "PySnake":
@@ -168,8 +172,8 @@ def main():
 
         # handle bullet collision
         if len(bullets) > 0:
-            args = bullets, blocks, platforms, entities, enemies, enemy_sprites, indestructibles
-            bullets, entities, platforms, blocks, enemies, enemy_sprites = bullet_collision(*args)
+            args = bullets, blocks, platforms, entities, enemies, enemy_sprites, indestructibles, current_score
+            bullets, entities, platforms, blocks, enemies, enemy_sprites, current_score = bullet_collision(*args)
 
         # if player has fallen off screen or hit an enemy, player has died
         if player.rect.y > 1000 or player.health <= 0 or time_remaining <= 0:
@@ -187,11 +191,12 @@ def main():
             text_y = screen.get_height() / 2 - text_rect.height / 2
             screen.blit(text, [text_x, text_y])
             current_life_playtime = 0
+            current_score = 0
 
         # display player healthbar and timer
         healthBar(player.health, screen)
         display_timer_text = "%.1f" % time_remaining + "s"
-        displayTimer(screen, display_timer_text)
+        displayTimer(screen, display_timer_text, current_score)
         for enemy in enemies:
             if type(enemy).__name__ != "GarbageCollector":
                 enemyHealthBar(enemy.health, enemy, screen, camera.state)

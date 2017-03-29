@@ -127,7 +127,7 @@ def bullet_collision(*args):
 
     # unpackage arguments
     bullets, blocks, platforms, entities,\
-    enemies, enemy_sprites, indestructibles = (x for x in args)
+    enemies, enemy_sprites, indestructibles, current_score = (x for x in args)
 
     # See if it hit a block
     block_hit_list, bullet_hit_list = [], []
@@ -162,6 +162,7 @@ def bullet_collision(*args):
                     entities.remove(enemy)
                 else:
                     enemy.health -= 20
+                    current_score += 20
             else:
                 enemies.remove(enemy)
                 enemy_sprites.remove(enemy)
@@ -184,7 +185,7 @@ def bullet_collision(*args):
             bullets.remove(bullet)
             entities.remove(bullet)
 
-    return bullets, entities, platforms, blocks, enemies, enemy_sprites
+    return bullets, entities, platforms, blocks, enemies, enemy_sprites, current_score
 
 def reset_level(*args):
     """ respawn player and rebuild layer if player dies """
@@ -236,7 +237,7 @@ def healthBar(player_health, screen):
     pygame.draw.rect(screen, player_health_color, (549,25,player_health,25), 0)
     pygame.draw.rect(screen, WHITE, (549,25,PLAYER_STARTER_HEALTH,25), 3)
     font = pygame.font.Font(None, 18)
-    text = font.render("HP", True, player_health_color)
+    text = font.render("HP " + str(player_health), True, player_health_color)
     text_rect = text.get_rect()
     text_x = 549
     text_y = screen.get_height() / 10 - text_rect.height / 2
@@ -275,7 +276,7 @@ def gameOver(screen):
     pygame.display.flip()
     pygame.time.delay(600)
 
-def displayTimer(screen, time_left):
+def displayTimer(screen, time_left, current_score):
     """ displays countdown timer and score """
     # display timer text
     font = pygame.font.Font(None, 24)
@@ -292,8 +293,8 @@ def displayTimer(screen, time_left):
     text_y = screen.get_height() / 16 - 10
     text_width, text_height = text_x, 17
     screen.blit(text, [text_x, text_y])
-    # display score
-    text = font.render('Score: 00000000', True, WHITE)
+    # display score 
+    text = font.render('Score: ' + str(current_score).zfill(8), True, WHITE)
     text_rect = text.get_rect()
     text_x = screen.get_width() / 8 - text_rect.width / 2
     text_y = screen.get_height() / 16 - 10 - 18
