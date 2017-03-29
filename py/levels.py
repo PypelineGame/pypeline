@@ -6,12 +6,15 @@
 # A = Blue Block
 # B = Bright Blue Block
 # D = Gray Block
+
 # L = Top left stone block
 # R = Top right stone block
 # M = left stone block
 # N = right stone block
-# O = blank collision platform
-# X = Exit Block
+
+# X = Exit Block # TRIGGERS LEVEL CHANGE
+# O = blank patrol platform # PLAYER REMOVES THESE BLOCKS WHEN COLLIDING WITH THEM
+# Q = Corner patrol platform # THESE BLOCKS ARE PERMANENT FOR EACH LEVEL
 
 """ ENEMIES """
 # GarbageCollector(x,y)
@@ -41,7 +44,7 @@ level_1 = [
 "LR                                                                                        XLR                                                                                                                                                                                                                                                                                              B",
 "LR    	                                                                                   XLR                                                                                                                                                                                                                                                                                              B",
 "LR                                                                                        XLR                                                                                                                                                                                                                                                                                              B",
-"LRO                                   O                                           O       XLR                                                                                                                                                                                                                                                                                              B",
+"LRQ       O                           O                                           O       XLR                                                                                                                                                                                                                                                                                              B",
 "LRBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"]
 
 # Generate level 1 enemies

@@ -38,6 +38,7 @@ CAMERA_SLACK = 30
 GARBAGE_COLLECTOR_MAX_FRAMES = 8
 PYSNAKE_MAX_FRAMES = 8
 PLAYER_DAMAGE_FRAMES = 20
+PLAYER_MAX_RUN_FRAMES = 8
 MAX_HEALTH_FRAMES = 210
 
 # import our functions
@@ -72,17 +73,15 @@ class Player(Entity):
         self.transparent_image = pygame.Surface([32, 32], pygame.SRCALPHA, 32)
         self.transparent_image = self.transparent_image.convert_alpha()
         self.image.convert()
-        self.rect = Rect(x, y, 31.5, 31.5)
+        self.rect = Rect(x, y, 55.5, 44.5)
         self.height = 32
         self.health = PLAYER_STARTER_HEALTH
-        self.melee_attack = 25
-        self.range_attack = 50
-        self.num_of_bullets = 10
+        self.melee_attack, self.range_attack, self.num_of_bullets = 25, 50, 10
         self.damage_frame = 0 # counts # of frames until max damage frames
-        self.enemy_collision = False
-        self.knockback_left = False
-        self.knockback_right = False
-        self.flicker = False
+        self.enemy_collision, self.knockback_left, self.knockback_right, self.flicker = False, False, False, False
+        self.frame_counter, self.counter = 0, 0
+        self.running = ['../sprites/player/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8]]
+        self.images = self.running # will be empty list []
 
     def damage(self, attack, enemy, camera):
         """ performs damage reduction on player's HP upon enemy collision """
@@ -94,9 +93,16 @@ class Player(Entity):
                 self.onGround = False
             self.flicker = True # causes player to flicker
 
-    def update(self, up, down, left, right, running, platforms, enemies, enemy_sprites, bullets, camera, collision_blocks, RESET_LEVEL_FLAG):
+    def update(self, up, down, left, right, running, platforms, enemies, enemy_sprites, bullets, camera, collision_blocks, RESET_LEVEL_FLAG, entities):
         """ updates the player on every frame of main game loop """
         self.damage_frame += 1 # increments damage_frame every frame of game
+        self.frame_counter += 1
+        # switch frames
+        if self.frame_counter >= PLAYER_MAX_RUN_FRAMES:
+            self.frame_counter = 0
+            self.image = pygame.image.load(self.images[self.counter])
+            self.counter = (self.counter + 1) % len(self.images)
+
 
         # flicker player when player is knocked back
         if self.flicker:
@@ -143,6 +149,7 @@ class Player(Entity):
                 else:
                     self.xvel = -5
             if right:
+                self.images = self.running
                 if running:
                     self.xvel = 6
                 else:
@@ -168,7 +175,10 @@ class Player(Entity):
         # handles level changing
         for c in collision_blocks:
             if pygame.sprite.collide_rect(self, c):
-                if type(c).__name__ == "ExitBlock":#isinstance(c, ExitBlock):
+                #print type(c).__name__
+                if type(c).__name__ == "BlankPlatform":
+                    return c
+                elif type(c).__name__ == "ExitBlock":#isinstance(c, ExitBlock):
                     return "Reset Level"
 
     def collide(self, xvel, yvel, platforms):
@@ -231,12 +241,13 @@ class Platform(Entity):
 
 class BlankPlatform(Entity):
     """ Generates an invisible 32x32 platform at x,y with a given BlockType """
-    def __init__(self, x, y, BlockType):
+    def __init__(self, x, y, BlockType, patrol):
         Entity.__init__(self)
         self.rect = Rect(x, y, 32, 32)
         self.image = pygame.Surface([32, 32], pygame.SRCALPHA, 32)
         # SRC ALPHA BUG IS PROBABLY HERE ^^^
         self.image = self.image.convert_alpha()
+        self.patrol = patrol
     def update(self):
         pass
 
@@ -323,6 +334,13 @@ class CollisionBlock(BlockType):
     """ blank block used to detect collisions """
     def __init__(self):
         BlockType.__init__(self)
+    def update(self):
+        pass
+
+class CornerPatrolBlock(CollisionBlock):
+    """ unremovable corner patrol block """
+    def __init__(self):
+        CollisionBlock.__init__(self)
     def update(self):
         pass
 
@@ -438,8 +456,6 @@ class GarbageCollector(Enemy):
                 if yvel < 0: # moving up, hit bottom side of wall
                     self.rect.top = p.rect.bottom
 
-					
-					
 class PySnake(Enemy):
     def __init__(self, x, y):
         Enemy.__init__(self)

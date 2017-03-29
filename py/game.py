@@ -40,7 +40,7 @@ def main():
     block_types = [
     BaigeBlock(), LeftStoneBlock(), RightStoneBlock(),\
     BlueBlock(), GrayBlock(), BrightBlueBlock(), BrownBlock(),
-    TopRightStoneBlock(), TopLeftStoneBlock(), CollisionBlock()
+    TopRightStoneBlock(), TopLeftStoneBlock(), CollisionBlock(), CornerPatrolBlock()
     ]
 
     __FPS = 70
@@ -156,9 +156,19 @@ def main():
         camera.update(player)
 
         # update player and check if reached next level
-        args = up, down, left, right, running, platforms, enemies, enemy_sprites, bullets, camera, collision_blocks, RESET_LEVEL_FLAG
-        if player.update(*args) == "Reset Level":
+        args = up, down, left, right, running, platforms, enemies, enemy_sprites, bullets, camera, collision_blocks, RESET_LEVEL_FLAG, entities
+        result = player.update(*args)
+        if result == None:
+            pass
+        # remove patrol blocks, but not corner colision blocks
+        elif result in collision_blocks:
+            if result.patrol == False:
+                collision_blocks.remove(result)
+                collision_block_sprites.remove(result)
+                entities.remove(result)
+        elif result == "Reset Level":
             RESET_LEVEL_FLAG = True
+
 
         # update enemies
         for enemy in enemies:

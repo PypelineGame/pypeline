@@ -40,7 +40,7 @@ def build_level(*args):
     # unpackage block_types
     BaigeBlock, LeftStoneBlock, RightStoneBlock,\
     BlueBlock, GrayBlock, BrightBlueBlock, BrownBlock,\
-    TopRightStoneBlock, TopLeftStoneBlock, CollisionBlock = (x for x in block_types)
+    TopRightStoneBlock, TopLeftStoneBlock, CollisionBlock, CornerPatrolBlock = (x for x in block_types)
 
     x, y = 0, 0
     # build the level
@@ -92,7 +92,13 @@ def build_level(*args):
                 elif col == "O":
                     which_block = CollisionBlock
                     # add collision block manually to sprite lists
-                    p = BlankPlatform(x, y, which_block)
+                    p = BlankPlatform(x, y, which_block, False)
+                    collision_blocks.append(p)
+                    collision_block_sprites.add(p)
+                    entities.add(p)
+                elif col == "Q":
+                    which_block = CornerPatrolBlock
+                    p = BlankPlatform(x, y, which_block, True)
                     collision_blocks.append(p)
                     collision_block_sprites.add(p)
                     entities.add(p)
