@@ -127,7 +127,7 @@ def bullet_collision(*args):
 
     # unpackage arguments
     bullets, blocks, platforms, entities,\
-    enemies, enemy_sprites, indestructibles, current_score = (x for x in args)
+    enemies, enemy_sprites, indestructibles, score = (x for x in args)
 
     # See if it hit a block
     block_hit_list, bullet_hit_list = [], []
@@ -162,7 +162,7 @@ def bullet_collision(*args):
                     entities.remove(enemy)
                 else:
                     enemy.health -= 20
-                    current_score += 20
+                    score += 20
             else:
                 enemies.remove(enemy)
                 enemy_sprites.remove(enemy)
@@ -185,7 +185,7 @@ def bullet_collision(*args):
             bullets.remove(bullet)
             entities.remove(bullet)
 
-    return bullets, entities, platforms, blocks, enemies, enemy_sprites, current_score
+    return bullets, entities, platforms, blocks, enemies, enemy_sprites, score
 
 def reset_level(*args):
     """ respawn player and rebuild layer if player dies """
@@ -274,7 +274,7 @@ def gameOver(screen):
     text_y = screen.get_height() / 2 - text_rect.height / 2
     screen.blit(text, [text_x, text_y])
     pygame.display.flip()
-    pygame.time.delay(600)
+    pygame.time.delay(1000)
 
 def displayTimer(screen, time_left, current_score):
     """ displays countdown timer and score """
@@ -301,3 +301,22 @@ def displayTimer(screen, time_left, current_score):
     text_width, text_height = text_x, 17
     screen.blit(text, [text_x, text_y])
 
+def displayLives(screen, lives):
+    if lives == 3:
+        image = pygame.image.load("../sprites/lives/3hearts.png")
+    elif lives == 2:
+        image = pygame.image.load("../sprites/lives/2hearts.png")
+    elif lives == 1:
+        image = pygame.image.load("../sprites/lives/1heart.png")
+    else:
+        image = pygame.image.load("../sprites/lives/0hearts.png")
+    imagerect = image.get_rect()
+    image = pygame.transform.scale(image, (75, 25))
+    image_x = 675
+    image_y = 55
+    screen.blit(image, [image_x, image_y])
+
+def scrollScore(current_score, score):
+    if current_score < score:
+        current_score += 1
+    return current_score

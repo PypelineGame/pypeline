@@ -17,6 +17,7 @@ HALF_HEIGHT = int(WIN_HEIGHT / 2)
 RESET_LEVEL_FLAG = False
 
 PLAYER_STARTER_HEALTH = 200
+MAX_LIVES = 3
 
 # Define some colors
 BLACK = (0, 0, 0)
@@ -447,7 +448,7 @@ class PySnake(Enemy):
         self.health = 100
 
         # establish list of sprite images
-        self.images = ['../sprites/PySnake/green_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
+        self.images = ['../sprites/PySnake/default_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
         self.image = pygame.image.load(self.images[0]) # start on first image
 
     def update(self, platforms, blank_platforms, blocks, entities):

@@ -64,7 +64,8 @@ def main():
 
     elapsed_playtime = 0 # keeps track of play time in seconds
     current_life_playtime = 0
-    current_score = 0
+    current_score, score = 0, 0
+    lives = copy(MAX_LIVES)
     MAX_PLAYTIME_PER_LEVEL = [0, 16, 360] # max time allowed before time runs out per level
     SPAWN_POINT_LEVEL = [0, (64, 135), (64, 64)] # x,y coordinates for each level spawn
 
@@ -172,11 +173,24 @@ def main():
 
         # handle bullet collision
         if len(bullets) > 0:
-            args = bullets, blocks, platforms, entities, enemies, enemy_sprites, indestructibles, current_score
-            bullets, entities, platforms, blocks, enemies, enemy_sprites, current_score = bullet_collision(*args)
+            args = bullets, blocks, platforms, entities, enemies, enemy_sprites, indestructibles, score
+            bullets, entities, platforms, blocks, enemies, enemy_sprites, score = bullet_collision(*args)
 
         # if player has fallen off screen or hit an enemy, player has died
         if player.rect.y > 1000 or player.health <= 0 or time_remaining <= 0:
+            font = pygame.font.Font(None, 36)
+            lives -= 1 # count number of deaths
+            # if player has run out of lives, set player back to level 1 and reset score
+            if lives <= 0:
+                current_score, score, current_level, lives = 0, 0, 1, MAX_LIVES
+                level = get_level(current_level)
+                # generate size of level and set camera
+                total_level_width  = len(level[0])*32
+                total_level_height = len(level)*32
+                camera = Camera(complex_camera, total_level_width, total_level_height)
+                gameOver(screen)
+            else:
+                text = font.render("Try again bruh...", True, WHITE)
             # build argument list
             args = screen, player, level, current_level, platforms, bullets,\
             blocks, entities, enemies, enemy_sprites, Platform,\
@@ -184,25 +198,26 @@ def main():
             # call player_has_died function with *args
             player, platforms, blocks, collision_blocks, collision_block_sprites,\
             entities, enemies, enemy_sprites, indestructibles = reset_level(*args)
-            font = pygame.font.Font(None, 36)
-            text = font.render("Try again bruh...", True, WHITE)
             text_rect = text.get_rect()
             text_x = screen.get_width() / 2 - text_rect.width / 2
             text_y = screen.get_height() / 2 - text_rect.height / 2
             screen.blit(text, [text_x, text_y])
             current_life_playtime = 0
-            current_score = 0
+            
 
-        # display player healthbar and timer
+        # animate scrolling effect on score
+        current_score = scrollScore(current_score, score)
+
+        # display player healthbar, enemy healthbar, timer, score, and lives
         healthBar(player.health, screen)
-        display_timer_text = "%.1f" % time_remaining + "s"
-        displayTimer(screen, display_timer_text, current_score)
+        #display_timer_text = "%.1f" % time_remaining + "s"
+        displayTimer(screen, "%.1f" % time_remaining + "s", current_score)
+        displayLives(screen, lives)
         for enemy in enemies:
             if type(enemy).__name__ != "GarbageCollector":
                 enemyHealthBar(enemy.health, enemy, screen, camera.state)
             else:
                 garbageCollectorHealthBar(enemy, screen, camera.state)
-
         # refresh screen at end of each frame
         #pygame.display.update()
         pygame.display.flip()
