@@ -113,12 +113,19 @@ def main():
                 main_loop = False
             if e.type == KEYDOWN and e.key == K_w:
                 up = True
+                player.jump = True
+                player.images = player.jumping
+                player.frame_counter, player.counter = 0, 0
             if e.type == KEYDOWN and e.key == K_s:
                 down = True
             if e.type == KEYDOWN and e.key == K_a:
                 left = True
+                player.images = player.running
+                player.frame_counter, player.counter = 0, 0
             if e.type == KEYDOWN and e.key == K_d:
                 right = True
+                player.images = player.running
+                player.frame_counter, player.counter = 0, 0
             if e.type == KEYDOWN and e.key == K_LSHIFT:
                 running = True
             if e.type == KEYUP and e.key == K_w:
@@ -127,18 +134,29 @@ def main():
                 down = False
             if e.type == KEYUP and e.key == K_d:
                 right = False
+                player.images = player.standing
+                player.frame_counter, player.counter = 0, 0
             if e.type == KEYUP and e.key == K_a:
                 left = False
+                player.images = player.standing
+                player.frame_counter, player.counter = 0, 0
             if e.type == KEYUP and e.key == K_LSHIFT:
                 running = False
             if (e.type == pygame.MOUSEBUTTONDOWN and e.button == 1) or\
-            (e.type == KEYUP and e.key == K_SPACE):
+            (e.type == KEYUP and e.key == K_SPACE) or (e.type == KEYDOWN and e.key == K_f):
                 # fire on left mouse click or space bar
-                bullet = Bullet(pygame.mouse.get_pos(),\
-                [player.rect.x, player.rect.y, player.height], camera.state)
-                # spawns bullet at the center of the player
-                bullet.rect.x = player.rect.x + player.height / 2
-                bullet.rect.y = player.rect.y + player.height / 2
+                if e.key == K_f:
+                    bullet = Bullet(pygame.mouse.get_pos(),\
+                    [player.rect.x, player.rect.y, player.height], camera.state, 'strong')
+                    bullet.rect.x = player.rect.x + player.height - player.height/2# / 2
+                    bullet.rect.y = player.rect.y - player.height + player.height/2# / 2
+                else:
+                    bullet = Bullet(pygame.mouse.get_pos(),\
+                    [player.rect.x, player.rect.y, player.height], camera.state)
+                    # spawns bullet at the center of the player
+                    bullet.rect.x = player.rect.x + player.height/2
+                    bullet.rect.y = player.rect.y + player.height/2
+
                 # adds bullet to list of bullets and list of entities
                 entities.add(bullet)
                 bullets.add(bullet)

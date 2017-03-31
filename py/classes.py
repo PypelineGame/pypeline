@@ -82,10 +82,12 @@ class Player(Entity):
         self.melee_attack, self.range_attack, self.num_of_bullets = 25, 50, 10
         self.damage_frame = 0 # counts # of frames until max damage frames
         self.enemy_collision, self.knockback_left, self.knockback_right, self.flicker = False, False, False, False
-        self.frame_counter, self.counter = 0, 0
+        self.frame_counter, self.counter, self.jump_counter = 0, 0, 0
         self.running = ['../sprites/player/running/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8]]
-        self.standing = ['../sprites/player/standing/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9]]
-        self.images = []
+        self.standing = ['../sprites/player/standing/' + str(x) + '.png' for x in [1, 2, 3, 4]]#, 5, 6]]#, 7, 8, 9]]
+        self.jumping = ['../sprites/player/jumping/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
+        self.images = self.standing # by default
+        self.jump = False
 
     def damage(self, attack, enemy, camera):
         """ performs damage reduction on player's HP upon enemy collision """
@@ -101,6 +103,40 @@ class Player(Entity):
         """ updates the player on every frame of main game loop """
         self.damage_frame += 1 # increments damage_frame every frame of game
         self.frame_counter += 1 # increments frame counter
+
+        
+            #if self.onGround and self.images == self.jumping:
+            #    #if left or right:
+            #    #    self.images = self.running
+            #    #else:
+            #    #    self.images = self.standing
+            #    self.counter = 0
+            #pygame.transform.scale(self.image, (55, 45), self.image)
+        if right and not self.jump:
+            self.images = self.running
+        elif self.jump == True:
+            self.jump_counter += 1
+            if self.jump_counter == 33:
+                self.jump = False
+                self.jump_counter, self.counter = 0, 0
+                self.images = self.standing
+
+        if self.frame_counter >= PLAYER_MAX_RUN_FRAMES:
+            self.frame_counter = 0
+            self.image = pygame.image.load(self.images[self.counter])
+            self.counter = (self.counter + 1) % len(self.images)
+            if left:
+                if self.jump:
+                    self.images = self.jumping
+                else: #elif self.yvel < 0:
+                    self.images = self.running
+                self.image = transform.flip(self.image, 1, 0)
+
+        #if jump == True:
+        #    if frame_counter == PLAYER_
+            
+
+
 
         # flicker player when player is knocked back
         if self.flicker:
@@ -137,49 +173,46 @@ class Player(Entity):
         # handle player movements
         else:
             if up:
-                if self.images != self.running:
-                    self.frame_counter, self.counter = 0, 0
-                self.images = self.running
+                #if self.images != self.jumping:
+                #    self.frame_counter, self.counter = 0, 0
+                #self.images = self.jumping
                 # only jump if on the ground
                 if self.onGround: self.yvel -= 10
             if down:
-                if self.images != self.standing:
-                    self.frame_counter, self.counter = 0, 0
-                self.images = self.standing
+                #if self.images != self.standing:
+                #    self.frame_counter, self.counter = 0, 0
+                #self.images = self.standing
                 pass # we can eventually implement crouching
             if left:
-                if self.images != self.running:
-                    self.frame_counter, self.counter = 0, 0
-                self.images = self.running
+                #if self.images != self.running:
+                #    self.frame_counter, self.counter = 0, 0
+                #self.images = self.running
                 if running:
                     self.xvel = -6
                 else:
                     self.xvel = -5
             if right:
-                if self.images != self.running:
-                    self.frame_counter, self.counter = 0, 0
-                self.images = self.running
+                #if self.images != self.running:
+                #    self.frame_counter, self.counter = 0, 0
+                #self.images = self.running
                 #self.rect.inflate_ip(55, 45)
                 if running:
                     self.xvel = 6
                 else:
                     self.xvel = 5
             if not(left or right):
-                if self.images != self.standing:
-                    self.frame_counter, self.counter = 0, 0
-                self.images = self.standing
+                #if self.images != self.standing:
+                #    self.frame_counter, self.counter = 0, 0
+                #self.images = self.standing
                 self.xvel = 0
 
         # switch frames
-        if self.images == self.running and self.frame_counter >= PLAYER_MAX_RUN_FRAMES:
-            #pygame.transform.scale(self.image, (55, 45), self.image)
-            self.frame_counter = 0
-            self.image = pygame.image.load(self.images[self.counter])
-            self.counter = (self.counter + 1) % len(self.images)
-        elif self.images == self.standing and self.frame_counter >= PLAYER_MAX_STANDING_FRAMES:
-            self.frame_counter = 0
-            self.image = pygame.image.load(self.images[self.counter])
-            self.counter = (self.counter + 1) % len(self.images)
+        #if self.images == self.running and
+
+        #elif self.images == self.standing and self.frame_counter >= PLAYER_MAX_STANDING_FRAMES:
+        #    self.frame_counter = 0
+        #    self.image = pygame.image.load(self.images[self.counter])
+        #    self.counter = (self.counter + 1) % len(self.images)
 
         # only accelerate with gravity if in the air and no knockback
         if not self.onGround:
@@ -189,7 +222,6 @@ class Player(Entity):
 
         self.rect.left += self.xvel # Modifies player's position in X direction
 
-        """ x collision is currently commented out; not sure why its bugging out? """
         self.collide(self.xvel, 0, platforms) # do x-axis collisions
 
         self.rect.top += self.yvel # Modifies player's position in Y direction
@@ -222,18 +254,28 @@ class Player(Entity):
 
 class Bullet(pygame.sprite.Sprite):
     """ This class represents the bullet . """
-    def __init__(self, mouse, player, camera_state):
+    def __init__(self, mouse, player, camera_state, strength = None):
         # Call the parent class (Sprite) constructor
         pygame.sprite.Sprite.__init__(self)
-        self.player = player
+        #self.player = player
         # calculate center of bullet
-        self.center_y = (player[1] - player[2]/2)
-        self.center_x = (player[0] - player[2]/2)
+        self.center_y = (player[1] + player[2] - player[2]/2)
+        self.center_x = (player[0] - player[2] - player[2]/2)
         # grab mouse coordinates
         self.mouse_x, self.mouse_y = mouse[0], mouse[1]
-        self.image = pygame.Surface([4, 4])
-        self.image.fill(WHITE)
+        if strength == "strong":
+            self.image = pygame.image.load('../sprites/player/blade_wave.png')
+            # calculate center of bullet
+            self.center_y = (player[1] + player[2] - player[2]/2)
+            self.center_x = (player[0] - player[2] - player[2]/2)
+        else:
+            self.image = pygame.Surface([4, 4])
+            self.image.fill(WHITE)
+            # calculate center of bullet
+            self.center_y = (player[1] + player[2]/2)
+            self.center_x = (player[0] - player[2]/2)
         self.rect = self.image.get_rect()
+        #self.rect = Rect(x, y, 60, 60)
         # offset camera state on x coordinates
         self.mouse_x -= camera_state[0]
         # might need to offset camera in y coordinates in the future
