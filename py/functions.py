@@ -162,11 +162,12 @@ def bullet_collision(*args):
     for enemy in enemy_hit_list:
         enemy.healthTrigger = True
         if type(enemy).__name__ != "GarbageCollector":
-            if type(enemy).__name__== "PySnake":
+            if isinstance(enemy, PySnake):
+                if type(enemy).__name__=="GreenPysnake":
+                    enemy.attack *= 2
                 if enemy.health <= 0:
-                    enemies.remove(enemy)
-                    enemy_sprites.remove(enemy)
-                    entities.remove(enemy)
+                    enemy.hit = True
+                    enemy.counter = 0
                 else:
                     enemy.health -= 20
                     score += 20

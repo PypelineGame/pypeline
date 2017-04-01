@@ -530,7 +530,11 @@ class PySnake(Enemy):
 
         # establish list of sprite images
         self.images = ['../sprites/PySnake/default_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
+        self.dying = ['../sprites/PySnake/default_snake/default_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
         self.image = pygame.image.load(self.images[0]) # start on first image
+        self.hit = False
+        self.kill = False
+        self.dying_counter = 0 
 
     def update(self, platforms, blank_platforms, blocks, entities):
         """ update garbage collector """
@@ -541,11 +545,14 @@ class PySnake(Enemy):
             if self.reverse:
                 self.image = transform.flip(self.image, 1, 0)
             self.counter = (self.counter + 1) % len(self.images)
-
-        if not self.reverse:
-            self.xvel = -2
-        else:
-            self.xvel = 2
+        if self.hit:
+            self.images = self.dying  				
+            self.dying_counter += 1
+        if not self.hit:
+            if not self.reverse:
+                self.xvel = -2
+            else:
+                self.xvel = 2
 
          # only accelerate with gravity if in the air
         if not self.onGround:
@@ -590,6 +597,26 @@ class PySnake(Enemy):
                     self.yvel = 0
                 if yvel < 0: # moving up, hit bottom side of wall
                     self.rect.top = p.rect.bottom
+
+					
+class GreenPysnake(PySnake):
+	def __init__(self, x, y):
+		PySnake.__init__(self, x, y)
+		self.images = ['../sprites/PySnake/green_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
+		self.image = pygame.image.load(self.images[0]) # start on first image
+		self.dying = ['../sprites/PySnake/green_snake/green_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
+		
+	#def collide(self, xvel, yvel, platforms, blocks, entities, player):
+	#	PySnake.collide(self, xvel, yvel, platforms, blocks, entities)
+				
+	
+					
+					
+					
+					
+					
+
+					
 
 """                              end of Enemies                              """
 

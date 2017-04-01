@@ -224,11 +224,17 @@ def main():
             if enemy.health_counter >= MAX_HEALTH_FRAMES:
                 enemy.health_counter = 0
                 enemy.healthTrigger = False
-            if type(enemy).__name__ == "GarbageCollector" or type(enemy).__name__== "PySnake":
+            if type(enemy).__name__ == "GarbageCollector" or isinstance(enemy, PySnake):
                 enemy.update(platforms, collision_blocks, blocks, entities)
+                if isinstance(enemy, PySnake):
+                    if enemy.hit and enemy.dying_counter >= 55:
+                         print (enemy.dying_counter)
+                         enemies.remove(enemy)
+                         enemy_sprites.remove(enemy)
+                         entities.remove(enemy)
             else:
                 enemy.update()
-
+            
         # update any additional entities
         for e in entities:
             screen.blit(e.image, camera.apply(e))
