@@ -28,7 +28,7 @@ def main():
     level = get_level(current_level)
 
     # Define list of backgrounds for the levels
-    BACKGROUNDS = [0, 'background2.png', 'sample_background.jpg']
+    BACKGROUNDS = [0, 'forest_day.png', 'deep_jungle.png']
     for i in range(1, len(BACKGROUNDS)):
         BACKGROUNDS[i] = '../sprites/backgrounds/' + BACKGROUNDS[i]
 
@@ -180,7 +180,7 @@ def main():
                 # if right click, print mouse coordinates for testing purposes
                 print(pygame.mouse.get_pos())
 
-        """ move background """
+        """ move background while camera moves """
         if -1 * camera.state[0] >= CURRENT_WIN_WIDTH:#_RIGHT:
             CURRENT_WIN_WIDTH += WIN_WIDTH
             camera_state = camera.state[0]
@@ -246,6 +246,9 @@ def main():
             # if player has run out of lives, set player back to level 1 and reset score
             if lives <= 0:
                 current_level = 1
+                bg = pygame.image.load(BACKGROUNDS[current_level])
+                bg = pygame.transform.scale(bg, (WIN_WIDTH, WIN_HEIGHT))
+                bg = bg.convert_alpha()
                 current_score, score, current_level, lives = 0, 0, 1, MAX_LIVES
                 level = get_level(current_level)
                 # generate size of level and set camera
@@ -259,7 +262,7 @@ def main():
             args = screen, player, level, current_level, platforms, bullets,\
             blocks, entities, enemies, enemy_sprites, Platform,\
             block_types, collision_blocks, collision_block_sprites, indestructibles, SPAWN_POINT_LEVEL
-            # call player_has_died function with *args
+            # call reset level function with *args
             player, platforms, blocks, collision_blocks, collision_block_sprites,\
             entities, enemies, enemy_sprites, indestructibles = reset_level(*args)
             text_rect = text.get_rect()
@@ -272,25 +275,24 @@ def main():
         # animate scrolling effect on score
         current_score = scrollScore(current_score, score)
 
-        # display player healthbar, enemy healthbar, timer, score, and lives
+        # display player healthbar, timer, score, and lives
         healthBar(player.health, screen)
-        #display_timer_text = "%.1f" % time_remaining + "s"
         displayTimer(screen, "%.1f" % time_remaining + "s", current_score)
         displayLives(screen, lives)
+        # display enemy healthbar
         for enemy in enemies:
             if enemy.healthTrigger == True:
                 if type(enemy).__name__ != "GarbageCollector":
                     enemyHealthBar(enemy.health, enemy, screen, camera.state)
                 else:
                     garbageCollectorHealthBar(enemy, screen, camera.state)
+
         # refresh screen at end of each frame
-        #pygame.display.update()
         pygame.display.flip()
 
     # draw game over and end the game
     gameOver(screen)
     pygame.quit()
-    #raise SystemExit
     print "Game terminated..\nTotal Runtime: " + str(elapsed_playtime) + "s."
 
 if __name__ == "__main__":
