@@ -11,7 +11,7 @@ from copy import copy
 
 # Define screen borders
 WIN_WIDTH = 800
-WIN_HEIGHT = 640
+WIN_HEIGHT = 450 # 400 # 640
 HALF_WIDTH = int(WIN_WIDTH / 2)
 HALF_HEIGHT = int(WIN_HEIGHT / 2)
 RESET_LEVEL_FLAG = False
@@ -131,12 +131,6 @@ class Player(Entity):
                 else: #elif self.yvel < 0:
                     self.images = self.running
                 self.image = transform.flip(self.image, 1, 0)
-
-        #if jump == True:
-        #    if frame_counter == PLAYER_
-            
-
-
 
         # flicker player when player is knocked back
         if self.flicker:

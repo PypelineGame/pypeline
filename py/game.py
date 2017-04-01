@@ -4,6 +4,7 @@
 from functions import *
 import levels
 from classes import *
+#from gifimage import *
 
 import time, os, sys
 
@@ -22,9 +23,23 @@ def main():
     # definitions
     up = down = left = right = running = False
     bullet = None
-    bg = Surface((32,32))
-    bg.convert()
-    bg.fill(BLACK)
+
+    current_level = 1 # start at level 1
+    level = get_level(current_level)
+
+    # Define list of backgrounds for the levels
+    BACKGROUNDS = [0, 'background2.png', 'sample_background.jpg']
+    for i in range(1, len(BACKGROUNDS)):
+        BACKGROUNDS[i] = '../sprites/backgrounds/' + BACKGROUNDS[i]
+
+    # helps draw background
+    CURRENT_WIN_WIDTH = copy(WIN_WIDTH)
+    camera_state = 0
+
+    bg = pygame.image.load(BACKGROUNDS[current_level])
+    bg = pygame.transform.scale(bg, (WIN_WIDTH, WIN_HEIGHT))
+    bg = bg.convert_alpha()
+
     entities = pygame.sprite.Group()
     bullets = pygame.sprite.Group()
     blocks = pygame.sprite.Group()
@@ -44,9 +59,6 @@ def main():
     ]
 
     __FPS = 70
-
-    current_level = 1 # start at level 1
-    level = get_level(current_level)
 
     # pack arg list to build level
     args = current_level, level, enemies, enemy_sprites, platforms, blocks,\
@@ -72,25 +84,31 @@ def main():
     player = Player(SPAWN_POINT_LEVEL[1][0], SPAWN_POINT_LEVEL[1][1])
     entities.add(player) # adds player to the list of entities
 
-    # main game loop
+    """ main game loop """
     main_loop = True
     game_over = False
     while main_loop:
 
-        # handle fps and elapsed_playtime counter
+        """ handle fps and elapsed_playtime counter """
         fps = timer.tick(__FPS) # max fps
         elapsed_playtime += fps / 1000.0
         current_life_playtime += fps / 1000.0
         time_remaining = float(MAX_PLAYTIME_PER_LEVEL[current_level]-current_life_playtime)
 
-        # display fps and playtime on window
+        """ display fps and playtime on window """
         text_display = "{0:.2f}fps    {1:.1f}s".format(timer.get_fps(), elapsed_playtime)
         pygame.display.set_caption(text_display)
 
+        """ PLAYER BEAT THE LEVEL """
         if RESET_LEVEL_FLAG == True:
             # moves to next level
             current_level += 1
+            # changes background
+            bg = pygame.image.load(BACKGROUNDS[current_level])
+            bg = pygame.transform.scale(bg, (WIN_WIDTH, WIN_HEIGHT))
+            bg = bg.convert_alpha()
             current_life_playtime = 0
+            camera_state = 0
             RESET_LEVEL_FLAG = False
             level = get_level(current_level)
             # package arguments for reset level
@@ -106,7 +124,7 @@ def main():
             camera = Camera(complex_camera, total_level_width, total_level_height)
             
 
-        # event handler
+        """ event handler """
         for e in pygame.event.get():
             if e.type == QUIT or (e.type == KEYDOWN and e.key == K_ESCAPE):
                 game_over = True
@@ -143,50 +161,61 @@ def main():
             if e.type == KEYUP and e.key == K_LSHIFT:
                 running = False
             if (e.type == pygame.MOUSEBUTTONDOWN and e.button == 1) or\
-            (e.type == KEYUP and e.key == K_SPACE) or (e.type == KEYDOWN and e.key == K_f):
-                # fire on left mouse click or space bar
-                if e.key == K_f:
-                    bullet = Bullet(pygame.mouse.get_pos(),\
-                    [player.rect.x, player.rect.y, player.height], camera.state, 'strong')
-                    bullet.rect.x = player.rect.x + player.height - player.height/2# / 2
-                    bullet.rect.y = player.rect.y - player.height + player.height/2# / 2
-                else:
-                    bullet = Bullet(pygame.mouse.get_pos(),\
-                    [player.rect.x, player.rect.y, player.height], camera.state)
-                    # spawns bullet at the center of the player
-                    bullet.rect.x = player.rect.x + player.height/2
-                    bullet.rect.y = player.rect.y + player.height/2
-
-                # adds bullet to list of bullets and list of entities
+            (e.type == KEYUP and e.key == K_SPACE):
+                bullet = Bullet(pygame.mouse.get_pos(),\
+                [player.rect.x, player.rect.y, player.height], camera.state)
+                # spawns bullet at the center of the player
+                bullet.rect.x = player.rect.x + player.height/2
+                bullet.rect.y = player.rect.y + player.height/2
+                entities.add(bullet)
+                bullets.add(bullet)
+            if (e.type == KEYDOWN and e.key == K_f):
+                bullet = Bullet(pygame.mouse.get_pos(),\
+                [player.rect.x, player.rect.y, player.height], camera.state, 'strong')
+                bullet.rect.x = player.rect.x + player.height - player.height/2# / 2
+                bullet.rect.y = player.rect.y - player.height + player.height/2# / 2
                 entities.add(bullet)
                 bullets.add(bullet)
             if e.type == pygame.MOUSEBUTTONDOWN and e.button == 3:
                 # if right click, print mouse coordinates for testing purposes
                 print(pygame.mouse.get_pos())
 
-        # draw background
-        for y in range(32):
-            for x in range(32):
-                screen.blit(bg, (x * 32, y * 32))
+        """ move background """
+        if -1 * camera.state[0] >= CURRENT_WIN_WIDTH:#_RIGHT:
+            CURRENT_WIN_WIDTH += WIN_WIDTH
+            camera_state = camera.state[0]
+        elif -1 * camera.state[0] < CURRENT_WIN_WIDTH:#_LEFT:
+            CURRENT_WIN_WIDTH -= WIN_WIDTH
+            camera_state = camera.state[0]
 
-        # update bullets, camera
+        """ DRAW BACKGROUND """
+        # if player is moving right
+        if camera.state[0] <= camera_state:
+            camera_state = camera.state[0]
+            screen.blit(bg, (CURRENT_WIN_WIDTH - WIN_WIDTH + camera.state[0],0))
+            screen.blit(bg,(CURRENT_WIN_WIDTH + camera.state[0],0))
+        # if player is moving left
+        elif camera.state[0] > camera_state:
+            camera_state = camera.state[0]
+            screen.blit(bg, (CURRENT_WIN_WIDTH - WIN_WIDTH + camera.state[0],0))
+            screen.blit(bg,(CURRENT_WIN_WIDTH + camera.state[0],0))
+
+        """ update bullets, camera """
         bullets.update()
         camera.update(player)
 
-        # update player and check if reached next level
+        """ update player and check if reached next level """
         args = up, down, left, right, running, platforms, enemies, enemy_sprites, bullets, camera, collision_blocks, RESET_LEVEL_FLAG, entities
         result = player.update(*args)
-        if result == None:
-            pass
         # remove patrol blocks, but not corner colision blocks
-        elif result in collision_blocks:
+        if result != None and result in collision_blocks:
             if result.patrol == False:
                 collision_blocks.remove(result)
                 collision_block_sprites.remove(result)
                 entities.remove(result)
-        elif result == "Reset Level":
+        # reset level if player reached end of level
+        elif result != None and result == "Reset Level":
             RESET_LEVEL_FLAG = True
-
 
         # update enemies
         for enemy in enemies:
@@ -212,9 +241,11 @@ def main():
         # if player has fallen off screen or hit an enemy, player has died
         if player.rect.y > 1000 or player.health <= 0 or time_remaining <= 0:
             font = pygame.font.Font(None, 36)
+            CURRENT_WIN_WIDTH = copy(WIN_WIDTH)
             lives -= 1 # count number of deaths
             # if player has run out of lives, set player back to level 1 and reset score
             if lives <= 0:
+                current_level = 1
                 current_score, score, current_level, lives = 0, 0, 1, MAX_LIVES
                 level = get_level(current_level)
                 # generate size of level and set camera
