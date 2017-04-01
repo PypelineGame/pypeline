@@ -49,7 +49,7 @@ level_1 = [
 
 # Generate level 1 enemies
 level_1_enemies = [
-GarbageCollector(821,264), GreenPySnake(450, 268)
+GarbageCollector(821,264), GreenPysnake(450, 268)
 ]
 
 # add enemies/levels to list

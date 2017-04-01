@@ -253,21 +253,21 @@ class Bullet(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         #self.player = player
         # calculate center of bullet
-        self.center_y = (player[1] + player[2] - player[2]/2)
-        self.center_x = (player[0] - player[2] - player[2]/2)
+        #self.center_y = (player[1] + player[2])# - player[2]/2)
+        #self.center_x = (player[0] - player[2])# - player[2]/2)
         # grab mouse coordinates
         self.mouse_x, self.mouse_y = mouse[0], mouse[1]
         if strength == "strong":
             self.image = pygame.image.load('../sprites/player/blade_wave.png')
             # calculate center of bullet
-            self.center_y = (player[1] + player[2] - player[2]/2)
-            self.center_x = (player[0] - player[2] - player[2]/2)
+            self.center_y = player[1]/2 + player[2]/2# + player[2] - player[2]/2)
+            self.center_x = player[0]/2 + player[2]/2# - player[2] - player[2]/2)
         else:
             self.image = pygame.Surface([4, 4])
             self.image.fill(WHITE)
             # calculate center of bullet
-            self.center_y = (player[1] + player[2]/2)
-            self.center_x = (player[0] - player[2]/2)
+            self.center_y = (player[1] + player[2])
+            self.center_x = (player[0] - player[2])
         self.rect = self.image.get_rect()
         #self.rect = Rect(x, y, 60, 60)
         # offset camera state on x coordinates
@@ -535,6 +535,7 @@ class PySnake(Enemy):
         self.hit = False
         self.kill = False
         self.dying_counter = 0 
+        self.inflated = False # for handeling resizing on death
 
     def update(self, platforms, blank_platforms, blocks, entities):
         """ update garbage collector """
@@ -546,12 +547,14 @@ class PySnake(Enemy):
                 self.image = transform.flip(self.image, 1, 0)
             self.counter = (self.counter + 1) % len(self.images)
         if self.hit:
-            self.images = self.dying  				
+            self.xvel = 0
+            self.images = self.dying
+            #self.counter = 0
             self.dying_counter += 1
         if not self.hit:
             if not self.reverse:
                 self.xvel = -2
-            else:
+            elif self.reverse:
                 self.xvel = 2
 
          # only accelerate with gravity if in the air
@@ -565,14 +568,16 @@ class PySnake(Enemy):
         self.rect.left += self.xvel
 
         # do x-axis collision
-        self.collide(self.xvel, 0, platforms, blocks, entities)
+        if self.dying_counter < 30:
+            self.collide(self.xvel, 0, platforms, blocks, entities)
 
         # increment in y direction
         self.rect.top += self.yvel
         self.onGround = False;
 
         # do y-axis collision
-        self.collide(0, self.yvel, platforms, blocks, entities)
+        if self.dying_counter < 30:
+            self.collide(0, self.yvel, platforms, blocks, entities)
 
         # handle collisions for blank collision blocks
         for p in blank_platforms:
@@ -598,25 +603,25 @@ class PySnake(Enemy):
                 if yvel < 0: # moving up, hit bottom side of wall
                     self.rect.top = p.rect.bottom
 
-					
+                    
 class GreenPysnake(PySnake):
-	def __init__(self, x, y):
-		PySnake.__init__(self, x, y)
-		self.images = ['../sprites/PySnake/green_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
-		self.image = pygame.image.load(self.images[0]) # start on first image
-		self.dying = ['../sprites/PySnake/green_snake/green_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
-		
-	#def collide(self, xvel, yvel, platforms, blocks, entities, player):
-	#	PySnake.collide(self, xvel, yvel, platforms, blocks, entities)
-				
-	
-					
-					
-					
-					
-					
+    def __init__(self, x, y):
+        PySnake.__init__(self, x, y)
+        self.images = ['../sprites/PySnake/green_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
+        self.image = pygame.image.load(self.images[0]) # start on first image
+        self.dying = ['../sprites/PySnake/green_snake/green_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
+        
+    #def collide(self, xvel, yvel, platforms, blocks, entities, player):
+    #   PySnake.collide(self, xvel, yvel, platforms, blocks, entities)
+                
+    
+                    
+                    
+                    
+                    
+                    
 
-					
+                    
 
 """                              end of Enemies                              """
 

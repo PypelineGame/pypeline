@@ -168,6 +168,9 @@ def bullet_collision(*args):
                 if enemy.health <= 0:
                     enemy.hit = True
                     enemy.counter = 0
+                    if not enemy.inflated:
+                        enemy.rect.inflate_ip(-15,18)
+                        enemy.inflated = True
                 else:
                     enemy.health -= 20
                     score += 20
@@ -291,21 +294,21 @@ def displayTimer(screen, time_left, current_score):
     text = font.render('Timer: ', True, WHITE)
     text_rect = text.get_rect()
     text_x = screen.get_width() / 8 - text_rect.width / 2 - 43 # + text_rect.width - 40
-    text_y = screen.get_height() / 16 - 10
+    text_y = screen.get_height() / 16 + 10
     text_width, text_height = text_x, 17
     screen.blit(text, [text_x, text_y])
     # display elapsed timer
     text = font.render(time_left, True, WHITE)
     text_rect = text.get_rect()
     text_x = text_x + 57 #screen.get_width() / 8 - #text_rect.width / 2 + 12 # + text_rect.width - 40
-    text_y = screen.get_height() / 16 - 10
+    text_y = screen.get_height() / 16 + 10
     text_width, text_height = text_x, 17
     screen.blit(text, [text_x, text_y])
     # display score 
     text = font.render('Score: ' + str(current_score).zfill(8), True, WHITE)
     text_rect = text.get_rect()
     text_x = screen.get_width() / 8 - text_rect.width / 2
-    text_y = screen.get_height() / 16 - 10 - 18
+    text_y = screen.get_height() / 16 - 5
     text_width, text_height = text_x, 17
     screen.blit(text, [text_x, text_y])
 

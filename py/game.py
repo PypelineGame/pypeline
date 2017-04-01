@@ -172,8 +172,8 @@ def main():
             if (e.type == KEYDOWN and e.key == K_f):
                 bullet = Bullet(pygame.mouse.get_pos(),\
                 [player.rect.x, player.rect.y, player.height], camera.state, 'strong')
-                bullet.rect.x = player.rect.x + player.height - player.height/2# / 2
-                bullet.rect.y = player.rect.y - player.height + player.height/2# / 2
+                bullet.rect.x = player.rect.x + player.height# - player.height/2# / 2
+                bullet.rect.y = player.rect.y - player.height# + player.height/2# / 2
                 entities.add(bullet)
                 bullets.add(bullet)
             if e.type == pygame.MOUSEBUTTONDOWN and e.button == 3:
@@ -228,7 +228,6 @@ def main():
                 enemy.update(platforms, collision_blocks, blocks, entities)
                 if isinstance(enemy, PySnake):
                     if enemy.hit and enemy.dying_counter >= 55:
-                         print (enemy.dying_counter)
                          enemies.remove(enemy)
                          enemy_sprites.remove(enemy)
                          entities.remove(enemy)
