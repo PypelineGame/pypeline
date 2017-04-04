@@ -166,14 +166,17 @@ def main():
                 [player.rect.x, player.rect.y, player.height], camera.state)
                 # spawns bullet at the center of the player
                 bullet.rect.x = player.rect.x + player.height/2
-                bullet.rect.y = player.rect.y + player.height/2
+                bullet.rect.y = player.rect.y - player.height/2
                 entities.add(bullet)
                 bullets.add(bullet)
-            if (e.type == KEYDOWN and e.key == K_f):
+            if e.type == KEYDOWN and e.key == K_f:# and player.facing_right == True):
                 bullet = Bullet(pygame.mouse.get_pos(),\
-                [player.rect.x, player.rect.y, player.height], camera.state, 'strong')
-                bullet.rect.x = player.rect.x + player.height# - player.height/2# / 2
-                bullet.rect.y = player.rect.y - player.height# + player.height/2# / 2
+                [player.rect.x, player.rect.y, player.height], camera.state, player.facing_right, 'strong')
+                if player.facing_right:
+                    bullet.rect.x = player.rect.x + player.height/2 + 10# - player.height/2# / 2
+                else:
+                    bullet.rect.x = player.rect.x - player.height/2 - 10
+                bullet.rect.y = player.rect.y - player.height/2 + 10# + player.height/2# / 2
                 entities.add(bullet)
                 bullets.add(bullet)
             if e.type == pygame.MOUSEBUTTONDOWN and e.button == 3:
@@ -188,7 +191,9 @@ def main():
             CURRENT_WIN_WIDTH -= WIN_WIDTH
             camera_state = camera.state[0]
 
+
         """ DRAW BACKGROUND """
+        #"""
         # if player is moving right
         if camera.state[0] <= camera_state:
             camera_state = camera.state[0]
@@ -199,6 +204,8 @@ def main():
             camera_state = camera.state[0]
             screen.blit(bg, (CURRENT_WIN_WIDTH - WIN_WIDTH + camera.state[0],0))
             screen.blit(bg,(CURRENT_WIN_WIDTH + camera.state[0],0))
+        #"""
+        #screen.blit(bg, (0,0))
 
         """ update bullets, camera """
         bullets.update()
@@ -242,6 +249,10 @@ def main():
         if len(bullets) > 0:
             args = bullets, blocks, platforms, entities, enemies, enemy_sprites, indestructibles, score
             bullets, entities, platforms, blocks, enemies, enemy_sprites, score = bullet_collision(*args)
+
+        # display loading when screen lags
+        if timer.get_fps() < 55 and lives > 0:
+            loading(screen)
 
         # if player has fallen off screen or hit an enemy, player has died
         if player.rect.y > 1000 or player.health <= 0 or time_remaining <= 0:

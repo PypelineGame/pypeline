@@ -287,6 +287,16 @@ def gameOver(screen):
     pygame.display.flip()
     pygame.time.delay(1000)
 
+def loading(screen):
+    """ displays loading message in center of screen """
+    font = pygame.font.Font(None, 24)
+    text = font.render("Loading...", True, WHITE)
+    text_rect = text.get_rect()
+    text_x = screen.get_width() / 2 - text_rect.width / 2
+    text_y = screen.get_height() / 2 - text_rect.height / 2
+    screen.blit(text, [text_x, text_y])
+    #pygame.time.delay(1000)
+
 def displayTimer(screen, time_left, current_score):
     """ displays countdown timer and score """
     # display timer text

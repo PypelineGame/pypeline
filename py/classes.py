@@ -70,13 +70,13 @@ class Player(Entity):
         self.xvel = 0 # current x velocity
         self.yvel = 0 # current y velocity
         self.onGround = False
-        self.image = Surface((32,32))
-        self.image.fill(Color("#0000FF"))
-        self.image_copy = self.image.copy()
-        self.transparent_image = pygame.Surface([32, 32], pygame.SRCALPHA, 32)
-        self.transparent_image = self.transparent_image.convert_alpha()
-        self.image.convert()
-        self.rect = Rect(x, y, 60, 60)
+        #self.image = Surface((60,60))
+        #self.image.fill(Color("#0000FF"))
+        #self.image_copy = self.image.copy()
+        #self.transparent_image = pygame.Surface([32, 32], pygame.SRCALPHA, 32)
+        #self.transparent_image = self.transparent_image.convert_alpha()
+        #self.image.convert()
+        self.rect = Rect(x, y, 60, 58)
         self.height = 32
         self.health = PLAYER_STARTER_HEALTH
         self.melee_attack, self.range_attack, self.num_of_bullets = 25, 50, 10
@@ -88,6 +88,8 @@ class Player(Entity):
         self.jumping = ['../sprites/player/jumping/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
         self.images = self.standing # by default
         self.jump = False
+        self.image = pygame.image.load(self.images[0])
+        self.facing_right = True # used to determine strong attack's direction
 
     def damage(self, attack, enemy, camera):
         """ performs damage reduction on player's HP upon enemy collision """
@@ -112,7 +114,11 @@ class Player(Entity):
             #    #    self.images = self.standing
             #    self.counter = 0
             #pygame.transform.scale(self.image, (55, 45), self.image)
+        #if (right or left) and not self.jump:
+        #    self.images = self.running
+        #el
         if right and not self.jump:
+            self.facing_right = True
             self.images = self.running
         elif self.jump == True:
             self.jump_counter += 1
@@ -125,19 +131,28 @@ class Player(Entity):
             self.frame_counter = 0
             self.image = pygame.image.load(self.images[self.counter])
             self.counter = (self.counter + 1) % len(self.images)
+
+            # reverse images if player is facing left
             if left:
+                self.facing_right = False
                 if self.jump:
                     self.images = self.jumping
-                else: #elif self.yvel < 0:
+                else:  #elif self.yvel < 0:
                     self.images = self.running
+                #self.image = transform.flip(self.image, 1, 0)
+
+        #if left and not right and self.jump == False and self.facing_right == False:
+        #    self.images = self.standing
+            if self.facing_right == False:
                 self.image = transform.flip(self.image, 1, 0)
+            #self.images = self.standing
 
         # flicker player when player is knocked back
-        if self.flicker:
-            if self.image is self.transparent_image:
-                self.image = self.image_copy
-            else:
-                self.image = self.transparent_image
+        #if self.flicker:
+        #    if self.image is self.transparent_image:
+        #        self.image = self.image_copy
+        #    else:
+        #        self.image = self.transparent_image
 
         # handle knock back collision
         for enemy in enemies:
@@ -162,7 +177,7 @@ class Player(Entity):
                 self.knockback_left = False
                 self.knockback_right = False
                 self.flicker = False
-                self.image = self.image_copy
+                #self.image = self.image_copy
 
         # handle player movements
         else:
@@ -248,7 +263,7 @@ class Player(Entity):
 
 class Bullet(pygame.sprite.Sprite):
     """ This class represents the bullet . """
-    def __init__(self, mouse, player, camera_state, strength = None):
+    def __init__(self, mouse, player, camera_state, direction, strength = None):
         # Call the parent class (Sprite) constructor
         pygame.sprite.Sprite.__init__(self)
         #self.player = player
@@ -258,20 +273,29 @@ class Bullet(pygame.sprite.Sprite):
         # grab mouse coordinates
         self.mouse_x, self.mouse_y = mouse[0], mouse[1]
         if strength == "strong":
-            self.image = pygame.image.load('../sprites/player/blade_wave.png')
+
+            
             # calculate center of bullet
-            self.center_y = player[1]/2 + player[2]/2# + player[2] - player[2]/2)
-            self.center_x = player[0]/2 + player[2]/2# - player[2] - player[2]/2)
+            self.center_y = player[1]/2 + player[2]/2 + 10# + player[2] - player[2]/2)
+            if direction == True:
+                self.center_x = player[0]/2 + player[2]/2 + 10# - player[2] - player[2]/2)
+                self.image = pygame.image.load('../sprites/player/blade_wave.png')
+            else:
+                self.center_x = player[0]/2 - player[2]/2 - 10
+                self.image = pygame.image.load('../sprites/player/blade_wave.png')
+                self.image = transform.flip(self.image, 1, 0)
         else:
             self.image = pygame.Surface([4, 4])
             self.image.fill(WHITE)
             # calculate center of bullet
-            self.center_y = (player[1] + player[2])
-            self.center_x = (player[0] - player[2])
+            self.center_y = (player[1]/2 + player[2]/2)
+            self.center_x = (player[0]/2 - player[2]/2)
         self.rect = self.image.get_rect()
         #self.rect = Rect(x, y, 60, 60)
         # offset camera state on x coordinates
         self.mouse_x -= camera_state[0]
+        self.strength = strength
+        self.direction = direction
         # might need to offset camera in y coordinates in the future
         # .. add here
 
@@ -280,13 +304,18 @@ class Bullet(pygame.sprite.Sprite):
         speed = 7
         range = 200
         # generate bullet vector
-        distance = [self.mouse_x - self.center_x, self.mouse_y - self.center_y]
-        norm = sqrt(distance[0] ** 2 + distance[1] ** 2)
-        direction = [distance[0] / norm, distance[1] / norm]
-        bullet_vector = [direction[0] * speed, direction[1] * speed]
-
-        self.rect.x += bullet_vector[0]
-        self.rect.y += bullet_vector[1]
+        if self.strength == None:
+            distance = [self.mouse_x - self.center_x, self.mouse_y - self.center_y]
+            norm = sqrt(distance[0] ** 2 + distance[1] ** 2)
+            direction = [distance[0] / norm, distance[1] / norm]
+            bullet_vector = [direction[0] * speed, direction[1] * speed]        
+            self.rect.x += bullet_vector[0]
+            self.rect.y += bullet_vector[1]
+        else:
+            if self.direction == True:
+                self.rect.x += 4
+            else:
+                self.rect.x -= 4
 
 """                                 Platforms and Blocks                                 """
 
