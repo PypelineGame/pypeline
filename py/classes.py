@@ -43,6 +43,7 @@ PLAYER_DAMAGE_FRAMES = 20
 PLAYER_MAX_RUN_FRAMES = 8
 PLAYER_MAX_STANDING_FRAMES = 16
 
+cache = {}
 
 # import our functions
 from functions import *
@@ -70,12 +71,8 @@ class Player(Entity):
         self.xvel = 0 # current x velocity
         self.yvel = 0 # current y velocity
         self.onGround = False
-        #self.image = Surface((60,60))
+        self.image = Surface((60,60))
         #self.image.fill(Color("#0000FF"))
-        #self.image_copy = self.image.copy()
-        #self.transparent_image = pygame.Surface([32, 32], pygame.SRCALPHA, 32)
-        #self.transparent_image = self.transparent_image.convert_alpha()
-        #self.image.convert()
         self.rect = Rect(x, y, 60, 58)
         self.height = 32
         self.health = PLAYER_STARTER_HEALTH
@@ -90,6 +87,10 @@ class Player(Entity):
         self.jump = False
         self.image = pygame.image.load(self.images[0])
         self.facing_right = True # used to determine strong attack's direction
+        self.image_copy = pygame.image.load(self.jumping[2])#self.image.copy()
+        self.transparent_image = pygame.Surface([32, 32], pygame.SRCALPHA, 32)
+        self.transparent_image = self.transparent_image.convert_alpha()
+        self.image.convert()
 
     def damage(self, attack, enemy, camera):
         """ performs damage reduction on player's HP upon enemy collision """
@@ -148,11 +149,11 @@ class Player(Entity):
             #self.images = self.standing
 
         # flicker player when player is knocked back
-        #if self.flicker:
-        #    if self.image is self.transparent_image:
-        #        self.image = self.image_copy
-        #    else:
-        #        self.image = self.transparent_image
+        if self.flicker:
+            if self.image is self.transparent_image:
+                self.image = self.image_copy
+            else:
+                self.image = self.transparent_image
 
         # handle knock back collision
         for enemy in enemies:
@@ -177,7 +178,7 @@ class Player(Entity):
                 self.knockback_left = False
                 self.knockback_right = False
                 self.flicker = False
-                #self.image = self.image_copy
+                self.image = self.image_copy
 
         # handle player movements
         else:
@@ -273,8 +274,6 @@ class Bullet(pygame.sprite.Sprite):
         # grab mouse coordinates
         self.mouse_x, self.mouse_y = mouse[0], mouse[1]
         if strength == "strong":
-
-            
             # calculate center of bullet
             self.center_y = player[1]/2 + player[2]/2 + 10# + player[2] - player[2]/2)
             if direction == True:

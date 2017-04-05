@@ -236,7 +236,7 @@ def reset_level(*args):
     return player, platforms, blocks, collision_blocks, collision_block_sprites,\
     entities, enemies, enemy_sprites, indestructibles
 
-def healthBar(player_health, screen):
+def healthBar(player_health, screen, cache):
     """ displays player's health bar at top right of screen """
     if player_health > PLAYER_STARTER_HEALTH * 0.75:
         player_health_color = GREEN
@@ -249,6 +249,7 @@ def healthBar(player_health, screen):
     pygame.draw.rect(screen, WHITE, (549,25,PLAYER_STARTER_HEALTH,25), 3)
     font = pygame.font.Font(None, 18)
     text = font.render("HP " + str(player_health), True, player_health_color)
+    #text = get_msg("HP " + str(player_health), cache, player_health_color)
     text_rect = text.get_rect()
     text_x = 549
     text_y = screen.get_height() / 10 - text_rect.height / 2
@@ -276,10 +277,27 @@ def garbageCollectorHealthBar(enemy, screen, camera_state):
     (enemy.rect.x + camera_state[0],\
     enemy.rect.top-enemy.rect.height + camera_state[1] + 35, 75,10), 0)
 
-def gameOver(screen):
+def get_msg(msg, cache, color = None):
+    """ a cache for font objects """
+    if not msg.strip(' ') in cache:
+        msg = msg.strip(' ')
+        if msg == 'Game Over' or msg == 'Try again bruh...':
+            font = pygame.font.Font(None, 36)
+            cache[msg] = font.render(msg, True, WHITE)
+        elif color != None:
+            font = pygame.font.Font(None, 18)
+            cache[msg] = font.render(msg, True, color)
+        else:
+            font = pygame.font.Font(None, 24)
+            cache[msg] = font.render(msg, True, WHITE)
+    #cache[msg] = fontobj.render(msg, False , pygame.Color('green'))
+    return cache[msg]
+
+def gameOver(screen, cache):
     """ displays gameover message in center of screen """
-    font = pygame.font.Font(None, 36)
-    text = font.render("Game Over", True, WHITE)
+    #font = pygame.font.Font(None, 36)
+    #text = font.render("Game Over", True, WHITE)
+    text = get_msg('Game Over', cache)
     text_rect = text.get_rect()
     text_x = screen.get_width() / 2 - text_rect.width / 2
     text_y = screen.get_height() / 2 - text_rect.height / 2
@@ -287,35 +305,39 @@ def gameOver(screen):
     pygame.display.flip()
     pygame.time.delay(1000)
 
-def loading(screen):
+def loading(screen, cache):
     """ displays loading message in center of screen """
-    font = pygame.font.Font(None, 24)
-    text = font.render("Loading...", True, WHITE)
+    #font = pygame.font.Font(None, 24)
+    #text = font.render("Loading...", True, WHITE)
+    text = get_msg('Loading...', cache)
     text_rect = text.get_rect()
     text_x = screen.get_width() / 2 - text_rect.width / 2
     text_y = screen.get_height() / 2 - text_rect.height / 2
     screen.blit(text, [text_x, text_y])
     #pygame.time.delay(1000)
 
-def displayTimer(screen, time_left, current_score):
+def displayTimer(screen, time_left, current_score, cache):
     """ displays countdown timer and score """
     # display timer text
-    font = pygame.font.Font(None, 24)
-    text = font.render('Timer: ', True, WHITE)
+    #font = pygame.font.Font(None, 24)
+    #text = font.render('Timer: ', True, WHITE)
+    text = get_msg('Timer: ', cache)
     text_rect = text.get_rect()
     text_x = screen.get_width() / 8 - text_rect.width / 2 - 43 # + text_rect.width - 40
     text_y = screen.get_height() / 16 + 10
     text_width, text_height = text_x, 17
     screen.blit(text, [text_x, text_y])
     # display elapsed timer
-    text = font.render(time_left, True, WHITE)
+    text = get_msg(time_left, cache)
+    #text = font.render(time_left, True, WHITE)
     text_rect = text.get_rect()
     text_x = text_x + 57 #screen.get_width() / 8 - #text_rect.width / 2 + 12 # + text_rect.width - 40
     text_y = screen.get_height() / 16 + 10
     text_width, text_height = text_x, 17
     screen.blit(text, [text_x, text_y])
     # display score 
-    text = font.render('Score: ' + str(current_score).zfill(8), True, WHITE)
+    text = get_msg('Score:' + str(current_score).zfill(8), cache)
+    #text = font.render('Score: ' + str(current_score).zfill(8), True, WHITE)
     text_rect = text.get_rect()
     text_x = screen.get_width() / 8 - text_rect.width / 2
     text_y = screen.get_height() / 16 - 5

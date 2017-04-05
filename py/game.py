@@ -28,7 +28,7 @@ def main():
     level = get_level(current_level)
 
     # Define list of backgrounds for the levels
-    BACKGROUNDS = [0, 'forest_day.png', 'deep_jungle.png']
+    BACKGROUNDS = [0, 'background5.jpg', 'beauty.jpg']
     for i in range(1, len(BACKGROUNDS)):
         BACKGROUNDS[i] = '../sprites/backgrounds/' + BACKGROUNDS[i]
 
@@ -163,13 +163,13 @@ def main():
             if (e.type == pygame.MOUSEBUTTONDOWN and e.button == 1) or\
             (e.type == KEYUP and e.key == K_SPACE):
                 bullet = Bullet(pygame.mouse.get_pos(),\
-                [player.rect.x, player.rect.y, player.height], camera.state)
+                [player.rect.x, player.rect.y, player.height], camera.state, player.facing_right)
                 # spawns bullet at the center of the player
                 bullet.rect.x = player.rect.x + player.height/2
                 bullet.rect.y = player.rect.y - player.height/2
                 entities.add(bullet)
                 bullets.add(bullet)
-            if e.type == KEYDOWN and e.key == K_f:# and player.facing_right == True):
+            if e.type == KEYDOWN and e.key == K_f and not left and not right:# and player.facing_right == True):
                 bullet = Bullet(pygame.mouse.get_pos(),\
                 [player.rect.x, player.rect.y, player.height], camera.state, player.facing_right, 'strong')
                 if player.facing_right:
@@ -193,7 +193,7 @@ def main():
 
 
         """ DRAW BACKGROUND """
-        #"""
+        #""" commented out to debug lag
         # if player is moving right
         if camera.state[0] <= camera_state:
             camera_state = camera.state[0]
@@ -251,12 +251,12 @@ def main():
             bullets, entities, platforms, blocks, enemies, enemy_sprites, score = bullet_collision(*args)
 
         # display loading when screen lags
-        if timer.get_fps() < 55 and lives > 0:
-            loading(screen)
+        #if timer.get_fps() < 55 and lives > 0:
+        #    loading(screen, cache)
 
         # if player has fallen off screen or hit an enemy, player has died
         if player.rect.y > 1000 or player.health <= 0 or time_remaining <= 0:
-            font = pygame.font.Font(None, 36)
+            
             CURRENT_WIN_WIDTH = copy(WIN_WIDTH)
             lives -= 1 # count number of deaths
             # if player has run out of lives, set player back to level 1 and reset score
@@ -271,9 +271,15 @@ def main():
                 total_level_width  = len(level[0])*32
                 total_level_height = len(level)*32
                 camera = Camera(complex_camera, total_level_width, total_level_height)
-                gameOver(screen)
+                gameOver(screen, cache)
             else:
-                text = font.render("Try again bruh...", True, WHITE)
+                #font = pygame.font.Font(None, 36)
+                #text = font.render("Try again bruh...", True, WHITE)
+                text = get_msg('Try again bruh...', cache)
+                text_rect = text.get_rect()
+                text_x = screen.get_width() / 2 - text_rect.width / 2
+                text_y = screen.get_height() / 2 - text_rect.height / 2
+                screen.blit(text, [text_x, text_y])
             # build argument list
             args = screen, player, level, current_level, platforms, bullets,\
             blocks, entities, enemies, enemy_sprites, Platform,\
@@ -281,19 +287,15 @@ def main():
             # call reset level function with *args
             player, platforms, blocks, collision_blocks, collision_block_sprites,\
             entities, enemies, enemy_sprites, indestructibles = reset_level(*args)
-            text_rect = text.get_rect()
-            text_x = screen.get_width() / 2 - text_rect.width / 2
-            text_y = screen.get_height() / 2 - text_rect.height / 2
-            screen.blit(text, [text_x, text_y])
+
             current_life_playtime = 0
             
 
         # animate scrolling effect on score
         current_score = scrollScore(current_score, score)
-
         # display player healthbar, timer, score, and lives
-        healthBar(player.health, screen)
-        displayTimer(screen, "%.1f" % time_remaining + "s", current_score)
+        healthBar(player.health, screen, cache)
+        #displayTimer(screen, "%.1f" % time_remaining + "s", current_score, cache)
         displayLives(screen, lives)
         # display enemy healthbar
         for enemy in enemies:
@@ -307,7 +309,7 @@ def main():
         pygame.display.flip()
 
     # draw game over and end the game
-    gameOver(screen)
+    gameOver(screen, cache)
     pygame.quit()
     print "Game terminated..\nTotal Runtime: " + str(elapsed_playtime) + "s."
 
