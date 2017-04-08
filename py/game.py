@@ -66,7 +66,7 @@ def main():
     current_life_playtime = 0
     current_score, score = 0, 0
     lives = copy(MAX_LIVES)
-    MAX_PLAYTIME_PER_LEVEL = [0, 16, 360] # max time allowed before time runs out per level
+    MAX_PLAYTIME_PER_LEVEL = [0, 8000, 360] # max time allowed before time runs out per level
     SPAWN_POINT_LEVEL = [0, (64, 135), (64, 64)] # x,y coordinates for each level spawn
 
     player = Player(SPAWN_POINT_LEVEL[1][0], SPAWN_POINT_LEVEL[1][1])
@@ -104,7 +104,7 @@ def main():
             total_level_width  = len(level[0])*32
             total_level_height = len(level)*32
             camera = Camera(complex_camera, total_level_width, total_level_height)
-            
+
 
         # event handler
         for e in pygame.event.get():
@@ -146,6 +146,7 @@ def main():
                 # if right click, print mouse coordinates for testing purposes
                 print(pygame.mouse.get_pos())
 
+
         # draw background
         for y in range(32):
             for x in range(32):
@@ -177,7 +178,10 @@ def main():
             if enemy.health_counter >= MAX_HEALTH_FRAMES:
                 enemy.health_counter = 0
                 enemy.healthTrigger = False
-            if type(enemy).__name__ == "GarbageCollector" or type(enemy).__name__== "PySnake":
+            if type(enemy).__name__ == "GarbageCollector" or \
+               type(enemy).__name__== "PySnake" or \
+               type(enemy).__name__ == "WhiteGhost" or \
+               type(enemy).__name__ == "RedGhost":
                 enemy.update(platforms, collision_blocks, blocks, entities)
             else:
                 enemy.update()
@@ -218,7 +222,7 @@ def main():
             text_y = screen.get_height() / 2 - text_rect.height / 2
             screen.blit(text, [text_x, text_y])
             current_life_playtime = 0
-            
+
 
         # animate scrolling effect on score
         current_score = scrollScore(current_score, score)

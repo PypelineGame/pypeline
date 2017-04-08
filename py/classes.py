@@ -1,11 +1,13 @@
 #! /usr/bin/python
 
+import matplotlib.pyplot as plt
+
 # import pygame modules
 import pygame
 from pygame import *
 
 # import additional python modules
-from math import sqrt
+from math import sqrt, hypot, sin, radians
 from random import randrange
 from copy import copy
 
@@ -43,6 +45,9 @@ PLAYER_DAMAGE_FRAMES = 20
 PLAYER_MAX_RUN_FRAMES = 8
 PLAYER_MAX_STANDING_FRAMES = 16
 
+#Player position
+PLAYER_X = 0
+PLAYER_Y = 0
 
 # import our functions
 from functions import *
@@ -98,6 +103,7 @@ class Player(Entity):
             self.flicker = True # causes player to flicker
 
     def update(self, up, down, left, right, running, platforms, enemies, enemy_sprites, bullets, camera, collision_blocks, RESET_LEVEL_FLAG, entities):
+        global PLAYER_X, PLAYER_Y
         """ updates the player on every frame of main game loop """
         self.damage_frame += 1 # increments damage_frame every frame of game
         self.frame_counter += 1 # increments frame counter
@@ -174,11 +180,11 @@ class Player(Entity):
         if self.images == self.running and self.frame_counter >= PLAYER_MAX_RUN_FRAMES:
             #pygame.transform.scale(self.image, (55, 45), self.image)
             self.frame_counter = 0
-            self.image = pygame.image.load(self.images[self.counter])
+            self.image = pygame.image.load(self.images[self.counter]).convert_alpha()
             self.counter = (self.counter + 1) % len(self.images)
         elif self.images == self.standing and self.frame_counter >= PLAYER_MAX_STANDING_FRAMES:
             self.frame_counter = 0
-            self.image = pygame.image.load(self.images[self.counter])
+            self.image = pygame.image.load(self.images[self.counter]).convert_alpha()
             self.counter = (self.counter + 1) % len(self.images)
 
         # only accelerate with gravity if in the air and no knockback
@@ -188,11 +194,14 @@ class Player(Entity):
                 self.yvel = 100 # max falling speed
 
         self.rect.left += self.xvel # Modifies player's position in X direction
+        PLAYER_X = self.rect.left #  Global Position Update:
 
         """ x collision is currently commented out; not sure why its bugging out? """
         self.collide(self.xvel, 0, platforms) # do x-axis collisions
 
-        self.rect.top += self.yvel # Modifies player's position in Y direction
+        self.rect.top += self.yvel  # Modifies player's position in Y direction
+        PLAYER_Y = self.rect.top  # Global Position Update
+
         self.onGround = False; # assuming we're in the air
         self.collide(0, self.yvel, platforms) # do y-axis collisions
 
@@ -286,7 +295,7 @@ class BaigeBlock(BlockType):
     """ baigeblock class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/baige_block.png")
+        self.image = pygame.image.load("../sprites/blocks/baige_block.png").convert()
     def update(self):
         pass
 
@@ -294,7 +303,7 @@ class BrownBlock(BlockType):
     """ brown block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/brown_block.png")
+        self.image = pygame.image.load("../sprites/blocks/brown_block.png").convert()
     def update(self):
         pass
 
@@ -302,7 +311,7 @@ class BlueBlock(BlockType):
     """ blue block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/blue_block.png")
+        self.image = pygame.image.load("../sprites/blocks/blue_block.png").convert()
     def update(self):
         pass
 
@@ -310,7 +319,7 @@ class BrightBlueBlock(BlockType):
     """ bright blue block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/bright_blue_block.png")
+        self.image = pygame.image.load("../sprites/blocks/bright_blue_block.png").convert()
     def update(self):
         pass
 
@@ -318,7 +327,7 @@ class GrayBlock(BlockType):
     """ gray block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/gray_block.png")
+        self.image = pygame.image.load("../sprites/blocks/gray_block.png").convert()
     def update(self):
         pass
 
@@ -326,7 +335,7 @@ class TopLeftStoneBlock(BlockType):
     """ top left stone block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/top_left_brick.png")
+        self.image = pygame.image.load("../sprites/blocks/top_left_brick.png").convert()
     def update(self):
         pass
 
@@ -334,7 +343,7 @@ class TopRightStoneBlock(BlockType):
     """ top right stone block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/top_right_brick.png")
+        self.image = pygame.image.load("../sprites/blocks/top_right_brick.png").convert()
     def update(self):
         pass
 
@@ -342,7 +351,7 @@ class RightStoneBlock(BlockType):
     """ right stone block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/right_brick.png")
+        self.image = pygame.image.load("../sprites/blocks/right_brick.png").convert()
     def update(self):
         pass
 
@@ -350,7 +359,7 @@ class LeftStoneBlock(BlockType):
     """ left stone block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/left_brick.png")
+        self.image = pygame.image.load("../sprites/blocks/left_brick.png").convert()
     def update(self):
         pass
 
@@ -415,7 +424,7 @@ class GarbageCollector(Enemy):
         # switch frames
         if self.frame_counter == GARBAGE_COLLECTOR_MAX_FRAMES:
             self.frame_counter = 0
-            self.image = pygame.image.load(self.images[self.counter])
+            self.image = pygame.image.load(self.images[self.counter]).convert()
             # reverse frames if enemy is walking in reverse
             if self.reverse:
                 self.image = transform.flip(self.image, 1, 0)
@@ -501,7 +510,7 @@ class PySnake(Enemy):
         self.frame_counter += 1
         if self.frame_counter == GARBAGE_COLLECTOR_MAX_FRAMES:
             self.frame_counter = 0
-            self.image = pygame.image.load(self.images[self.counter])
+            self.image = pygame.image.load(self.images[self.counter]).convert()
             if self.reverse:
                 self.image = transform.flip(self.image, 1, 0)
             self.counter = (self.counter + 1) % len(self.images)
@@ -554,6 +563,129 @@ class PySnake(Enemy):
                     self.yvel = 0
                 if yvel < 0: # moving up, hit bottom side of wall
                     self.rect.top = p.rect.bottom
+
+
+class Ghost(Enemy):
+    def __init__(self, x, y):
+        Enemy.__init__(self)
+        self.rect = Rect(x, y, 85, 70)
+        # establishes attack for pysnake
+        self.attack = 25
+
+        # max health and health should start at the same constant
+        self.max_health = 100
+        self.health = 100
+
+        #direction
+        self.xdir = -1
+        self.ydir = 1
+
+        #velocity
+        self.xvel = 2
+        self.yvel = 2
+
+        # establish list of sprite images
+        self.images = ['../sprites/PySnake/default_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
+        self.image = pygame.image.load(self.images[0]) # start on first image
+
+    def update(self, platforms, blank_platforms, blocks, entities):
+        """ update garbage collector """
+        self.frame_counter += 1
+        if self.frame_counter == GARBAGE_COLLECTOR_MAX_FRAMES:
+            self.frame_counter = 0
+            self.image = pygame.image.load(self.images[self.counter]).convert()
+            if self.reverse:
+                self.image = transform.flip(self.image, 1, 0)
+            self.counter = (self.counter + 1) % len(self.images)
+
+        #  # only accelerate with gravity if in the air
+        # if not self.onGround:
+        #     self.yvel += 0.4 # increase falling distance
+        #      # max falling speed
+        #     if self.yvel > 100:
+        #         self.yvel = 100
+
+        # increment in x direction
+        self.rect.left += self.xdir * self.xvel
+        # do x-axis collision
+        self.collide(self.xvel, 0, platforms, blocks, entities)
+
+        # increment in y direction
+        self.rect.top += self.ydir * self.yvel
+        self.onGround = False;
+
+        # do y-axis collision
+        self.collide(0, self.yvel, platforms, blocks, entities)
+
+    def collide(self, xvel, yvel, platforms, blocks, entities):
+        pass
+
+
+
+class WhiteGhost(Ghost):
+    def __init__(self, x, y):
+        Ghost.__init__(self, x, y)
+        #Setting initial_rect
+        self.top_bound = self.rect.top - 100
+        self.bot_bound = self.rect.top + 100
+
+        #arrays for testing
+        self.x_arr = []
+        self.y_arr = []
+
+    def update(self, platforms, blank_platforms, blocks, entities):
+        Ghost.update(self, platforms, blank_platforms, blocks, entities)
+
+        #self.ydir = sin(radians(self.rect.left))
+
+        if self.rect.top <= self.top_bound:
+            self.ydir = 1
+            # self.ydir = sin(radians(self.rect.left))
+            # self.xdir = sin(radians(self.rect.left))
+        elif self.rect.top >= self.bot_bound:
+            self.ydir = -1
+            # self.ydir = sin(radians(self.rect.left))
+            # self.xdir = -sin(radians(self.rect.left))
+
+        if self.rect.left < 0:
+            plt.plot(self.x_arr,self.y_arr)
+            plt.show()
+            pygame.quit()
+        self.x_arr.append(self.rect.left)
+        self.y_arr.append(self.rect.top)
+
+class RedGhost(Ghost):
+    def __init__(self, x, y):
+        Ghost.__init__(self, x, y)
+        self.radius = 500
+        self.chasing = False
+
+    def update(self, platforms, blank_platforms, blocks, entities):
+        global PLAYER_X, PLAYER_Y
+        Ghost.update(self, platforms, blank_platforms, blocks, entities)
+        # Chasing Functionality
+        if self.chasing:
+            self.yvel = 2
+            # find normalized direction vector (dx, dy) between enemy and player
+            dx, dy = self.rect.left - PLAYER_X, self.rect.top - PLAYER_Y
+            dist = hypot(dx, dy)
+            self.xdir, self.ydir = -1 * dx / dist, -1 * dy / dist # direction are reversed
+            # move along this normalized vector towards the player at current speed
+        elif not self.reverse:
+            self.xdir = -1
+        else:
+            self.xdir = 1
+
+    def collide(self, xvel, yvel, platforms, blocks, entities):
+        for e in entities:
+            if type(e) == Player:
+                if pygame.sprite.collide_circle(self,e):
+                    self.chasing = True
+                else:
+                    self.chasing = False
+
+
+
 
 """                              end of Enemies                              """
 

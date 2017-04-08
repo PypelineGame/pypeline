@@ -300,7 +300,7 @@ def displayTimer(screen, time_left, current_score):
     text_y = screen.get_height() / 16 - 10
     text_width, text_height = text_x, 17
     screen.blit(text, [text_x, text_y])
-    # display score 
+    # display score
     text = font.render('Score: ' + str(current_score).zfill(8), True, WHITE)
     text_rect = text.get_rect()
     text_x = screen.get_width() / 8 - text_rect.width / 2
@@ -310,13 +310,13 @@ def displayTimer(screen, time_left, current_score):
 
 def displayLives(screen, lives):
     if lives == 3:
-        image = pygame.image.load("../sprites/lives/3hearts.png")
+        image = pygame.image.load("../sprites/lives/3hearts.png").convert()
     elif lives == 2:
-        image = pygame.image.load("../sprites/lives/2hearts.png")
+        image = pygame.image.load("../sprites/lives/2hearts.png").convert()
     elif lives == 1:
-        image = pygame.image.load("../sprites/lives/1heart.png")
+        image = pygame.image.load("../sprites/lives/1heart.png").convert()
     else:
-        image = pygame.image.load("../sprites/lives/0hearts.png")
+        image = pygame.image.load("../sprites/lives/0hearts.png").convert()
     imagerect = image.get_rect()
     image = pygame.transform.scale(image, (75, 25))
     image_x = 675
