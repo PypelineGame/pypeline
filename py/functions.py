@@ -108,16 +108,45 @@ def build_level(*args):
                     collision_blocks.append(p)
                     collision_block_sprites.add(p)
                     entities.add(p)
+                # spawn enemies
+                elif col == "1":
+                    enemy = GarbageCollector(x, y)
+                    entities.add(enemy)
+                    enemies.append(enemy)
+                elif col == "2":
+                    enemy = GreenPysnake(x, y)
+                    entities.add(enemy)
+                    enemies.append(enemy)
+                elif col == "3":
+                    enemy = RedPysnake(x, y)
+                    entities.add(enemy)
+                    enemies.append(enemy)
+                elif col == "4":
+                    enemy = BluePysnake(x, y)
+                    entities.add(enemy)
+                    enemies.append(enemy)
+                elif col == "5":
+                    enemy = PurplePysnake(x, y)
+                    entities.add(enemy)
+                    enemies.append(enemy)
+                elif col == "6":
+                    enemy = RedGhost(x, y)
+                    entities.add(enemy)
+                    enemies.append(enemy)
+                elif col == "7":
+                    enemy = WhiteGhost(x, y)
+                    entities.add(enemy)
+                    enemies.append(enemy)
             x += 32 # index by 32 bits
         y += 32
         x = 0
 
-    for enemy in get_enemies(current_level):
-        # re-calls enemy's constructor
-        enemy = type(enemy)(enemy.rect.x, enemy.rect.y)
-        entities.add(enemy)
-        enemy_sprites.add(enemy)
-        enemies.append(enemy)
+    #for enemy in get_enemies(current_level):
+    #    # re-calls enemy's constructor
+    #    enemy = type(enemy)(enemy.rect.x, enemy.rect.y)
+    #    entities.add(enemy)
+    #    enemy_sprites.add(enemy)
+    #    enemies.append(enemy)
 
     return platforms, blocks, entities, enemies,\
     enemy_sprites, collision_block_sprites, indestructibles, collision_blocks

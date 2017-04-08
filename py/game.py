@@ -230,7 +230,7 @@ def main():
             if enemy.health_counter >= MAX_HEALTH_FRAMES:
                 enemy.health_counter = 0
                 enemy.healthTrigger = False
-            if type(enemy).__name__ == "GarbageCollector" or isinstance(enemy, PySnake):
+            if type(enemy).__name__ == "GarbageCollector" or isinstance(enemy, PySnake) or isinstance(enemy, Ghost):
                 enemy.update(platforms, collision_blocks, blocks, entities)
                 if isinstance(enemy, PySnake):
                     if enemy.hit and enemy.dying_counter >= 55:

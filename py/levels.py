@@ -17,6 +17,14 @@
 # Q = Corner patrol platform # THESE BLOCKS ARE PERMANENT FOR EACH LEVEL
 
 """ ENEMIES """
+# 1 = Garbage Collector
+# 2 = Green Snake
+# 3 = Red Snake
+# 4 = Blue Snake
+# 5 = Purple Snake
+# 6 = Red Ghost
+# 7 = White Ghost
+
 # GarbageCollector(x,y)
 
 from classes import *
@@ -40,7 +48,7 @@ level_1 = [
 "LR                                                                                                                                                                                                                                                                                                                                                                                         B",
 "LR                                                                                                                                                                                                                                                                                                                                                                                         B",
 "LR                                                                                                                                                                                                                                                                                                                                                                                         B",
-"LR                                                                                        XLR                                                                                                                                                                                                                                                                                              B",
+"LR                   1234567                                                              XLR                                                                                                                                                                                                                                                                                              B",
 "LR                                                                                        XLR                                                                                                                                                                                                                                                                                              B",
 "LR    	                                                                                   XLR                                                                                                                                                                                                                                                                                              B",
 "LR                                                                                        XLR                                                                                                                                                                                                                                                                                              B",
@@ -48,22 +56,13 @@ level_1 = [
 "LRBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"]
 
 # Generate level 1 enemies
-level_1_enemies = [
-#GarbageCollector(100,0), PySnake(450, 268), \
-#Ghost(1000, 0), \
-#Ghost(1000, 100), \
-RedGhost(1000, 200), \
-RedGhost(1000, 300), \
-RedGhost(1000, 400), \
-RedGhost(1000, 500), \
-#RedGhost(1000, 300), \
-#Ghost(1000, 400), \
-#Ghost(1000, 500)
-]
+#level_1_enemies = [
+#GarbageCollector(100,0), PySnake(450, 268)
+#]
 
 # add enemies/levels to list
 get_levels.append(level_1)
-get_enemies.append(level_1_enemies)
+#get_enemies.append(level_1_enemies)
 
 level_2 = [
 "DD                                                                                                                                                                                                                                                                                                                                                                                          ",

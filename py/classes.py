@@ -1,6 +1,6 @@
 #! /usr/bin/python
 
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 # import pygame modules
 import pygame
@@ -95,7 +95,7 @@ class Player(Entity):
         self.image_copy = pygame.image.load(self.jumping[2])#self.image.copy()
         self.transparent_image = pygame.Surface([32, 32], pygame.SRCALPHA, 32)
         self.transparent_image = self.transparent_image.convert_alpha()
-        self.image.convert()
+        self.image.convert_alpha()
 
     def damage(self, attack, enemy, camera):
         """ performs damage reduction on player's HP upon enemy collision """
@@ -367,7 +367,7 @@ class BaigeBlock(BlockType):
     """ baigeblock class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/baige_block.png").convert()
+        self.image = pygame.image.load("../sprites/blocks/baige_block.png").convert_alpha()
     def update(self):
         pass
 
@@ -375,7 +375,7 @@ class BrownBlock(BlockType):
     """ brown block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/brown_block.png").convert()
+        self.image = pygame.image.load("../sprites/blocks/brown_block.png").convert_alpha()
     def update(self):
         pass
 
@@ -383,7 +383,7 @@ class BlueBlock(BlockType):
     """ blue block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/blue_block.png").convert()
+        self.image = pygame.image.load("../sprites/blocks/blue_block.png").convert_alpha()
     def update(self):
         pass
 
@@ -391,7 +391,7 @@ class BrightBlueBlock(BlockType):
     """ bright blue block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/bright_blue_block.png").convert()
+        self.image = pygame.image.load("../sprites/blocks/bright_blue_block.png").convert_alpha()
     def update(self):
         pass
 
@@ -399,7 +399,7 @@ class GrayBlock(BlockType):
     """ gray block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/gray_block.png").convert()
+        self.image = pygame.image.load("../sprites/blocks/gray_block.png").convert_alpha()
     def update(self):
         pass
 
@@ -407,7 +407,7 @@ class TopLeftStoneBlock(BlockType):
     """ top left stone block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/top_left_brick.png").convert()
+        self.image = pygame.image.load("../sprites/blocks/top_left_brick.png").convert_alpha()
     def update(self):
         pass
 
@@ -415,7 +415,7 @@ class TopRightStoneBlock(BlockType):
     """ top right stone block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/top_right_brick.png").convert()
+        self.image = pygame.image.load("../sprites/blocks/top_right_brick.png").convert_alpha()
     def update(self):
         pass
 
@@ -423,7 +423,7 @@ class RightStoneBlock(BlockType):
     """ right stone block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/right_brick.png").convert()
+        self.image = pygame.image.load("../sprites/blocks/right_brick.png").convert_alpha()
     def update(self):
         pass
 
@@ -431,7 +431,7 @@ class LeftStoneBlock(BlockType):
     """ left stone block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/left_brick.png").convert()
+        self.image = pygame.image.load("../sprites/blocks/left_brick.png").convert_alpha()
     def update(self):
         pass
 
@@ -496,7 +496,7 @@ class GarbageCollector(Enemy):
         # switch frames
         if self.frame_counter == GARBAGE_COLLECTOR_MAX_FRAMES:
             self.frame_counter = 0
-            self.image = pygame.image.load(self.images[self.counter]).convert()
+            self.image = pygame.image.load(self.images[self.counter]).convert_alpha()
             # reverse frames if enemy is walking in reverse
             if self.reverse:
                 self.image = transform.flip(self.image, 1, 0)
@@ -587,7 +587,7 @@ class PySnake(Enemy):
         self.frame_counter += 1
         if self.frame_counter == GARBAGE_COLLECTOR_MAX_FRAMES:
             self.frame_counter = 0
-            self.image = pygame.image.load(self.images[self.counter]).convert()
+            self.image = pygame.image.load(self.images[self.counter]).convert_alpha()
             if self.reverse:
                 self.image = transform.flip(self.image, 1, 0)
             self.counter = (self.counter + 1) % len(self.images)
@@ -649,6 +649,7 @@ class PySnake(Enemy):
                     self.rect.top = p.rect.bottom
 
 class GreenPysnake(PySnake):
+    """ green pysnake enemy """
     def __init__(self, x, y):
         PySnake.__init__(self, x, y)
         self.images = ['../sprites/PySnake/green_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
@@ -657,12 +658,39 @@ class GreenPysnake(PySnake):
         
     #def collide(self, xvel, yvel, platforms, blocks, entities, player):
     #   PySnake.collide(self, xvel, yvel, platforms, blocks, entities)
-                
+
+class RedPysnake(PySnake):
+    """ red pysnake enemy """
+    def __init__(self, x, y):
+        PySnake.__init__(self, x, y)
+        self.images = ['../sprites/PySnake/red_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
+        self.image = pygame.image.load(self.images[0]) # start on first image
+        self.dying = ['../sprites/PySnake/red_snake/red_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
+
+class PurplePysnake(PySnake):
+    """ purple pysnake enemy """
+    def __init__(self, x, y):
+        PySnake.__init__(self, x, y)
+        self.images = ['../sprites/PySnake/purple_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
+        self.image = pygame.image.load(self.images[0]) # start on first image
+        self.dying = ['../sprites/PySnake/purple_snake/purple_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
+
+class BluePysnake(PySnake):
+    """ blue pysnake enemy """
+    def __init__(self, x, y):
+        PySnake.__init__(self, x, y)
+        self.images = ['../sprites/PySnake/blue_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
+        self.image = pygame.image.load(self.images[0]) # start on first image
+        self.dying = ['../sprites/PySnake/blue_snake/blue_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
 
 class Ghost(Enemy):
     def __init__(self, x, y):
         Enemy.__init__(self)
-        self.rect = Rect(x, y, 85, 70)
+        self.rect = Rect(x, y, 25, 25)
+        self.image = pygame.image.load('../sprites/ghosts/boo/normal/1.png')
+        self.reverse = False
+        #self.rect = self.image.get_rect()
+        #self.rect.left, self.rect.top = x, y
         # establishes attack for pysnake
         self.attack = 25
 
@@ -679,18 +707,20 @@ class Ghost(Enemy):
         self.yvel = 2
 
         # establish list of sprite images
-        self.images = ['../sprites/PySnake/default_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
-        self.image = pygame.image.load(self.images[0]) # start on first image
+        #self.images = ['../sprites/PySnake/default_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
+        #self.image = pygame.image.load(self.images[0]) # start on first image
+        
 
     def update(self, platforms, blank_platforms, blocks, entities):
         """ update garbage collector """
-        self.frame_counter += 1
-        if self.frame_counter == GARBAGE_COLLECTOR_MAX_FRAMES:
-            self.frame_counter = 0
-            self.image = pygame.image.load(self.images[self.counter]).convert()
-            if self.reverse:
-                self.image = transform.flip(self.image, 1, 0)
-            self.counter = (self.counter + 1) % len(self.images)
+        
+        #self.frame_counter += 1
+        #if self.frame_counter == GARBAGE_COLLECTOR_MAX_FRAMES:
+        #    self.frame_counter = 0
+        #    self.image = pygame.image.load(self.images[self.counter]).convert_alpha()
+        if self.reverse:
+            self.image = transform.flip(self.image, 1, 0)
+        #    self.counter = (self.counter + 1) % len(self.images)
 
         #  # only accelerate with gravity if in the air
         # if not self.onGround:
@@ -698,6 +728,10 @@ class Ghost(Enemy):
         #      # max falling speed
         #     if self.yvel > 100:
         #         self.yvel = 100
+        if self.xvel < 0 and not self.reverse:
+            self.reverse = True
+        elif self.xvel > 0 and self.reverse:
+            self.reverse = False
 
         # increment in x direction
         self.rect.left += self.xdir * self.xvel
@@ -713,8 +747,6 @@ class Ghost(Enemy):
 
     def collide(self, xvel, yvel, platforms, blocks, entities):
         pass
-
-
 
 class WhiteGhost(Ghost):
     def __init__(self, x, y):
@@ -741,10 +773,10 @@ class WhiteGhost(Ghost):
             # self.ydir = sin(radians(self.rect.left))
             # self.xdir = -sin(radians(self.rect.left))
 
-        if self.rect.left < 0:
-            plt.plot(self.x_arr,self.y_arr)
-            plt.show()
-            pygame.quit()
+        #if self.rect.left < 0:
+        #    #plt.plot(self.x_arr,self.y_arr)
+        #    #plt.show()
+        #    #pygame.quit()
         self.x_arr.append(self.rect.left)
         self.y_arr.append(self.rect.top)
 
