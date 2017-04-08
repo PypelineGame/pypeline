@@ -364,7 +364,7 @@ def displayTimer(screen, time_left, current_score, cache):
     text_y = screen.get_height() / 16 + 10
     text_width, text_height = text_x, 17
     screen.blit(text, [text_x, text_y])
-    # display score 
+    # display score
     text = get_msg('Score:' + str(current_score).zfill(8), cache)
     #text = font.render('Score: ' + str(current_score).zfill(8), True, WHITE)
     text_rect = text.get_rect()
@@ -392,3 +392,17 @@ def scrollScore(current_score, score):
     if current_score < score:
         current_score += 1
     return current_score
+
+def deleteEnemy(target, enemy_sprites, enemies, entities):
+    enemy_sprites.remove(target)
+    enemies.remove(target)
+    entities.remove(target)
+
+def outOfLevel(rect, max_x, max_y):
+    if rect.left < 0 or \
+       rect.left > max_x or \
+       rect.top < 0 or \
+       rect.top > max_y:
+        return True
+    else:
+        return False

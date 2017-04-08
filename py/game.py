@@ -26,7 +26,6 @@ def main():
 
     current_level = 1 # start at level 1
     level = get_level(current_level)
-
     # Define list of backgrounds for the levels
     BACKGROUNDS = [0, 'background5.jpg', 'beauty.jpg']
     for i in range(1, len(BACKGROUNDS)):
@@ -230,16 +229,19 @@ def main():
             if enemy.health_counter >= MAX_HEALTH_FRAMES:
                 enemy.health_counter = 0
                 enemy.healthTrigger = False
-            if type(enemy).__name__ == "GarbageCollector" or isinstance(enemy, PySnake) or isinstance(enemy, Ghost):
+            if type(enemy).__name__ == "GarbageCollector" or \
+               isinstance(enemy, PySnake) or \
+               isinstance(enemy, Ghost):
                 enemy.update(platforms, collision_blocks, blocks, entities)
                 if isinstance(enemy, PySnake):
                     if enemy.hit and enemy.dying_counter >= 55:
-                         enemies.remove(enemy)
-                         enemy_sprites.remove(enemy)
-                         entities.remove(enemy)
+                         deleteEnemy(enemy, enemy_sprites, enemies, entities)
+                if isinstance(enemy, Ghost) and outOfLevel(enemy.rect, total_level_width, total_level_height):
+                    deleteEnemy(enemy, enemy_sprites, enemies, entities)
+
             else:
                 enemy.update()
-            
+
         # update any additional entities
         for e in entities:
             screen.blit(e.image, camera.apply(e))
@@ -255,7 +257,7 @@ def main():
 
         # if player has fallen off screen or hit an enemy, player has died
         if player.rect.y > 1000 or player.health <= 0 or time_remaining <= 0:
-            
+
             CURRENT_WIN_WIDTH = copy(WIN_WIDTH)
             lives -= 1 # count number of deaths
             # if player has run out of lives, set player back to level 1 and reset score
