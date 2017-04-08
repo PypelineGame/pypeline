@@ -81,8 +81,11 @@ class Player(Entity):
         self.onGround = False
         self.image = Surface((60,60))
         #self.image.fill(Color("#0000FF"))
-        self.rect = Rect(x, y, 60, 58)
-        self.height = 32
+        self.standing_rect = Rect(x, y, 58, 58)
+        self.attack_rect = Rect(x, y, 80, 60)
+        self.running_rect = Rect(x, y, 58, 66)
+        self.rect = self.standing_rect
+        self.attack_height = 32
         self.health = PLAYER_STARTER_HEALTH
         self.melee_attack, self.range_attack, self.num_of_bullets = 25, 50, 10
         self.damage_frame = 0 # counts # of frames until max damage frames
@@ -207,18 +210,18 @@ class Player(Entity):
                 #    self.frame_counter, self.counter = 0, 0
                 #self.images = self.running
                 if running:
-                    self.xvel = -6
-                else:
                     self.xvel = -5
+                else:
+                    self.xvel = -4
             if right:
                 #if self.images != self.running:
                 #    self.frame_counter, self.counter = 0, 0
                 #self.images = self.running
                 #self.rect.inflate_ip(55, 45)
                 if running:
-                    self.xvel = 6
-                else:
                     self.xvel = 5
+                else:
+                    self.xvel = 4
             if not(left or right):
                 #if self.images != self.standing:
                 #    self.frame_counter, self.counter = 0, 0
@@ -297,9 +300,11 @@ class Bullet(pygame.sprite.Sprite):
             # calculate center of bullet
             self.center_y = player[1]/2 + player[2]/2 + 10# + player[2] - player[2]/2)
             if direction == True:
+                # draw going right
                 self.center_x = player[0]/2 + player[2]/2 + 10# - player[2] - player[2]/2)
                 self.image = pygame.image.load('../sprites/player/blade_wave.png')
             else:
+                # draw going left
                 self.center_x = player[0]/2 - player[2]/2 - 10
                 self.image = pygame.image.load('../sprites/player/blade_wave.png')
                 self.image = transform.flip(self.image, 1, 0)
@@ -381,6 +386,54 @@ class BrownBlock(BlockType):
     def update(self):
         pass
 
+class NeonRedBlock(BlockType):
+    """ brown block class """
+    def __init__(self):
+        BlockType.__init__(self)
+        self.image = pygame.image.load("../sprites/blocks/neon_red.png").convert_alpha()
+    def update(self):
+        pass
+
+class NeonWhiteBlock(BlockType):
+    """ brown block class """
+    def __init__(self):
+        BlockType.__init__(self)
+        self.image = pygame.image.load("../sprites/blocks/neon_white.png").convert_alpha()
+    def update(self):
+        pass
+
+class NeonBlueBlock(BlockType):
+    """ brown block class """
+    def __init__(self):
+        BlockType.__init__(self)
+        self.image = pygame.image.load("../sprites/blocks/neon_blue.png").convert_alpha()
+    def update(self):
+        pass
+
+class NeonYellowBlock(BlockType):
+    """ brown block class """
+    def __init__(self):
+        BlockType.__init__(self)
+        self.image = pygame.image.load("../sprites/blocks/neon_yellow.png").convert_alpha()
+    def update(self):
+        pass
+
+class NeonOrangeBlock(BlockType):
+    """ brown block class """
+    def __init__(self):
+        BlockType.__init__(self)
+        self.image = pygame.image.load("../sprites/blocks/neon_orange.png").convert_alpha()
+    def update(self):
+        pass
+
+class NeonGreenBlock(BlockType):
+    """ brown block class """
+    def __init__(self):
+        BlockType.__init__(self)
+        self.image = pygame.image.load("../sprites/blocks/neon_green.png").convert_alpha()
+    def update(self):
+        pass
+
 class BlueBlock(BlockType):
     """ blue block class """
     def __init__(self):
@@ -405,35 +458,20 @@ class GrayBlock(BlockType):
     def update(self):
         pass
 
-class TopLeftStoneBlock(BlockType):
-    """ top left stone block class """
+class Unbreakable1(BlockType):
+    """ brown unbreakable block """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/top_left_brick.png").convert_alpha()
+        self.image = pygame.image.load("../sprites/blocks/unbreakable1.png").convert_alpha()
+
     def update(self):
         pass
 
-class TopRightStoneBlock(BlockType):
-    """ top right stone block class """
+class Unbreakable2(BlockType):
+    """ grey brick unbreakable block """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/top_right_brick.png").convert_alpha()
-    def update(self):
-        pass
-
-class RightStoneBlock(BlockType):
-    """ right stone block class """
-    def __init__(self):
-        BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/right_brick.png").convert_alpha()
-    def update(self):
-        pass
-
-class LeftStoneBlock(BlockType):
-    """ left stone block class """
-    def __init__(self):
-        BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/left_brick.png").convert_alpha()
+        self.image = pygame.image.load("../sprites/blocks/unbreakable2.png").convert_alpha()
     def update(self):
         pass
 

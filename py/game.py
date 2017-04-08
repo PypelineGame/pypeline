@@ -52,9 +52,10 @@ def main():
 
      # create list of different block types
     block_types = [
-    BaigeBlock(), LeftStoneBlock(), RightStoneBlock(),\
+    Unbreakable1(), Unbreakable2(), BaigeBlock(),\
+    NeonRedBlock(), NeonWhiteBlock(), NeonBlueBlock(), NeonYellowBlock(), NeonOrangeBlock(), NeonGreenBlock(),\
     BlueBlock(), GrayBlock(), BrightBlueBlock(), BrownBlock(),
-    TopRightStoneBlock(), TopLeftStoneBlock(), CollisionBlock(), CornerPatrolBlock()
+    CollisionBlock(), CornerPatrolBlock()
     ]
 
     __FPS = 70
@@ -161,20 +162,20 @@ def main():
             if (e.type == pygame.MOUSEBUTTONDOWN and e.button == 1) or\
             (e.type == KEYUP and e.key == K_SPACE):
                 bullet = Bullet(pygame.mouse.get_pos(),\
-                [player.rect.x, player.rect.y, player.height], camera.state, player.facing_right)
+                [player.rect.x, player.rect.y, player.attack_height], camera.state, player.facing_right)
                 # spawns bullet at the center of the player
-                bullet.rect.x = player.rect.x + player.height/2
-                bullet.rect.y = player.rect.y - player.height/2
+                bullet.rect.x = player.rect.x + player.attack_height/2
+                bullet.rect.y = player.rect.y - player.attack_height/2
                 entities.add(bullet)
                 bullets.add(bullet)
             if e.type == KEYDOWN and e.key == K_f and not left and not right:# and player.facing_right == True):
                 bullet = Bullet(pygame.mouse.get_pos(),\
-                [player.rect.x, player.rect.y, player.height], camera.state, player.facing_right, 'strong')
+                [player.rect.x, player.rect.y, player.attack_height], camera.state, player.facing_right, 'strong')
                 if player.facing_right:
-                    bullet.rect.x = player.rect.x + player.height/2 + 10# - player.height/2# / 2
+                    bullet.rect.x = player.rect.x + player.attack_height/2 + 10# - player.height/2# / 2
                 else:
-                    bullet.rect.x = player.rect.x - player.height/2 - 10
-                bullet.rect.y = player.rect.y - player.height/2 + 10# + player.height/2# / 2
+                    bullet.rect.x = player.rect.x - player.attack_height/2 - 10
+                bullet.rect.y = player.rect.y - player.attack_height/2 + 10# + player.height/2# / 2
                 entities.add(bullet)
                 bullets.add(bullet)
             if e.type == pygame.MOUSEBUTTONDOWN and e.button == 3:
