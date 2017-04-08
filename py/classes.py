@@ -653,8 +653,8 @@ class PySnake(Enemy):
                 if yvel < 0: # moving up, hit bottom side of wall
                     self.rect.top = p.rect.bottom
 
-    def dead():
-        return enemy.hit and enemy.dying_counter >= 55
+    def dead(self):
+        return self.hit and self.dying_counter >= 55
 
 class GreenPysnake(PySnake):
     """ green pysnake enemy """
