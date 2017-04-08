@@ -26,9 +26,9 @@ def get_level(level_num):
     """ retrieve levels """
     return levels.get_levels[level_num]
 
-def get_enemies(level_num):
-    """ retreieve enemies """
-    return levels.get_enemies[level_num]
+#def get_enemies(level_num):
+#    """ retreieve enemies """
+#    return levels.get_enemies[level_num]
 
 def build_level(*args):
     """ build level passed in """
@@ -38,10 +38,11 @@ def build_level(*args):
     collision_block_sprites, indestructibles = (x for x in args)
 
     # unpackage block_types
-    BaigeBlock, LeftStoneBlock, RightStoneBlock,\
+    Unbreakable1, Unbreakable2, BaigeBlock,\
+    NeonRedBlock, NeonWhiteBlock, NeonBlueBlock, NeonYellowBlock, NeonOrangeBlock, NeonGreenBlock,\
     BlueBlock, GrayBlock, BrightBlueBlock, BrownBlock,\
-    TopRightStoneBlock, TopLeftStoneBlock, CollisionBlock, CornerPatrolBlock = (x for x in block_types)
-
+    CollisionBlock, CornerPatrolBlock = (x for x in block_types)
+    enemy = None
     x, y = 0, 0
     # build the level
     for row in level:
@@ -67,28 +68,66 @@ def build_level(*args):
                     which_block = GrayBlock
                     p = Platform(x, y, which_block)
                     platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
-                elif col == "L":
-                    which_block = TopLeftStoneBlock
+                elif col == "r":
+                    which_block = NeonRedBlock
+                    p = Platform(x, y, which_block)
+                    platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
+                elif col == "w":
+                    which_block = NeonWhiteBlock
+                    p = Platform(x, y, which_block)
+                    platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
+                elif col == "b":
+                    which_block = NeonBlueBlock
+                    p = Platform(x, y, which_block)
+                    platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
+                elif col == "y":
+                    which_block = NeonYellowBlock
+                    p = Platform(x, y, which_block)
+                    platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
+                elif col == "o":
+                    which_block = NeonOrangeBlock
+                    p = Platform(x, y, which_block)
+                    platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
+                elif col == "g":
+                    which_block = NeonGreenBlock
+                    p = Platform(x, y, which_block)
+                    platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
+                #elif col == "L":
+                #    which_block = TopLeftStoneBlock
+                #    # add indestructible manually to sprite lists
+                #    p = Platform(x, y, which_block)
+                #    indestructibles.add(p)
+                #    entities.add(p)
+                #    platforms.append(p)
+                #elif col == "R":
+                #    which_block = TopRightStoneBlock
+                #    # add indestructible manually to sprite lists
+                #    p = Platform(x, y, which_block)
+                #    indestructibles.add(p)
+                #    entities.add(p)
+                #    platforms.append(p)
+                #elif col == "M":
+                #    which_block = LeftStoneBlock
+                #    p = Platform(x, y, which_block)
+                #    platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
+                #elif col == "N":
+                #    which_block = RightStoneBlock
+                #    p = Platform(x, y, which_block)
+                #    platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
+                elif col == "n":
+                    which_block = Unbreakable1
                     # add indestructible manually to sprite lists
                     p = Platform(x, y, which_block)
                     indestructibles.add(p)
                     entities.add(p)
                     platforms.append(p)
-                elif col == "R":
-                    which_block = TopRightStoneBlock
+                elif col == "m":
+                    which_block = Unbreakable2
                     # add indestructible manually to sprite lists
                     p = Platform(x, y, which_block)
                     indestructibles.add(p)
                     entities.add(p)
                     platforms.append(p)
-                elif col == "M":
-                    which_block = LeftStoneBlock
-                    p = Platform(x, y, which_block)
-                    platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
-                elif col == "N":
-                    which_block = RightStoneBlock
-                    p = Platform(x, y, which_block)
-                    platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
                 elif col == "O":
                     which_block = CollisionBlock
                     # add collision block manually to sprite lists
@@ -109,34 +148,27 @@ def build_level(*args):
                     collision_block_sprites.add(p)
                     entities.add(p)
                 # spawn enemies
-                elif col == "1":
-                    enemy = GarbageCollector(x, y)
-                    entities.add(enemy)
-                    enemies.append(enemy)
-                elif col == "2":
-                    enemy = GreenPysnake(x, y)
-                    entities.add(enemy)
-                    enemies.append(enemy)
-                elif col == "3":
-                    enemy = RedPysnake(x, y)
-                    entities.add(enemy)
-                    enemies.append(enemy)
-                elif col == "4":
-                    enemy = BluePysnake(x, y)
-                    entities.add(enemy)
-                    enemies.append(enemy)
-                elif col == "5":
-                    enemy = PurplePysnake(x, y)
-                    entities.add(enemy)
-                    enemies.append(enemy)
-                elif col == "6":
-                    enemy = RedGhost(x, y)
-                    entities.add(enemy)
-                    enemies.append(enemy)
-                elif col == "7":
-                    enemy = WhiteGhost(x, y)
-                    entities.add(enemy)
-                    enemies.append(enemy)
+                elif col in list('1234567'):
+                    if col == "1":
+                        enemy = GarbageCollector(x-32, y-64)
+                    elif col == "2":
+                        enemy = GreenPysnake(x-32, y-64)
+                        entities.add(enemy)
+                        enemies.append(enemy)
+                        enemy_sprites.add(enemy)
+                    elif col == "3":
+                        enemy = RedPysnake(x-32, y-64)
+                    elif col == "4":
+                        enemy = BluePysnake(x-32, y-64)
+                    elif col == "5":
+                        enemy = PurplePysnake(x-32, y-64)
+                    elif col == "6":
+                        enemy = RedGhost(x, y)
+                    elif col == "7":
+                        enemy = WhiteGhost(x, y)
+                    #entities.add(enemy)
+                    #enemies.append(enemy)
+                    #enemy_sprites.add(enemy)
             x += 32 # index by 32 bits
         y += 32
         x = 0
@@ -375,13 +407,13 @@ def displayTimer(screen, time_left, current_score, cache):
 
 def displayLives(screen, lives):
     if lives == 3:
-        image = pygame.image.load("../sprites/lives/3hearts.png").convert()
+        image = pygame.image.load("../sprites/lives/3hearts.png").convert_alpha()
     elif lives == 2:
-        image = pygame.image.load("../sprites/lives/2hearts.png").convert()
+        image = pygame.image.load("../sprites/lives/2hearts.png").convert_alpha()
     elif lives == 1:
-        image = pygame.image.load("../sprites/lives/1heart.png").convert()
+        image = pygame.image.load("../sprites/lives/1heart.png").convert_alpha()
     else:
-        image = pygame.image.load("../sprites/lives/0hearts.png").convert()
+        image = pygame.image.load("../sprites/lives/0hearts.png").convert_alpha()
     imagerect = image.get_rect()
     image = pygame.transform.scale(image, (75, 25))
     image_x = 675
