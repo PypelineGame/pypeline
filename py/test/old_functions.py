@@ -1,27 +1,26 @@
 #! /usr/bin/python
 
 import levels
-import classes
+from classes import *
 import os, time
-import pygame
 
 def simple_camera(camera, target_rect):
     """ simple camera class """
     l, t, _, _ = target_rect
     _, _, w, h = camera
-    return pygame.Rect(-l+classes.HALF_WIDTH, -t+classes.HALF_HEIGHT, w, h)
+    return Rect(-l+HALF_WIDTH, -t+HALF_HEIGHT, w, h)
 
 def complex_camera(camera, target_rect):
     """ complex camera class """
     l, t, _, _ = target_rect
     _, _, w, h = camera
-    l, t, _, _ = -l+classes.HALF_WIDTH, -t+classes.HALF_HEIGHT, w, h
+    l, t, _, _ = -l+HALF_WIDTH, -t+HALF_HEIGHT, w, h
 
     l = min(0, l)                           # stop scrolling at the left edge
-    l = max(-(camera.width-classes.WIN_WIDTH), l)   # stop scrolling at the right edge
-    t = max(-(camera.height-classes.WIN_HEIGHT), t) # stop scrolling at the bottom
+    l = max(-(camera.width-WIN_WIDTH), l)   # stop scrolling at the right edge
+    t = max(-(camera.height-WIN_HEIGHT), t) # stop scrolling at the bottom
     t = min(0, t)                           # stop scrolling at the top
-    return pygame.Rect(l, t, w, h)
+    return Rect(l, t, w, h)
 
 def get_level(level_num):
     """ retrieve levels """
@@ -39,7 +38,7 @@ def build_level(*args):
     collision_block_sprites, indestructibles = (x for x in args)
 
     # unpackage block_types
-    Unbreakable1, Unbreakable2, BaigeBlock,\
+    Unbreakable1, Unbreakable2, BaigeBlock\
     NeonRedBlock, NeonWhiteBlock, NeonBlueBlock, NeonYellowBlock, NeonOrangeBlock, NeonGreenBlock,\
     BlueBlock, GrayBlock, BrightBlueBlock, BrownBlock,\
     CollisionBlock, CornerPatrolBlock = (x for x in block_types)
@@ -53,97 +52,97 @@ def build_level(*args):
             if col != " ":
                 if col == "E":
                     which_block = BaigeBlock
-                    p = classes.Platform(x, y, which_block)
+                    p = Platform(x, y, which_block)
                     platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
                 elif col == "C":
                     which_block = BrownBlock
-                    p = classes.Platform(x, y, which_block)
+                    p = Platform(x, y, which_block)
                     platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
                 elif col == "A":
                     which_block = BlueBlock
-                    p = classes.Platform(x, y, which_block)
+                    p = Platform(x, y, which_block)
                     platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
                 elif col == "B":
                     which_block = BrightBlueBlock
-                    p = classes.Platform(x, y, which_block)
+                    p = Platform(x, y, which_block)
                     platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
                 elif col == "D":
                     which_block = GrayBlock
-                    p = classes.Platform(x, y, which_block)
+                    p = Platform(x, y, which_block)
                     platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
                 elif col == "r":
                     which_block = NeonRedBlock
-                    p = classes.Platform(x, y, which_block)
+                    p = Platform(x, y, which_block)
                     platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
                 elif col == "w":
                     which_block = NeonWhiteBlock
-                    p = classes.Platform(x, y, which_block)
+                    p = Platform(x, y, which_block)
                     platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
                 elif col == "b":
                     which_block = NeonBlueBlock
-                    p = classes.Platform(x, y, which_block)
+                    p = Platform(x, y, which_block)
                     platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
                 elif col == "y":
                     which_block = NeonYellowBlock
-                    p = classes.Platform(x, y, which_block)
+                    p = Platform(x, y, which_block)
                     platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
                 elif col == "o":
                     which_block = NeonOrangeBlock
-                    p = classes.Platform(x, y, which_block)
+                    p = Platform(x, y, which_block)
                     platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
                 elif col == "g":
                     which_block = NeonGreenBlock
-                    p = classes.Platform(x, y, which_block)
+                    p = Platform(x, y, which_block)
                     platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
                 elif col == "n":
                     which_block = Unbreakable1
                     # add indestructible manually to sprite lists
-                    p = classes.Platform(x, y, which_block)
+                    p = Platform(x, y, which_block)
                     indestructibles.add(p)
                     entities.add(p)
                     platforms.append(p)
                 elif col == "m":
                     which_block = Unbreakable1
                     # add indestructible manually to sprite lists
-                    p = classes.Platform(x, y, which_block)
+                    p = Platform(x, y, which_block)
                     indestructibles.add(p)
                     entities.add(p)
                     platforms.append(p)
                 elif col == "O":
                     which_block = CollisionBlock
                     # add collision block manually to sprite lists
-                    p = classes.BlankPlatform(x, y, which_block, False)
+                    p = BlankPlatform(x, y, which_block, False)
                     collision_blocks.append(p)
                     collision_block_sprites.add(p)
                     entities.add(p)
                 elif col == "Q":
                     which_block = CornerPatrolBlock
-                    p = classes.BlankPlatform(x, y, which_block, True)
+                    p = BlankPlatform(x, y, which_block, True)
                     collision_blocks.append(p)
                     collision_block_sprites.add(p)
                     entities.add(p)
                 elif col == "X":
                     # add exit block manually to sprite lists
-                    p = classes.ExitBlock(x, y)
+                    p = ExitBlock(x, y)
                     collision_blocks.append(p)
                     collision_block_sprites.add(p)
                     entities.add(p)
                 # spawn enemies
-                elif col in list('1234567'):
+                else:
                     if col == "1":
-                        enemy = classes.GarbageCollector(x-32, y-64)
+                        enemy = GarbageCollector(x, y)
                     elif col == "2":
-                        enemy = classes.GreenPysnake(x-32, y-64)
+                        enemy = GreenPysnake(x, y)
                     elif col == "3":
-                        enemy = classes.RedPysnake(x-32, y-64)
+                        enemy = RedPysnake(x, y)
                     elif col == "4":
-                        enemy = classes.BluePysnake(x-32, y-64)
+                        enemy = BluePysnake(x, y)
                     elif col == "5":
-                        enemy = classes.PurplePysnake(x-32, y-64)
+                        enemy = PurplePysnake(x, y)
                     elif col == "6":
-                        enemy = classes.RedGhost(x, y)
+                        enemy = RedGhost(x, y)
                     elif col == "7":
-                        enemy = classes.WhiteGhost(x, y)
+                        enemy = WhiteGhost(x, y)
                     entities.add(enemy)
                     enemies.append(enemy)
                     enemy_sprites.add(enemy)
@@ -177,7 +176,7 @@ def bullet_collision(*args):
     # See if it hit a block
     block_hit_list, bullet_hit_list = [], []
     for bullet in bullets:
-        hit_block = pygame.sprite.spritecollide(bullet, blocks, True)
+        hit_block = sprite.spritecollide(bullet, blocks, True)
         block_hit_list += hit_block # keep track of hit blocks
         if bool(hit_block):
             bullet_hit_list.append(bullet)
@@ -191,7 +190,7 @@ def bullet_collision(*args):
     # See if we hit an enemy
     enemy_hit_list = []
     for bullet in bullets:
-        hit_enemy = pygame.sprite.spritecollide(bullet, enemy_sprites, False)
+        hit_enemy = sprite.spritecollide(bullet, enemy_sprites, False)
         enemy_hit_list += hit_enemy
         if bool(hit_enemy):
             bullets.remove(bullet)
@@ -220,7 +219,7 @@ def bullet_collision(*args):
 
     # See if we hit an indestructible block
     for bullet in bullets:
-        if bool(pygame.sprite.spritecollide(bullet, indestructibles, False)):
+        if bool(sprite.spritecollide(bullet, indestructibles, False)):
             bullets.remove(bullet)
             entities.remove(bullet)
 
@@ -277,15 +276,15 @@ def reset_level(*args):
 
 def healthBar(player_health, screen, cache):
     """ displays player's health bar at top right of screen """
-    if player_health > classes.PLAYER_STARTER_HEALTH * 0.75:
-        player_health_color = classes.GREEN
-    elif player_health > classes.PLAYER_STARTER_HEALTH* 0.40:
+    if player_health > PLAYER_STARTER_HEALTH * 0.75:
+        player_health_color = GREEN
+    elif player_health > PLAYER_STARTER_HEALTH* 0.40:
         player_health_color = YELLOW
     else:
         player_health_color = RED
     """ pygame.draw.rect(screen, color, (x,y,width,height), thickness) """
     pygame.draw.rect(screen, player_health_color, (549,25,player_health,25), 0)
-    pygame.draw.rect(screen, classes.WHITE, (549,25,classes.PLAYER_STARTER_HEALTH,25), 3)
+    pygame.draw.rect(screen, WHITE, (549,25,PLAYER_STARTER_HEALTH,25), 3)
     font = pygame.font.Font(None, 18)
     text = font.render("HP " + str(player_health), True, player_health_color)
     #text = get_msg("HP " + str(player_health), cache, player_health_color)
@@ -297,11 +296,11 @@ def healthBar(player_health, screen, cache):
 def enemyHealthBar(enemy_health, enemy, screen, camera_state):
     """ displays health bar above enemy """
     if enemy_health > enemy.max_health * 0.75:
-        enemy_health_color = classes.GREEN
+        enemy_health_color = GREEN
     elif enemy_health > enemy.max_health * 0.40:
-        enemy_health_color = classes.YELLOW
+        enemy_health_color = YELLOW
     else:
-        enemy_health_color = classes.RED
+        enemy_health_color = RED
     """ pygame.draw.rect(screen, color, (x,y,width,height), thickness) """
     pygame.draw.rect(screen, enemy_health_color,\
     (enemy.rect.left + camera_state[0],\
@@ -322,13 +321,13 @@ def get_msg(msg, cache, color = None):
         msg = msg.strip(' ')
         if msg == 'Game Over' or msg == 'Try again bruh...':
             font = pygame.font.Font(None, 36)
-            cache[msg] = font.render(msg, True, classes.WHITE)
+            cache[msg] = font.render(msg, True, WHITE)
         elif color != None:
             font = pygame.font.Font(None, 18)
             cache[msg] = font.render(msg, True, color)
         else:
             font = pygame.font.Font(None, 24)
-            cache[msg] = font.render(msg, True, classes.WHITE)
+            cache[msg] = font.render(msg, True, WHITE)
     #cache[msg] = fontobj.render(msg, False , pygame.Color('green'))
     return cache[msg]
 

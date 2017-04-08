@@ -1,9 +1,9 @@
 #! /usr/bin/python
 
 # import our modules
+from classes import *
 from functions import *
 import levels
-from classes import *
 #from gifimage import *
 
 import time, os, sys
@@ -26,7 +26,6 @@ def main():
 
     current_level = 1 # start at level 1
     level = get_level(current_level)
-
     # Define list of backgrounds for the levels
     BACKGROUNDS = [0, 'background5.jpg', 'beauty.jpg']
     for i in range(1, len(BACKGROUNDS)):
@@ -53,9 +52,10 @@ def main():
 
      # create list of different block types
     block_types = [
-    BaigeBlock(), LeftStoneBlock(), RightStoneBlock(),\
+    Unbreakable1(), Unbreakable2(), BaigeBlock(),\
+    NeonRedBlock(), NeonWhiteBlock(), NeonBlueBlock(), NeonYellowBlock(), NeonOrangeBlock(), NeonGreenBlock(),\
     BlueBlock(), GrayBlock(), BrightBlueBlock(), BrownBlock(),
-    TopRightStoneBlock(), TopLeftStoneBlock(), CollisionBlock(), CornerPatrolBlock()
+    CollisionBlock(), CornerPatrolBlock()
     ]
 
     __FPS = 70
@@ -70,9 +70,9 @@ def main():
     collision_block_sprites, indestructibles, collision_blocks = build_level(*args)
 
     # generate size of level and set camera
-    total_level_width  = len(level[0])*32
-    total_level_height = len(level)*32
-    camera = Camera(complex_camera, total_level_width, total_level_height)
+    pygame.total_level_width  = len(level[0])*32
+    pygame.total_level_height = len(level)*32
+    camera = Camera(complex_camera, pygame.total_level_width, pygame.total_level_height)
 
     elapsed_playtime = 0 # keeps track of play time in seconds
     current_life_playtime = 0
@@ -88,7 +88,6 @@ def main():
     main_loop = True
     game_over = False
     while main_loop:
-
         """ handle fps and elapsed_playtime counter """
         fps = timer.tick(__FPS) # max fps
         elapsed_playtime += fps / 1000.0
@@ -107,6 +106,7 @@ def main():
             bg = pygame.image.load(BACKGROUNDS[current_level])
             bg = pygame.transform.scale(bg, (WIN_WIDTH, WIN_HEIGHT))
             bg = bg.convert_alpha()
+
             current_life_playtime = 0
             camera_state = 0
             RESET_LEVEL_FLAG = False
@@ -119,9 +119,9 @@ def main():
             player, platforms, blocks, collision_blocks, collision_block_sprites,\
             entities, enemies, enemy_sprites, indestructibles = reset_level(*args)
             # reset camera
-            total_level_width  = len(level[0])*32
-            total_level_height = len(level)*32
-            camera = Camera(complex_camera, total_level_width, total_level_height)
+            pygame.total_level_width  = len(level[0])*32
+            pygame.total_level_height = len(level)*32
+            camera = Camera(complex_camera, pygame.total_level_width, pygame.total_level_height)
 
         """ event handler """
         for e in pygame.event.get():
@@ -162,20 +162,20 @@ def main():
             if (e.type == pygame.MOUSEBUTTONDOWN and e.button == 1) or\
             (e.type == KEYUP and e.key == K_SPACE):
                 bullet = Bullet(pygame.mouse.get_pos(),\
-                [player.rect.x, player.rect.y, player.height], camera.state, player.facing_right)
+                [player.rect.x, player.rect.y, player.attack_height], camera.state, player.facing_right)
                 # spawns bullet at the center of the player
-                bullet.rect.x = player.rect.x + player.height/2
-                bullet.rect.y = player.rect.y - player.height/2
+                bullet.rect.x = player.rect.x + player.attack_height/2
+                bullet.rect.y = player.rect.y - player.attack_height/2
                 entities.add(bullet)
                 bullets.add(bullet)
             if e.type == KEYDOWN and e.key == K_f and not left and not right:# and player.facing_right == True):
                 bullet = Bullet(pygame.mouse.get_pos(),\
-                [player.rect.x, player.rect.y, player.height], camera.state, player.facing_right, 'strong')
+                [player.rect.x, player.rect.y, player.attack_height], camera.state, player.facing_right, 'strong')
                 if player.facing_right:
-                    bullet.rect.x = player.rect.x + player.height/2 + 10# - player.height/2# / 2
+                    bullet.rect.x = player.rect.x + player.attack_height/2 + 10# - player.height/2# / 2
                 else:
-                    bullet.rect.x = player.rect.x - player.height/2 - 10
-                bullet.rect.y = player.rect.y - player.height/2 + 10# + player.height/2# / 2
+                    bullet.rect.x = player.rect.x - player.attack_height/2 - 10
+                bullet.rect.y = player.rect.y - player.attack_height/2 + 10# + player.height/2# / 2
                 entities.add(bullet)
                 bullets.add(bullet)
             if e.type == pygame.MOUSEBUTTONDOWN and e.button == 3:
@@ -230,16 +230,18 @@ def main():
             if enemy.health_counter >= MAX_HEALTH_FRAMES:
                 enemy.health_counter = 0
                 enemy.healthTrigger = False
-            if type(enemy).__name__ == "GarbageCollector" or isinstance(enemy, PySnake):
+            if type(enemy).__name__ == "GarbageCollector" or \
+               isinstance(enemy, PySnake) or \
+               isinstance(enemy, Ghost):
                 enemy.update(platforms, collision_blocks, blocks, entities)
-                if isinstance(enemy, PySnake):
-                    if enemy.hit and enemy.dying_counter >= 55:
-                         enemies.remove(enemy)
-                         enemy_sprites.remove(enemy)
-                         entities.remove(enemy)
+                if enemy.dead():
+                    delete_enemy(enemy, enemy_sprites, enemies, entities)
+#                if (isinstance(enemy, PySnake) and enemy.hit and enemy.dying_counter >= 55) or \
+#                   (isinstance(enemy, Ghost) and outOfLevel(enemy.rect, pygame.total_level_width, pygame.total_level_height)):
+#                    deleteEnemy(enemy, enemy_sprites, enemies, entities)
             else:
                 enemy.update()
-            
+
         # update any additional entities
         for e in entities:
             screen.blit(e.image, camera.apply(e))
@@ -255,7 +257,7 @@ def main():
 
         # if player has fallen off screen or hit an enemy, player has died
         if player.rect.y > 1000 or player.health <= 0 or time_remaining <= 0:
-            
+
             CURRENT_WIN_WIDTH = copy(WIN_WIDTH)
             lives -= 1 # count number of deaths
             # if player has run out of lives, set player back to level 1 and reset score
@@ -267,9 +269,9 @@ def main():
                 current_score, score, current_level, lives = 0, 0, 1, MAX_LIVES
                 level = get_level(current_level)
                 # generate size of level and set camera
-                total_level_width  = len(level[0])*32
-                total_level_height = len(level)*32
-                camera = Camera(complex_camera, total_level_width, total_level_height)
+                #pygame.total_level_width  = len(level[0])*32
+                #pygame.total_level_height = len(level)*32
+                camera = Camera(complex_camera, pygame.total_level_width, pygame.total_level_height)
                 gameOver(screen, cache)
             else:
                 #font = pygame.font.Font(None, 36)
