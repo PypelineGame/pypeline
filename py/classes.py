@@ -13,7 +13,7 @@ from copy import copy
 
 # Define screen borders
 WIN_WIDTH = 800
-WIN_HEIGHT = 640
+WIN_HEIGHT = 450 # 400 # 640
 HALF_WIDTH = int(WIN_WIDTH / 2)
 HALF_HEIGHT = int(WIN_HEIGHT / 2)
 RESET_LEVEL_FLAG = False
@@ -45,6 +45,7 @@ PLAYER_DAMAGE_FRAMES = 20
 PLAYER_MAX_RUN_FRAMES = 8
 PLAYER_MAX_STANDING_FRAMES = 16
 
+cache = {}
 #Player position
 PLAYER_X = 0
 PLAYER_Y = 0
@@ -75,22 +76,26 @@ class Player(Entity):
         self.xvel = 0 # current x velocity
         self.yvel = 0 # current y velocity
         self.onGround = False
-        self.image = Surface((32,32))
-        self.image.fill(Color("#0000FF"))
-        self.image_copy = self.image.copy()
-        self.transparent_image = pygame.Surface([32, 32], pygame.SRCALPHA, 32)
-        self.transparent_image = self.transparent_image.convert_alpha()
-        self.image.convert()
-        self.rect = Rect(x, y, 60, 60)
+        self.image = Surface((60,60))
+        #self.image.fill(Color("#0000FF"))
+        self.rect = Rect(x, y, 60, 58)
         self.height = 32
         self.health = PLAYER_STARTER_HEALTH
         self.melee_attack, self.range_attack, self.num_of_bullets = 25, 50, 10
         self.damage_frame = 0 # counts # of frames until max damage frames
         self.enemy_collision, self.knockback_left, self.knockback_right, self.flicker = False, False, False, False
-        self.frame_counter, self.counter = 0, 0
+        self.frame_counter, self.counter, self.jump_counter = 0, 0, 0
         self.running = ['../sprites/player/running/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8]]
-        self.standing = ['../sprites/player/standing/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9]]
-        self.images = []
+        self.standing = ['../sprites/player/standing/' + str(x) + '.png' for x in [1, 2, 3, 4]]#, 5, 6]]#, 7, 8, 9]]
+        self.jumping = ['../sprites/player/jumping/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
+        self.images = self.standing # by default
+        self.jump = False
+        self.image = pygame.image.load(self.images[0])
+        self.facing_right = True # used to determine strong attack's direction
+        self.image_copy = pygame.image.load(self.jumping[2])#self.image.copy()
+        self.transparent_image = pygame.Surface([32, 32], pygame.SRCALPHA, 32)
+        self.transparent_image = self.transparent_image.convert_alpha()
+        self.image.convert()
 
     def damage(self, attack, enemy, camera):
         """ performs damage reduction on player's HP upon enemy collision """
@@ -107,6 +112,47 @@ class Player(Entity):
         """ updates the player on every frame of main game loop """
         self.damage_frame += 1 # increments damage_frame every frame of game
         self.frame_counter += 1 # increments frame counter
+
+        
+            #if self.onGround and self.images == self.jumping:
+            #    #if left or right:
+            #    #    self.images = self.running
+            #    #else:
+            #    #    self.images = self.standing
+            #    self.counter = 0
+            #pygame.transform.scale(self.image, (55, 45), self.image)
+        #if (right or left) and not self.jump:
+        #    self.images = self.running
+        #el
+        if right and not self.jump:
+            self.facing_right = True
+            self.images = self.running
+        elif self.jump == True:
+            self.jump_counter += 1
+            if self.jump_counter == 33:
+                self.jump = False
+                self.jump_counter, self.counter = 0, 0
+                self.images = self.standing
+
+        if self.frame_counter >= PLAYER_MAX_RUN_FRAMES:
+            self.frame_counter = 0
+            self.image = pygame.image.load(self.images[self.counter])
+            self.counter = (self.counter + 1) % len(self.images)
+
+            # reverse images if player is facing left
+            if left:
+                self.facing_right = False
+                if self.jump:
+                    self.images = self.jumping
+                else:  #elif self.yvel < 0:
+                    self.images = self.running
+                #self.image = transform.flip(self.image, 1, 0)
+
+        #if left and not right and self.jump == False and self.facing_right == False:
+        #    self.images = self.standing
+            if self.facing_right == False:
+                self.image = transform.flip(self.image, 1, 0)
+            #self.images = self.standing
 
         # flicker player when player is knocked back
         if self.flicker:
@@ -143,37 +189,37 @@ class Player(Entity):
         # handle player movements
         else:
             if up:
-                if self.images != self.running:
-                    self.frame_counter, self.counter = 0, 0
-                self.images = self.running
+                #if self.images != self.jumping:
+                #    self.frame_counter, self.counter = 0, 0
+                #self.images = self.jumping
                 # only jump if on the ground
                 if self.onGround: self.yvel -= 10
             if down:
-                if self.images != self.standing:
-                    self.frame_counter, self.counter = 0, 0
-                self.images = self.standing
+                #if self.images != self.standing:
+                #    self.frame_counter, self.counter = 0, 0
+                #self.images = self.standing
                 pass # we can eventually implement crouching
             if left:
-                if self.images != self.running:
-                    self.frame_counter, self.counter = 0, 0
-                self.images = self.running
+                #if self.images != self.running:
+                #    self.frame_counter, self.counter = 0, 0
+                #self.images = self.running
                 if running:
                     self.xvel = -6
                 else:
                     self.xvel = -5
             if right:
-                if self.images != self.running:
-                    self.frame_counter, self.counter = 0, 0
-                self.images = self.running
+                #if self.images != self.running:
+                #    self.frame_counter, self.counter = 0, 0
+                #self.images = self.running
                 #self.rect.inflate_ip(55, 45)
                 if running:
                     self.xvel = 6
                 else:
                     self.xvel = 5
             if not(left or right):
-                if self.images != self.standing:
-                    self.frame_counter, self.counter = 0, 0
-                self.images = self.standing
+                #if self.images != self.standing:
+                #    self.frame_counter, self.counter = 0, 0
+                #self.images = self.standing
                 self.xvel = 0
 
         # switch frames
@@ -187,6 +233,11 @@ class Player(Entity):
             self.image = pygame.image.load(self.images[self.counter]).convert_alpha()
             self.counter = (self.counter + 1) % len(self.images)
 
+        #elif self.images == self.standing and self.frame_counter >= PLAYER_MAX_STANDING_FRAMES:
+        #    self.frame_counter = 0
+        #    self.image = pygame.image.load(self.images[self.counter])
+        #    self.counter = (self.counter + 1) % len(self.images)
+
         # only accelerate with gravity if in the air and no knockback
         if not self.onGround:
             self.yvel += 0.6 # increment falling velocity
@@ -196,7 +247,6 @@ class Player(Entity):
         self.rect.left += self.xvel # Modifies player's position in X direction
         PLAYER_X = self.rect.left #  Global Position Update:
 
-        """ x collision is currently commented out; not sure why its bugging out? """
         self.collide(self.xvel, 0, platforms) # do x-axis collisions
 
         self.rect.top += self.yvel  # Modifies player's position in Y direction
@@ -231,20 +281,37 @@ class Player(Entity):
 
 class Bullet(pygame.sprite.Sprite):
     """ This class represents the bullet . """
-    def __init__(self, mouse, player, camera_state):
+    def __init__(self, mouse, player, camera_state, direction, strength = None):
         # Call the parent class (Sprite) constructor
         pygame.sprite.Sprite.__init__(self)
-        self.player = player
+        #self.player = player
         # calculate center of bullet
-        self.center_y = (player[1] - player[2]/2)
-        self.center_x = (player[0] - player[2]/2)
+        #self.center_y = (player[1] + player[2])# - player[2]/2)
+        #self.center_x = (player[0] - player[2])# - player[2]/2)
         # grab mouse coordinates
         self.mouse_x, self.mouse_y = mouse[0], mouse[1]
-        self.image = pygame.Surface([4, 4])
-        self.image.fill(WHITE)
+        if strength == "strong":
+            # calculate center of bullet
+            self.center_y = player[1]/2 + player[2]/2 + 10# + player[2] - player[2]/2)
+            if direction == True:
+                self.center_x = player[0]/2 + player[2]/2 + 10# - player[2] - player[2]/2)
+                self.image = pygame.image.load('../sprites/player/blade_wave.png')
+            else:
+                self.center_x = player[0]/2 - player[2]/2 - 10
+                self.image = pygame.image.load('../sprites/player/blade_wave.png')
+                self.image = transform.flip(self.image, 1, 0)
+        else:
+            self.image = pygame.Surface([4, 4])
+            self.image.fill(WHITE)
+            # calculate center of bullet
+            self.center_y = (player[1]/2 + player[2]/2)
+            self.center_x = (player[0]/2 - player[2]/2)
         self.rect = self.image.get_rect()
+        #self.rect = Rect(x, y, 60, 60)
         # offset camera state on x coordinates
         self.mouse_x -= camera_state[0]
+        self.strength = strength
+        self.direction = direction
         # might need to offset camera in y coordinates in the future
         # .. add here
 
@@ -253,13 +320,18 @@ class Bullet(pygame.sprite.Sprite):
         speed = 7
         range = 200
         # generate bullet vector
-        distance = [self.mouse_x - self.center_x, self.mouse_y - self.center_y]
-        norm = sqrt(distance[0] ** 2 + distance[1] ** 2)
-        direction = [distance[0] / norm, distance[1] / norm]
-        bullet_vector = [direction[0] * speed, direction[1] * speed]
-
-        self.rect.x += bullet_vector[0]
-        self.rect.y += bullet_vector[1]
+        if self.strength == None:
+            distance = [self.mouse_x - self.center_x, self.mouse_y - self.center_y]
+            norm = sqrt(distance[0] ** 2 + distance[1] ** 2)
+            direction = [distance[0] / norm, distance[1] / norm]
+            bullet_vector = [direction[0] * speed, direction[1] * speed]        
+            self.rect.x += bullet_vector[0]
+            self.rect.y += bullet_vector[1]
+        else:
+            if self.direction == True:
+                self.rect.x += 4
+            else:
+                self.rect.x -= 4
 
 """                                 Platforms and Blocks                                 """
 
@@ -503,7 +575,12 @@ class PySnake(Enemy):
 
         # establish list of sprite images
         self.images = ['../sprites/PySnake/default_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
+        self.dying = ['../sprites/PySnake/default_snake/default_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
         self.image = pygame.image.load(self.images[0]) # start on first image
+        self.hit = False
+        self.kill = False
+        self.dying_counter = 0 
+        self.inflated = False # for handeling resizing on death
 
     def update(self, platforms, blank_platforms, blocks, entities):
         """ update garbage collector """
@@ -514,11 +591,16 @@ class PySnake(Enemy):
             if self.reverse:
                 self.image = transform.flip(self.image, 1, 0)
             self.counter = (self.counter + 1) % len(self.images)
-
-        if not self.reverse:
-            self.xvel = -2
-        else:
-            self.xvel = 2
+        if self.hit:
+            self.xvel = 0
+            self.images = self.dying
+            #self.counter = 0
+            self.dying_counter += 1
+        if not self.hit:
+            if not self.reverse:
+                self.xvel = -2
+            elif self.reverse:
+                self.xvel = 2
 
          # only accelerate with gravity if in the air
         if not self.onGround:
@@ -531,14 +613,16 @@ class PySnake(Enemy):
         self.rect.left += self.xvel
 
         # do x-axis collision
-        self.collide(self.xvel, 0, platforms, blocks, entities)
+        if self.dying_counter < 30:
+            self.collide(self.xvel, 0, platforms, blocks, entities)
 
         # increment in y direction
         self.rect.top += self.yvel
         self.onGround = False;
 
         # do y-axis collision
-        self.collide(0, self.yvel, platforms, blocks, entities)
+        if self.dying_counter < 30:
+            self.collide(0, self.yvel, platforms, blocks, entities)
 
         # handle collisions for blank collision blocks
         for p in blank_platforms:
@@ -564,6 +648,16 @@ class PySnake(Enemy):
                 if yvel < 0: # moving up, hit bottom side of wall
                     self.rect.top = p.rect.bottom
 
+class GreenPysnake(PySnake):
+    def __init__(self, x, y):
+        PySnake.__init__(self, x, y)
+        self.images = ['../sprites/PySnake/green_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
+        self.image = pygame.image.load(self.images[0]) # start on first image
+        self.dying = ['../sprites/PySnake/green_snake/green_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
+        
+    #def collide(self, xvel, yvel, platforms, blocks, entities, player):
+    #   PySnake.collide(self, xvel, yvel, platforms, blocks, entities)
+                
 
 class Ghost(Enemy):
     def __init__(self, x, y):
