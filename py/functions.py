@@ -1,26 +1,27 @@
 #! /usr/bin/python
 
 import levels
-from classes import *
+import classes
 import os, time
+import pygame
 
 def simple_camera(camera, target_rect):
     """ simple camera class """
     l, t, _, _ = target_rect
     _, _, w, h = camera
-    return Rect(-l+HALF_WIDTH, -t+HALF_HEIGHT, w, h)
+    return pygame.Rect(-l + HALF_WIDTH, -t + HALF_HEIGHT, w, h)
 
 def complex_camera(camera, target_rect):
     """ complex camera class """
     l, t, _, _ = target_rect
     _, _, w, h = camera
-    l, t, _, _ = -l+HALF_WIDTH, -t+HALF_HEIGHT, w, h
+    l, t, _, _ = -l + classes.HALF_WIDTH, -t + classes.HALF_HEIGHT, w, h
 
     l = min(0, l)                           # stop scrolling at the left edge
-    l = max(-(camera.width-WIN_WIDTH), l)   # stop scrolling at the right edge
-    t = max(-(camera.height-WIN_HEIGHT), t) # stop scrolling at the bottom
+    l = max(-(camera.width - classes.WIN_WIDTH), l)   # stop scrolling at the right edge
+    t = max(-(camera.height - classes.WIN_HEIGHT), t) # stop scrolling at the bottom
     t = min(0, t)                           # stop scrolling at the top
-    return Rect(l, t, w, h)
+    return pygame.Rect(l, t, w, h)
 
 def get_level(level_num):
     """ retrieve levels """
@@ -49,92 +50,92 @@ def build_level(*args):
             if col != " ":
                 if col == "E":
                     which_block = BaigeBlock
-                    p = Platform(x, y, which_block)
+                    p = classes.Platform(x, y, which_block)
                     platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
                 elif col == "C":
                     which_block = BrownBlock
-                    p = Platform(x, y, which_block)
+                    p = classes.Platform(x, y, which_block)
                     platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
                 elif col == "A":
                     which_block = BlueBlock
-                    p = Platform(x, y, which_block)
+                    p = classes.Platform(x, y, which_block)
                     platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
                 elif col == "B":
                     which_block = BrightBlueBlock
-                    p = Platform(x, y, which_block)
+                    p = classes.Platform(x, y, which_block)
                     platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
                 elif col == "D":
                     which_block = GrayBlock
-                    p = Platform(x, y, which_block)
+                    p = classes.Platform(x, y, which_block)
                     platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
                 elif col == "L":
                     which_block = TopLeftStoneBlock
                     # add indestructible manually to sprite lists
-                    p = Platform(x, y, which_block)
+                    p = classes.Platform(x, y, which_block)
                     indestructibles.add(p)
                     entities.add(p)
                     platforms.append(p)
                 elif col == "R":
                     which_block = TopRightStoneBlock
                     # add indestructible manually to sprite lists
-                    p = Platform(x, y, which_block)
+                    p = classes.Platform(x, y, which_block)
                     indestructibles.add(p)
                     entities.add(p)
                     platforms.append(p)
                 elif col == "M":
                     which_block = LeftStoneBlock
-                    p = Platform(x, y, which_block)
+                    p = classes.Platform(x, y, which_block)
                     platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
                 elif col == "N":
                     which_block = RightStoneBlock
-                    p = Platform(x, y, which_block)
+                    p = classes.Platform(x, y, which_block)
                     platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
                 elif col == "O":
                     which_block = CollisionBlock
                     # add collision block manually to sprite lists
-                    p = BlankPlatform(x, y, which_block, False)
+                    p = classes.BlankPlatform(x, y, which_block, False)
                     collision_blocks.append(p)
                     collision_block_sprites.add(p)
                     entities.add(p)
                 elif col == "Q":
                     which_block = CornerPatrolBlock
-                    p = BlankPlatform(x, y, which_block, True)
+                    p = classes.BlankPlatform(x, y, which_block, True)
                     collision_blocks.append(p)
                     collision_block_sprites.add(p)
                     entities.add(p)
                 elif col == "X":
                     # add exit block manually to sprite lists
-                    p = ExitBlock(x, y)
+                    p = classes.ExitBlock(x, y)
                     collision_blocks.append(p)
                     collision_block_sprites.add(p)
                     entities.add(p)
                 # spawn enemies
                 elif col == "1":
-                    enemy = GarbageCollector(x, y)
+                    enemy = classes.GarbageCollector(x, y)
                     entities.add(enemy)
                     enemies.append(enemy)
                 elif col == "2":
-                    enemy = GreenPysnake(x, y)
+                    enemy = classes.GreenPysnake(x, y)
                     entities.add(enemy)
                     enemies.append(enemy)
                 elif col == "3":
-                    enemy = RedPysnake(x, y)
+                    enemy = classes.RedPysnake(x, y)
                     entities.add(enemy)
                     enemies.append(enemy)
                 elif col == "4":
-                    enemy = BluePysnake(x, y)
+                    enemy = classes.BluePysnake(x, y)
                     entities.add(enemy)
                     enemies.append(enemy)
                 elif col == "5":
-                    enemy = PurplePysnake(x, y)
+                    enemy = classes.PurplePysnake(x, y)
                     entities.add(enemy)
                     enemies.append(enemy)
                 elif col == "6":
-                    enemy = RedGhost(x, y)
+                    enemy = classes.RedGhost(x, y)
                     entities.add(enemy)
                     enemies.append(enemy)
                 elif col == "7":
-                    enemy = WhiteGhost(x, y)
+                    enemy = classes.WhiteGhost(x, y)
                     entities.add(enemy)
                     enemies.append(enemy)
             x += 32 # index by 32 bits
@@ -167,7 +168,7 @@ def bullet_collision(*args):
     # See if it hit a block
     block_hit_list, bullet_hit_list = [], []
     for bullet in bullets:
-        hit_block = sprite.spritecollide(bullet, blocks, True)
+        hit_block = pygame.sprite.spritecollide(bullet, blocks, True)
         block_hit_list += hit_block # keep track of hit blocks
         if bool(hit_block):
             bullet_hit_list.append(bullet)
@@ -181,7 +182,7 @@ def bullet_collision(*args):
     # See if we hit an enemy
     enemy_hit_list = []
     for bullet in bullets:
-        hit_enemy = sprite.spritecollide(bullet, enemy_sprites, False)
+        hit_enemy = pygame.sprite.spritecollide(bullet, enemy_sprites, False)
         enemy_hit_list += hit_enemy
         if bool(hit_enemy):
             bullets.remove(bullet)
@@ -210,7 +211,7 @@ def bullet_collision(*args):
 
     # See if we hit an indestructible block
     for bullet in bullets:
-        if bool(sprite.spritecollide(bullet, indestructibles, False)):
+        if bool(pygame.sprite.spritecollide(bullet, indestructibles, False)):
             bullets.remove(bullet)
             entities.remove(bullet)
 
@@ -267,15 +268,15 @@ def reset_level(*args):
 
 def healthBar(player_health, screen, cache):
     """ displays player's health bar at top right of screen """
-    if player_health > PLAYER_STARTER_HEALTH * 0.75:
-        player_health_color = GREEN
-    elif player_health > PLAYER_STARTER_HEALTH* 0.40:
-        player_health_color = YELLOW
+    if player_health > classes.PLAYER_STARTER_HEALTH * 0.75:
+        player_health_color = classes.GREEN
+    elif player_health > classes.PLAYER_STARTER_HEALTH* 0.40:
+        player_health_color = classes.YELLOW
     else:
         player_health_color = RED
     """ pygame.draw.rect(screen, color, (x,y,width,height), thickness) """
     pygame.draw.rect(screen, player_health_color, (549,25,player_health,25), 0)
-    pygame.draw.rect(screen, WHITE, (549,25,PLAYER_STARTER_HEALTH,25), 3)
+    pygame.draw.rect(screen, classes.WHITE, (549,25,classes.PLAYER_STARTER_HEALTH,25), 3)
     font = pygame.font.Font(None, 18)
     text = font.render("HP " + str(player_health), True, player_health_color)
     #text = get_msg("HP " + str(player_health), cache, player_health_color)
@@ -296,13 +297,13 @@ def enemyHealthBar(enemy_health, enemy, screen, camera_state):
     pygame.draw.rect(screen, enemy_health_color,\
     (enemy.rect.left + camera_state[0],\
     enemy.rect.top - enemy.rect.height + camera_state[1] + 35, enemy_health, 10), 0)
-    pygame.draw.rect(screen, WHITE,\
+    pygame.draw.rect(screen, classes.WHITE,\
     (enemy.rect.left + camera_state[0],\
     enemy.rect.top - enemy.rect.height + camera_state[1] + 35, enemy.max_health, 10), 1)
 
 def garbageCollectorHealthBar(enemy, screen, camera_state):
     """ displays garbage collectors health bar """
-    pygame.draw.rect(screen, WHITE,\
+    pygame.draw.rect(screen, classes.WHITE,\
     (enemy.rect.x + camera_state[0],\
     enemy.rect.top-enemy.rect.height + camera_state[1] + 35, 75,10), 0)
 
@@ -312,20 +313,20 @@ def get_msg(msg, cache, color = None):
         msg = msg.strip(' ')
         if msg == 'Game Over' or msg == 'Try again bruh...':
             font = pygame.font.Font(None, 36)
-            cache[msg] = font.render(msg, True, WHITE)
+            cache[msg] = font.render(msg, True, classes.WHITE)
         elif color != None:
             font = pygame.font.Font(None, 18)
             cache[msg] = font.render(msg, True, color)
         else:
             font = pygame.font.Font(None, 24)
-            cache[msg] = font.render(msg, True, WHITE)
+            cache[msg] = font.render(msg, True, classes.WHITE)
     #cache[msg] = fontobj.render(msg, False , pygame.Color('green'))
     return cache[msg]
 
 def gameOver(screen, cache):
     """ displays gameover message in center of screen """
     #font = pygame.font.Font(None, 36)
-    #text = font.render("Game Over", True, WHITE)
+    #text = font.render("Game Over", True, classes.WHITE)
     text = get_msg('Game Over', cache)
     text_rect = text.get_rect()
     text_x = screen.get_width() / 2 - text_rect.width / 2
@@ -337,7 +338,7 @@ def gameOver(screen, cache):
 def loading(screen, cache):
     """ displays loading message in center of screen """
     #font = pygame.font.Font(None, 24)
-    #text = font.render("Loading...", True, WHITE)
+    #text = font.render("Loading...", True, classes.WHITE)
     text = get_msg('Loading...', cache)
     text_rect = text.get_rect()
     text_x = screen.get_width() / 2 - text_rect.width / 2
@@ -349,7 +350,7 @@ def displayTimer(screen, time_left, current_score, cache):
     """ displays countdown timer and score """
     # display timer text
     #font = pygame.font.Font(None, 24)
-    #text = font.render('Timer: ', True, WHITE)
+    #text = font.render('Timer: ', True, classes.WHITE)
     text = get_msg('Timer: ', cache)
     text_rect = text.get_rect()
     text_x = screen.get_width() / 8 - text_rect.width / 2 - 43 # + text_rect.width - 40
@@ -358,7 +359,7 @@ def displayTimer(screen, time_left, current_score, cache):
     screen.blit(text, [text_x, text_y])
     # display elapsed timer
     text = get_msg(time_left, cache)
-    #text = font.render(time_left, True, WHITE)
+    #text = font.render(time_left, True, classes.WHITE)
     text_rect = text.get_rect()
     text_x = text_x + 57 #screen.get_width() / 8 - #text_rect.width / 2 + 12 # + text_rect.width - 40
     text_y = screen.get_height() / 16 + 10
@@ -366,7 +367,7 @@ def displayTimer(screen, time_left, current_score, cache):
     screen.blit(text, [text_x, text_y])
     # display score
     text = get_msg('Score:' + str(current_score).zfill(8), cache)
-    #text = font.render('Score: ' + str(current_score).zfill(8), True, WHITE)
+    #text = font.render('Score: ' + str(current_score).zfill(8), True, classes.WHITE)
     text_rect = text.get_rect()
     text_x = screen.get_width() / 8 - text_rect.width / 2
     text_y = screen.get_height() / 16 - 5
@@ -393,16 +394,11 @@ def scrollScore(current_score, score):
         current_score += 1
     return current_score
 
-def deleteEnemy(target, enemy_sprites, enemies, entities):
+def delete_enemy(target, enemy_sprites, enemies, entities):
     enemy_sprites.remove(target)
     enemies.remove(target)
     entities.remove(target)
 
-def outOfLevel(rect, max_x, max_y):
-    if rect.left < 0 or \
-       rect.left > max_x or \
-       rect.top < 0 or \
-       rect.top > max_y:
-        return True
-    else:
-        return False
+def out_of_level(rect, max_x, max_y):
+    return rect.left < 0 or rect.left > max_x or \
+           rect.top < 0 or rect.top > max_y

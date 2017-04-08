@@ -1,9 +1,9 @@
 #! /usr/bin/python
 
 # import our modules
+from classes import *
 from functions import *
 import levels
-from classes import *
 #from gifimage import *
 
 import time, os, sys
@@ -69,9 +69,9 @@ def main():
     collision_block_sprites, indestructibles, collision_blocks = build_level(*args)
 
     # generate size of level and set camera
-    total_level_width  = len(level[0])*32
-    total_level_height = len(level)*32
-    camera = Camera(complex_camera, total_level_width, total_level_height)
+    pygame.total_level_width  = len(level[0])*32
+    pygame.total_level_height = len(level)*32
+    camera = Camera(complex_camera, pygame.total_level_width, pygame.total_level_height)
 
     elapsed_playtime = 0 # keeps track of play time in seconds
     current_life_playtime = 0
@@ -87,7 +87,6 @@ def main():
     main_loop = True
     game_over = False
     while main_loop:
-
         """ handle fps and elapsed_playtime counter """
         fps = timer.tick(__FPS) # max fps
         elapsed_playtime += fps / 1000.0
@@ -106,6 +105,7 @@ def main():
             bg = pygame.image.load(BACKGROUNDS[current_level])
             bg = pygame.transform.scale(bg, (WIN_WIDTH, WIN_HEIGHT))
             bg = bg.convert_alpha()
+
             current_life_playtime = 0
             camera_state = 0
             RESET_LEVEL_FLAG = False
@@ -118,9 +118,9 @@ def main():
             player, platforms, blocks, collision_blocks, collision_block_sprites,\
             entities, enemies, enemy_sprites, indestructibles = reset_level(*args)
             # reset camera
-            total_level_width  = len(level[0])*32
-            total_level_height = len(level)*32
-            camera = Camera(complex_camera, total_level_width, total_level_height)
+            pygame.total_level_width  = len(level[0])*32
+            pygame.total_level_height = len(level)*32
+            camera = Camera(complex_camera, pygame.total_level_width, pygame.total_level_height)
 
         """ event handler """
         for e in pygame.event.get():
@@ -233,12 +233,11 @@ def main():
                isinstance(enemy, PySnake) or \
                isinstance(enemy, Ghost):
                 enemy.update(platforms, collision_blocks, blocks, entities)
-                if isinstance(enemy, PySnake):
-                    if enemy.hit and enemy.dying_counter >= 55:
-                         deleteEnemy(enemy, enemy_sprites, enemies, entities)
-                if isinstance(enemy, Ghost) and outOfLevel(enemy.rect, total_level_width, total_level_height):
-                    deleteEnemy(enemy, enemy_sprites, enemies, entities)
-
+                if enemy.dead():
+                    delete_enemy(enemy, enemy_sprites, enemies, entities)
+#                if (isinstance(enemy, PySnake) and enemy.hit and enemy.dying_counter >= 55) or \
+#                   (isinstance(enemy, Ghost) and outOfLevel(enemy.rect, pygame.total_level_width, pygame.total_level_height)):
+#                    deleteEnemy(enemy, enemy_sprites, enemies, entities)
             else:
                 enemy.update()
 
@@ -269,9 +268,9 @@ def main():
                 current_score, score, current_level, lives = 0, 0, 1, MAX_LIVES
                 level = get_level(current_level)
                 # generate size of level and set camera
-                total_level_width  = len(level[0])*32
-                total_level_height = len(level)*32
-                camera = Camera(complex_camera, total_level_width, total_level_height)
+                #pygame.total_level_width  = len(level[0])*32
+                #pygame.total_level_height = len(level)*32
+                camera = Camera(complex_camera, pygame.total_level_width, pygame.total_level_height)
                 gameOver(screen, cache)
             else:
                 #font = pygame.font.Font(None, 36)

@@ -11,6 +11,11 @@ from math import sqrt, hypot, sin, radians
 from random import randrange
 from copy import copy
 
+# import our functions
+import functions
+
+#out_of_level()
+
 # Define screen borders
 WIN_WIDTH = 800
 WIN_HEIGHT = 450 # 400 # 640
@@ -50,8 +55,6 @@ cache = {}
 PLAYER_X = 0
 PLAYER_Y = 0
 
-# import our functions
-from functions import *
 
 class Camera(object):
     """ Camera object """
@@ -113,7 +116,7 @@ class Player(Entity):
         self.damage_frame += 1 # increments damage_frame every frame of game
         self.frame_counter += 1 # increments frame counter
 
-        
+
             #if self.onGround and self.images == self.jumping:
             #    #if left or right:
             #    #    self.images = self.running
@@ -324,7 +327,7 @@ class Bullet(pygame.sprite.Sprite):
             distance = [self.mouse_x - self.center_x, self.mouse_y - self.center_y]
             norm = sqrt(distance[0] ** 2 + distance[1] ** 2)
             direction = [distance[0] / norm, distance[1] / norm]
-            bullet_vector = [direction[0] * speed, direction[1] * speed]        
+            bullet_vector = [direction[0] * speed, direction[1] * speed]
             self.rect.x += bullet_vector[0]
             self.rect.y += bullet_vector[1]
         else:
@@ -350,7 +353,6 @@ class BlankPlatform(Entity):
         Entity.__init__(self)
         self.rect = Rect(x, y, 32, 32)
         self.image = pygame.Surface([32, 32], pygame.SRCALPHA, 32)
-        # SRC ALPHA BUG IS PROBABLY HERE ^^^
         self.image = self.image.convert_alpha()
         self.patrol = patrol
     def update(self):
@@ -474,6 +476,9 @@ class Enemy(Entity):
         self.health_counter = 0
         self.healthTrigger = False
 
+    def dead(self):
+        return False
+
 """                                 Enemies                                 """
 
 class GarbageCollector(Enemy):
@@ -579,7 +584,7 @@ class PySnake(Enemy):
         self.image = pygame.image.load(self.images[0]) # start on first image
         self.hit = False
         self.kill = False
-        self.dying_counter = 0 
+        self.dying_counter = 0
         self.inflated = False # for handeling resizing on death
 
     def update(self, platforms, blank_platforms, blocks, entities):
@@ -648,6 +653,9 @@ class PySnake(Enemy):
                 if yvel < 0: # moving up, hit bottom side of wall
                     self.rect.top = p.rect.bottom
 
+    def dead():
+        return enemy.hit and enemy.dying_counter >= 55
+
 class GreenPysnake(PySnake):
     """ green pysnake enemy """
     def __init__(self, x, y):
@@ -655,7 +663,7 @@ class GreenPysnake(PySnake):
         self.images = ['../sprites/PySnake/green_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
         self.image = pygame.image.load(self.images[0]) # start on first image
         self.dying = ['../sprites/PySnake/green_snake/green_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
-        
+
     #def collide(self, xvel, yvel, platforms, blocks, entities, player):
     #   PySnake.collide(self, xvel, yvel, platforms, blocks, entities)
 
@@ -689,8 +697,7 @@ class Ghost(Enemy):
         self.rect = Rect(x, y, 25, 25)
         self.image = pygame.image.load('../sprites/ghosts/boo/normal/1.png')
         self.reverse = False
-        #self.rect = self.image.get_rect()
-        #self.rect.left, self.rect.top = x, y
+
         # establishes attack for pysnake
         self.attack = 25
 
@@ -706,14 +713,15 @@ class Ghost(Enemy):
         self.xvel = 2
         self.yvel = 2
 
+        #flag to start moving
+        self.visible = False
         # establish list of sprite images
         #self.images = ['../sprites/PySnake/default_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
         #self.image = pygame.image.load(self.images[0]) # start on first image
-        
+
 
     def update(self, platforms, blank_platforms, blocks, entities):
         """ update garbage collector """
-        
         #self.frame_counter += 1
         #if self.frame_counter == GARBAGE_COLLECTOR_MAX_FRAMES:
         #    self.frame_counter = 0
@@ -748,6 +756,9 @@ class Ghost(Enemy):
     def collide(self, xvel, yvel, platforms, blocks, entities):
         pass
 
+    def dead(self):
+        return functions.out_of_level(self.rect, pygame.total_level_width, pygame.total_level_height)
+
 class WhiteGhost(Ghost):
     def __init__(self, x, y):
         Ghost.__init__(self, x, y)
@@ -766,10 +777,12 @@ class WhiteGhost(Ghost):
 
         if self.rect.top <= self.top_bound:
             self.ydir = 1
+            self.image = pygame.image.load('../sprites/ghosts/boo/normal/1.png')
             # self.ydir = sin(radians(self.rect.left))
             # self.xdir = sin(radians(self.rect.left))
         elif self.rect.top >= self.bot_bound:
             self.ydir = -1
+            self.image = pygame.image.load('../sprites/ghosts/boo/normal/2.png')
             # self.ydir = sin(radians(self.rect.left))
             # self.xdir = -sin(radians(self.rect.left))
 
