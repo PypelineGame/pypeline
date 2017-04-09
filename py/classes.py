@@ -861,6 +861,8 @@ class RedGhost(Ghost):
                 else:
                     self.chasing = False
 
+    def dead(self):
+        return True
 
 
 

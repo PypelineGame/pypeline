@@ -201,7 +201,7 @@ def bullet_collision(*args):
     for enemy in enemy_hit_list:
         enemy.healthTrigger = True
         if type(enemy).__name__ != "GarbageCollector":
-            if isinstance(enemy, PySnake):
+            if isinstance(enemy, classes.PySnake):
                 if type(enemy).__name__=="GreenPysnake":
                     enemy.attack *= 2
                 if enemy.health <= 0:
@@ -269,7 +269,7 @@ def reset_level(*args):
     # respawn player at these coordinates
     player.kill()
     x, y = SPAWN_POINT_LEVEL[current_level][0], SPAWN_POINT_LEVEL[current_level][1]
-    player = Player(x, y)
+    player = classes.Player(x, y)
     entities.add(player)
 
     return player, platforms, blocks, collision_blocks, collision_block_sprites,\
@@ -280,9 +280,9 @@ def healthBar(player_health, screen, cache):
     if player_health > classes.PLAYER_STARTER_HEALTH * 0.75:
         player_health_color = classes.GREEN
     elif player_health > classes.PLAYER_STARTER_HEALTH* 0.40:
-        player_health_color = YELLOW
+        player_health_color = classes.YELLOW
     else:
-        player_health_color = RED
+        player_health_color = classes.RED
     """ pygame.draw.rect(screen, color, (x,y,width,height), thickness) """
     pygame.draw.rect(screen, player_health_color, (549,25,player_health,25), 0)
     pygame.draw.rect(screen, classes.WHITE, (549,25,classes.PLAYER_STARTER_HEALTH,25), 3)
@@ -306,13 +306,13 @@ def enemyHealthBar(enemy_health, enemy, screen, camera_state):
     pygame.draw.rect(screen, enemy_health_color,\
     (enemy.rect.left + camera_state[0],\
     enemy.rect.top - enemy.rect.height + camera_state[1] + 35, enemy_health, 10), 0)
-    pygame.draw.rect(screen, WHITE,\
+    pygame.draw.rect(screen, classes.WHITE,\
     (enemy.rect.left + camera_state[0],\
     enemy.rect.top - enemy.rect.height + camera_state[1] + 35, enemy.max_health, 10), 1)
 
 def garbageCollectorHealthBar(enemy, screen, camera_state):
     """ displays garbage collectors health bar """
-    pygame.draw.rect(screen, WHITE,\
+    pygame.draw.rect(screen, classes.WHITE,\
     (enemy.rect.x + camera_state[0],\
     enemy.rect.top-enemy.rect.height + camera_state[1] + 35, 75,10), 0)
 
@@ -374,7 +374,7 @@ def displayTimer(screen, time_left, current_score, cache):
     text_y = screen.get_height() / 16 + 10
     text_width, text_height = text_x, 17
     screen.blit(text, [text_x, text_y])
-    # display score 
+    # display score
     text = get_msg('Score:' + str(current_score).zfill(8), cache)
     #text = font.render('Score: ' + str(current_score).zfill(8), True, WHITE)
     text_rect = text.get_rect()
@@ -402,3 +402,12 @@ def scrollScore(current_score, score):
     if current_score < score:
         current_score += 1
     return current_score
+
+def delete_enemy(target, enemy_sprites, enemies, entities):
+    enemy_sprites.remove(target)
+    enemies.remove(target)
+    entities.remove(target)
+
+def out_of_level(rect, max_x, max_y):
+    return rect.left < 0 or rect.left > max_x or \
+           rect.top < 0 or rect.top > max_y
