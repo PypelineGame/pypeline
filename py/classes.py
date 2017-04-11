@@ -862,7 +862,7 @@ class RedGhost(Ghost):
                     self.chasing = False
 
     def dead(self):
-        return True
+        return False
 
 
 
