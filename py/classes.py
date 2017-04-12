@@ -786,7 +786,7 @@ class Ghost(Enemy):
 
         # do x-axis collision
         self.collide(self.xvel, 0, platforms, blocks, entities)
-        
+
         # increment in y direction
         self.rect.top += int(round(self.ydir * self.yvel))
         self.onGround = False;
@@ -837,8 +837,9 @@ class WhiteGhost(Ghost):
 class RedGhost(Ghost):
     def __init__(self, x, y):
         Ghost.__init__(self, x, y)
-        self.radius = 500
-        self.chasing = False
+        self.radius = 500       # View radius, for chasing player
+        self.chasing = False    # Chasing movement flag
+        self.move_away = False  # Move away from overlapping ghost flag
 
     def update(self, platforms, blank_platforms, blocks, entities):
         global PLAYER_X, PLAYER_Y
@@ -851,13 +852,23 @@ class RedGhost(Ghost):
             self.xdir, self.ydir = -1 * dx / dist, -1 * dy / dist # direction are reversed
             # move along this normalized vector towards the player at current speed
 
+        if self.move_away:
+            pass
+
     def collide(self, xvel, yvel, platforms, blocks, entities):
         for e in entities:
-            if type(e) == Player:
-                if pygame.sprite.collide_circle(self,e):
+            if isinstance(e,Player):
+                player_in_view = pygame.sprite.collide_circle(self,e)
+                if player_in_view and not self.chasing:
                     self.chasing = True
-                else:
+                elif not player_in_view and self.chasing:
                     self.chasing = False
+            elif isinstance(e,RedGhost):
+                overlapping_ghosts = pygame.sprite.collide_rect(self,e)
+                if overlapping_ghosts and not self.move_away:
+                    self.move_away = True
+                elif not overlapping_ghosts and self.move_away:
+                    self.move_away = False
 
     def dead(self):
         return False
