@@ -764,8 +764,6 @@ class Ghost(Enemy):
         #if self.frame_counter == GARBAGE_COLLECTOR_MAX_FRAMES:
         #    self.frame_counter = 0
         #    self.image = pygame.image.load(self.images[self.counter]).convert_alpha()
-        if self.reverse:
-            self.image = transform.flip(self.image, 1, 0)
         #    self.counter = (self.counter + 1) % len(self.images)
 
         #  # only accelerate with gravity if in the air
@@ -774,18 +772,23 @@ class Ghost(Enemy):
         #      # max falling speed
         #     if self.yvel > 100:
         #         self.yvel = 100
-        if self.xvel < 0 and not self.reverse:
-            self.reverse = True
-        elif self.xvel > 0 and self.reverse:
+
+        # Flip image and set reverse flag
+        if self.xdir < 0 and self.reverse:
             self.reverse = False
+            self.image = transform.flip(self.image, 1, 0)
+        if self.xdir > 0 and not self.reverse:
+            self.reverse = True
+            self.image = transform.flip(self.image, 1, 0)
 
         # increment in x direction
-        self.rect.left += self.xdir * self.xvel
+        self.rect.left += int(round(self.xdir * self.xvel))
+
         # do x-axis collision
         self.collide(self.xvel, 0, platforms, blocks, entities)
-
+        
         # increment in y direction
-        self.rect.top += self.ydir * self.yvel
+        self.rect.top += int(round(self.ydir * self.yvel))
         self.onGround = False;
 
         # do y-axis collision
@@ -842,16 +845,11 @@ class RedGhost(Ghost):
         Ghost.update(self, platforms, blank_platforms, blocks, entities)
         # Chasing Functionality
         if self.chasing:
-            self.yvel = 2
             # find normalized direction vector (dx, dy) between enemy and player
             dx, dy = self.rect.left - PLAYER_X, self.rect.top - PLAYER_Y
             dist = hypot(dx, dy)
             self.xdir, self.ydir = -1 * dx / dist, -1 * dy / dist # direction are reversed
             # move along this normalized vector towards the player at current speed
-        elif not self.reverse:
-            self.xdir = -1
-        else:
-            self.xdir = 1
 
     def collide(self, xvel, yvel, platforms, blocks, entities):
         for e in entities:
@@ -862,7 +860,7 @@ class RedGhost(Ghost):
                     self.chasing = False
 
     def dead(self):
-        return True
+        return False
 
 
 
