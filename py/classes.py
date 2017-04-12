@@ -782,13 +782,13 @@ class Ghost(Enemy):
             self.image = transform.flip(self.image, 1, 0)
 
         # increment in x direction
-        self.rect.left += self.xdir * self.xvel
+        self.rect.left += int(round(self.xdir * self.xvel))
 
         # do x-axis collision
         self.collide(self.xvel, 0, platforms, blocks, entities)
-
+        
         # increment in y direction
-        self.rect.top += self.ydir * self.yvel
+        self.rect.top += int(round(self.ydir * self.yvel))
         self.onGround = False;
 
         # do y-axis collision
