@@ -291,7 +291,7 @@ def healthBar(player_health, screen, cache):
     #text = get_msg("HP " + str(player_health), cache, player_health_color)
     text_rect = text.get_rect()
     text_x = 549
-    text_y = screen.get_height() / 10 - text_rect.height / 2
+    text_y = screen.get_height() / 10 - text_rect.height / 2 + 20
     screen.blit(text, [text_x, text_y])
 
 def enemyHealthBar(enemy_health, enemy, screen, camera_state):
@@ -360,9 +360,9 @@ def displayTimer(screen, time_left, current_score, cache):
     # display timer text
     #font = pygame.font.Font(None, 24)
     #text = font.render('Timer: ', True, WHITE)
-    text = get_msg('Timer: ', cache)
+    text = get_msg('Timer:', cache)
     text_rect = text.get_rect()
-    text_x = screen.get_width() / 8 - text_rect.width / 2 - 43 # + text_rect.width - 40
+    text_x = screen.get_width() / 8 - text_rect.width / 2 - 45 # + text_rect.width - 40
     text_y = screen.get_height() / 16 + 10
     text_width, text_height = text_x, 17
     screen.blit(text, [text_x, text_y])
@@ -375,7 +375,7 @@ def displayTimer(screen, time_left, current_score, cache):
     text_width, text_height = text_x, 17
     screen.blit(text, [text_x, text_y])
     # display score
-    text = get_msg('Score:' + str(current_score).zfill(8), cache)
+    text = get_msg('Score: ' + str(current_score).zfill(8), cache)
     #text = font.render('Score: ' + str(current_score).zfill(8), True, WHITE)
     text_rect = text.get_rect()
     text_x = screen.get_width() / 8 - text_rect.width / 2
