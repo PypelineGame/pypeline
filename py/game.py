@@ -12,6 +12,7 @@ def main():
     global cameraX, cameraY
     global RESET_LEVEL_FLAG
     RESET_LEVEL_FLAG = False
+    pygame.mixer.pre_init(44100,16,2,4096)
     pygame.init()
 
     print ("Game loaded.")
@@ -27,14 +28,16 @@ def main():
     current_level = 1 # start at level 1
     level = get_level(current_level)
     # Define list of backgrounds for the levels
-    BACKGROUNDS = [0, 'background5.jpg', 'beauty.jpg']
+    BACKGROUNDS = [0, 'background5.jpg', 'beauty.jpg', 'deep_jungle.png', 'mountain_range.png', 'montanha']
     for i in range(1, len(BACKGROUNDS)):
         BACKGROUNDS[i] = '../sprites/backgrounds/' + BACKGROUNDS[i]
 
     # helps draw background
     CURRENT_WIN_WIDTH = copy(WIN_WIDTH)
     camera_state = 0
-
+    pygame.mixer.music.load("background.mp3")
+    pygame.mixer.music.set_volume(0.5)
+    pygame.mixer.music.play(-1)
     bg = pygame.image.load(BACKGROUNDS[current_level])
     bg = pygame.transform.scale(bg, (WIN_WIDTH, WIN_HEIGHT))
     bg = bg.convert_alpha()
