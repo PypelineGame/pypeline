@@ -12,9 +12,11 @@ def main():
     global cameraX, cameraY
     global RESET_LEVEL_FLAG
     RESET_LEVEL_FLAG = False
+    pygame.mixer.pre_init(44100,16,2,4096)
     pygame.init()
 
     print ("Game loaded.")
+    loading = False
     os.environ['SDL_VIDEO_CENTERED'] = '1'
     screen = pygame.display.set_mode(DISPLAY, FLAGS, DEPTH)
     hud = pygame.display.set_mode(DISPLAY, FLAGS, DEPTH)
@@ -31,7 +33,13 @@ def main():
     CURRENT_WIN_WIDTH = copy(WIN_WIDTH)
     camera_state = 0
 
+    # loads background music
+    pygame.mixer.music.load("background.mp3")
+    pygame.mixer.music.set_volume(0.5)
+    pygame.mixer.music.play(-1)
+
     bg = pygame.image.load(levels.BACKGROUNDS[current_level])
+
     bg = pygame.transform.scale(bg, (WIN_WIDTH, WIN_HEIGHT))
     bg = bg.convert_alpha()
 
@@ -245,8 +253,12 @@ def main():
             bullets, entities, platforms, blocks, enemies, enemy_sprites, score = bullet_collision(*args)
 
         # display loading when screen lags
-        #if timer.get_fps() < 55 and lives > 0:
-        #    loading(screen, cache)
+        if timer.get_fps() < 60 and not loading and lives > 0:
+            #loading(screen, cache)
+            print('Loading...')
+            loading = True
+        elif timer.get_fps() >= 60 and loading and lives > 0:
+            loading = False
 
         # if player has fallen off screen or hit an enemy, player has died
         if player.rect.y > 1000 or player.health <= 0 or time_remaining <= 0:
@@ -262,8 +274,8 @@ def main():
                 current_score, score, current_level, lives = 0, 0, 1, MAX_LIVES
                 level = get_level(current_level)
                 # generate size of level and set camera
-                #pygame.total_level_width  = len(level[0])*32
-                #pygame.total_level_height = len(level)*32
+                pygame.total_level_width  = len(level[0])*32
+                pygame.total_level_height = len(level)*32
                 camera = Camera(complex_camera, pygame.total_level_width, pygame.total_level_height)
                 gameOver(screen, cache)
             else:
