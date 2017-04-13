@@ -28,18 +28,18 @@ def main():
 
     current_level = 1 # start at level 1
     level = get_level(current_level)
-    # Define list of backgrounds for the levels
-    BACKGROUNDS = [0, 'background5.jpg', 'beauty.jpg', 'deep_jungle.png', 'mountain_range.png', 'montanha']
-    for i in range(1, len(BACKGROUNDS)):
-        BACKGROUNDS[i] = '../sprites/backgrounds/' + BACKGROUNDS[i]
 
     # helps draw background
     CURRENT_WIN_WIDTH = copy(WIN_WIDTH)
     camera_state = 0
+
+    # loads background music
     pygame.mixer.music.load("background.mp3")
     pygame.mixer.music.set_volume(0.5)
     pygame.mixer.music.play(-1)
-    bg = pygame.image.load(BACKGROUNDS[current_level])
+
+    bg = pygame.image.load(levels.BACKGROUNDS[current_level])
+
     bg = pygame.transform.scale(bg, (WIN_WIDTH, WIN_HEIGHT))
     bg = bg.convert_alpha()
 
@@ -82,10 +82,7 @@ def main():
     current_life_playtime = 0
     current_score, score = 0, 0
     lives = copy(MAX_LIVES)
-    MAX_PLAYTIME_PER_LEVEL = [0, 8000, 360] # max time allowed before time runs out per level
-    SPAWN_POINT_LEVEL = [0, (64, 135), (64, 64)] # x,y coordinates for each level spawn
-
-    player = Player(SPAWN_POINT_LEVEL[1][0], SPAWN_POINT_LEVEL[1][1])
+    player = Player(levels.SPAWN_POINT_LEVEL[1][0], levels.SPAWN_POINT_LEVEL[1][1])
     entities.add(player) # adds player to the list of entities
 
     """ main game loop """
@@ -96,7 +93,7 @@ def main():
         fps = timer.tick(__FPS) # max fps
         elapsed_playtime += fps / 1000.0
         current_life_playtime += fps / 1000.0
-        time_remaining = float(MAX_PLAYTIME_PER_LEVEL[current_level]-current_life_playtime)
+        time_remaining = float(levels.MAX_PLAYTIME_PER_LEVEL[current_level]-current_life_playtime)
 
         """ display fps and playtime on window """
         text_display = "{0:.2f}fps    {1:.1f}s".format(timer.get_fps(), elapsed_playtime)
@@ -107,7 +104,7 @@ def main():
             # moves to next level
             current_level += 1
             # changes background
-            bg = pygame.image.load(BACKGROUNDS[current_level])
+            bg = pygame.image.load(levels.BACKGROUNDS[current_level])
             bg = pygame.transform.scale(bg, (WIN_WIDTH, WIN_HEIGHT))
             bg = bg.convert_alpha()
 
@@ -118,7 +115,7 @@ def main():
             # package arguments for reset level
             args = screen, player, level, current_level, platforms, bullets,\
             blocks, entities, enemies, enemy_sprites, Platform,\
-            block_types, collision_blocks, collision_block_sprites, indestructibles, SPAWN_POINT_LEVEL
+            block_types, collision_blocks, collision_block_sprites, indestructibles, levels.SPAWN_POINT_LEVEL
             # call reset level
             player, platforms, blocks, collision_blocks, collision_block_sprites,\
             entities, enemies, enemy_sprites, indestructibles = reset_level(*args)
@@ -271,7 +268,7 @@ def main():
             # if player has run out of lives, set player back to level 1 and reset score
             if lives <= 0:
                 current_level = 1
-                bg = pygame.image.load(BACKGROUNDS[current_level])
+                bg = pygame.image.load(levels.BACKGROUNDS[current_level])
                 bg = pygame.transform.scale(bg, (WIN_WIDTH, WIN_HEIGHT))
                 bg = bg.convert_alpha()
                 current_score, score, current_level, lives = 0, 0, 1, MAX_LIVES
@@ -292,7 +289,7 @@ def main():
             # build argument list
             args = screen, player, level, current_level, platforms, bullets,\
             blocks, entities, enemies, enemy_sprites, Platform,\
-            block_types, collision_blocks, collision_block_sprites, indestructibles, SPAWN_POINT_LEVEL
+            block_types, collision_blocks, collision_block_sprites, indestructibles, levels.SPAWN_POINT_LEVEL
             # call reset level function with *args
             player, platforms, blocks, collision_blocks, collision_block_sprites,\
             entities, enemies, enemy_sprites, indestructibles = reset_level(*args)

@@ -32,10 +32,17 @@
 # 6 = Red Ghost
 # 7 = White Ghost
 
-#from classes import *
+import classes
 
 """ lists to store levels and enemies """
 get_levels = [0] #, get_enemies = [0], [0] # init first index to 0
+
+MAX_PLAYTIME_PER_LEVEL = [0, 8000, 360, 360] # max time allowed before time runs out per level
+SPAWN_POINT_LEVEL = [0, (64, 135), (64, 64), (64, 64)] # x,y coordinates for each level spawn
+BACKGROUNDS = [0, 'background5.jpg', 'beauty.jpg', 'forest_day.png', 'montanha.png']
+    # Get list of backgrounds for the levels
+for i in range(1, len(BACKGROUNDS)):
+    BACKGROUNDS[i] = classes.SPRITES_DIRECTORY + 'backgrounds/' + BACKGROUNDS[i]
 
 level_1 = [
 
@@ -133,5 +140,5 @@ level_3 = [
 "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnB"]
 
 # add enemies/levels to list
+
 get_levels.append(level_3)
-'''

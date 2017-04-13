@@ -11,11 +11,9 @@ from math import sqrt, hypot, sin, radians
 from random import randrange
 from copy import copy
 
-# import our functions
-import functions
 
 #out_of_level()
-
+SPRITES_DIRECTORY = "../assets/sprites/"
 # Define screen borders
 WIN_WIDTH = 800
 WIN_HEIGHT = 450 # 400 # 640
@@ -55,6 +53,8 @@ cache = {}
 PLAYER_X = 0
 PLAYER_Y = 0
 
+# import our functions
+import functions
 
 class Camera(object):
     """ Camera object """
@@ -91,9 +91,9 @@ class Player(Entity):
         self.damage_frame = 0 # counts # of frames until max damage frames
         self.enemy_collision, self.knockback_left, self.knockback_right, self.flicker = False, False, False, False
         self.frame_counter, self.counter, self.jump_counter = 0, 0, 0
-        self.running = ['../sprites/player/running/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8]]
-        self.standing = ['../sprites/player/standing/' + str(x) + '.png' for x in [1, 2, 3, 4]]#, 5, 6]]#, 7, 8, 9]]
-        self.jumping = ['../sprites/player/jumping/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
+        self.running = [SPRITES_DIRECTORY + 'player/running/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8]]
+        self.standing = [SPRITES_DIRECTORY + 'player/standing/' + str(x) + '.png' for x in [1, 2, 3, 4]]#, 5, 6]]#, 7, 8, 9]]
+        self.jumping = [SPRITES_DIRECTORY + 'player/jumping/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
         self.images = self.standing # by default
         self.jump = False
         self.image = pygame.image.load(self.images[0])
@@ -302,11 +302,11 @@ class Bullet(pygame.sprite.Sprite):
             if direction == True:
                 # draw going right
                 self.center_x = player[0]/2 + player[2]/2 + 10# - player[2] - player[2]/2)
-                self.image = pygame.image.load('../sprites/player/blade_wave.png')
+                self.image = pygame.image.load(SPRITES_DIRECTORY + 'player/blade_wave.png')
             else:
                 # draw going left
                 self.center_x = player[0]/2 - player[2]/2 - 10
-                self.image = pygame.image.load('../sprites/player/blade_wave.png')
+                self.image = pygame.image.load(SPRITES_DIRECTORY + 'player/blade_wave.png')
                 self.image = transform.flip(self.image, 1, 0)
         else:
             self.image = pygame.Surface([4, 4])
@@ -374,7 +374,7 @@ class BaigeBlock(BlockType):
     """ baigeblock class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/baige_block.png").convert_alpha()
+        self.image = pygame.image.load(SPRITES_DIRECTORY + "blocks/baige_block.png").convert_alpha()
     def update(self):
         pass
 
@@ -382,7 +382,7 @@ class BrownBlock(BlockType):
     """ brown block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/brown_block.png").convert_alpha()
+        self.image = pygame.image.load(SPRITES_DIRECTORY + "blocks/brown_block.png").convert_alpha()
     def update(self):
         pass
 
@@ -390,7 +390,7 @@ class NeonRedBlock(BlockType):
     """ brown block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/neon_red.png").convert_alpha()
+        self.image = pygame.image.load(SPRITES_DIRECTORY + "blocks/neon_red.png").convert_alpha()
     def update(self):
         pass
 
@@ -398,7 +398,7 @@ class NeonWhiteBlock(BlockType):
     """ brown block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/neon_white.png").convert_alpha()
+        self.image = pygame.image.load(SPRITES_DIRECTORY + "blocks/neon_white.png").convert_alpha()
     def update(self):
         pass
 
@@ -406,7 +406,7 @@ class NeonBlueBlock(BlockType):
     """ brown block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/neon_blue.png").convert_alpha()
+        self.image = pygame.image.load(SPRITES_DIRECTORY + "blocks/neon_blue.png").convert_alpha()
     def update(self):
         pass
 
@@ -414,7 +414,7 @@ class NeonYellowBlock(BlockType):
     """ brown block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/neon_yellow.png").convert_alpha()
+        self.image = pygame.image.load(SPRITES_DIRECTORY + "blocks/neon_yellow.png").convert_alpha()
     def update(self):
         pass
 
@@ -422,7 +422,7 @@ class NeonOrangeBlock(BlockType):
     """ brown block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/neon_orange.png").convert_alpha()
+        self.image = pygame.image.load(SPRITES_DIRECTORY + "blocks/neon_orange.png").convert_alpha()
     def update(self):
         pass
 
@@ -430,7 +430,7 @@ class NeonGreenBlock(BlockType):
     """ brown block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/neon_green.png").convert_alpha()
+        self.image = pygame.image.load(SPRITES_DIRECTORY + "blocks/neon_green.png").convert_alpha()
     def update(self):
         pass
 
@@ -438,7 +438,7 @@ class BlueBlock(BlockType):
     """ blue block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/blue_block.png").convert_alpha()
+        self.image = pygame.image.load(SPRITES_DIRECTORY + "blocks/blue_block.png").convert_alpha()
     def update(self):
         pass
 
@@ -446,7 +446,7 @@ class BrightBlueBlock(BlockType):
     """ bright blue block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/bright_blue_block.png").convert_alpha()
+        self.image = pygame.image.load(SPRITES_DIRECTORY + "blocks/bright_blue_block.png").convert_alpha()
     def update(self):
         pass
 
@@ -454,7 +454,7 @@ class GrayBlock(BlockType):
     """ gray block class """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/gray_block.png").convert_alpha()
+        self.image = pygame.image.load(SPRITES_DIRECTORY + "blocks/gray_block.png").convert_alpha()
     def update(self):
         pass
 
@@ -462,7 +462,7 @@ class Unbreakable1(BlockType):
     """ brown unbreakable block """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/unbreakable1.png").convert_alpha()
+        self.image = pygame.image.load(SPRITES_DIRECTORY + "blocks/unbreakable1.png").convert_alpha()
 
     def update(self):
         pass
@@ -471,7 +471,7 @@ class Unbreakable2(BlockType):
     """ grey brick unbreakable block """
     def __init__(self):
         BlockType.__init__(self)
-        self.image = pygame.image.load("../sprites/blocks/unbreakable2.png").convert_alpha()
+        self.image = pygame.image.load(SPRITES_DIRECTORY + "blocks/unbreakable2.png").convert_alpha()
     def update(self):
         pass
 
@@ -530,7 +530,7 @@ class GarbageCollector(Enemy):
         self.attack = 100
 
         # establish list of sprite images
-        self.images = ['../sprites/garbage_collector/' + str(x) + '.png' for x in [1, 2, 3, 4]]
+        self.images = [SPRITES_DIRECTORY + 'garbage_collector/' + str(x) + '.png' for x in [1, 2, 3, 4]]
         self.image = pygame.image.load(self.images[0]) # start on first images
 
     def update(self, platforms, blank_platforms, blocks, entities):
@@ -617,8 +617,8 @@ class PySnake(Enemy):
         self.health = 100
 
         # establish list of sprite images
-        self.images = ['../sprites/PySnake/default_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
-        self.dying = ['../sprites/PySnake/default_snake/default_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
+        self.images = [SPRITES_DIRECTORY + 'PySnake/default_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
+        self.dying = [SPRITES_DIRECTORY + 'PySnake/default_snake/default_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
         self.image = pygame.image.load(self.images[0]) # start on first image
         self.hit = False
         self.kill = False
@@ -698,9 +698,9 @@ class GreenPysnake(PySnake):
     """ green pysnake enemy """
     def __init__(self, x, y):
         PySnake.__init__(self, x, y)
-        self.images = ['../sprites/PySnake/green_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
+        self.images = [SPRITES_DIRECTORY + 'PySnake/green_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
         self.image = pygame.image.load(self.images[0]) # start on first image
-        self.dying = ['../sprites/PySnake/green_snake/green_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
+        self.dying = [SPRITES_DIRECTORY + 'PySnake/green_snake/green_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
 
     #def collide(self, xvel, yvel, platforms, blocks, entities, player):
     #   PySnake.collide(self, xvel, yvel, platforms, blocks, entities)
@@ -709,31 +709,31 @@ class RedPysnake(PySnake):
     """ red pysnake enemy """
     def __init__(self, x, y):
         PySnake.__init__(self, x, y)
-        self.images = ['../sprites/PySnake/red_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
+        self.images = [SPRITES_DIRECTORY + 'PySnake/red_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
         self.image = pygame.image.load(self.images[0]) # start on first image
-        self.dying = ['../sprites/PySnake/red_snake/red_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
+        self.dying = [SPRITES_DIRECTORY + 'PySnake/red_snake/red_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
 
 class PurplePysnake(PySnake):
     """ purple pysnake enemy """
     def __init__(self, x, y):
         PySnake.__init__(self, x, y)
-        self.images = ['../sprites/PySnake/purple_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
+        self.images = [SPRITES_DIRECTORY + 'PySnake/purple_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
         self.image = pygame.image.load(self.images[0]) # start on first image
-        self.dying = ['../sprites/PySnake/purple_snake/purple_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
+        self.dying = [SPRITES_DIRECTORY + 'PySnake/purple_snake/purple_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
 
 class BluePysnake(PySnake):
     """ blue pysnake enemy """
     def __init__(self, x, y):
         PySnake.__init__(self, x, y)
-        self.images = ['../sprites/PySnake/blue_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
+        self.images = [SPRITES_DIRECTORY + 'PySnake/blue_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
         self.image = pygame.image.load(self.images[0]) # start on first image
-        self.dying = ['../sprites/PySnake/blue_snake/blue_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
+        self.dying = [SPRITES_DIRECTORY + 'PySnake/blue_snake/blue_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
 
 class Ghost(Enemy):
     def __init__(self, x, y):
         Enemy.__init__(self)
         self.rect = Rect(x, y, 25, 25)
-        self.image = pygame.image.load('../sprites/ghosts/boo/normal/1.png')
+        self.image = pygame.image.load(SPRITES_DIRECTORY + 'ghosts/boo/normal/1.png')
         self.reverse = False
 
         # establishes attack for pysnake
@@ -754,7 +754,7 @@ class Ghost(Enemy):
         #flag to start moving
         self.visible = False
         # establish list of sprite images
-        #self.images = ['../sprites/PySnake/default_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
+        #self.images = [SPRITES_DIRECTORY + 'PySnake/default_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
         #self.image = pygame.image.load(self.images[0]) # start on first image
 
 
@@ -786,7 +786,7 @@ class Ghost(Enemy):
 
         # do x-axis collision
         self.collide(self.xvel, 0, platforms, blocks, entities)
-        
+
         # increment in y direction
         self.rect.top += int(round(self.ydir * self.yvel))
         self.onGround = False;
@@ -818,12 +818,12 @@ class WhiteGhost(Ghost):
 
         if self.rect.top <= self.top_bound:
             self.ydir = 1
-            self.image = pygame.image.load('../sprites/ghosts/boo/normal/1.png')
+            self.image = pygame.image.load(SPRITES_DIRECTORY + 'ghosts/boo/normal/1.png')
             # self.ydir = sin(radians(self.rect.left))
             # self.xdir = sin(radians(self.rect.left))
         elif self.rect.top >= self.bot_bound:
             self.ydir = -1
-            self.image = pygame.image.load('../sprites/ghosts/boo/normal/2.png')
+            self.image = pygame.image.load(SPRITES_DIRECTORY + 'ghosts/boo/normal/2.png')
             # self.ydir = sin(radians(self.rect.left))
             # self.xdir = -sin(radians(self.rect.left))
 
@@ -837,8 +837,9 @@ class WhiteGhost(Ghost):
 class RedGhost(Ghost):
     def __init__(self, x, y):
         Ghost.__init__(self, x, y)
-        self.radius = 500
-        self.chasing = False
+        self.radius = 500       # View radius, for chasing player
+        self.chasing = False    # Chasing movement flag
+        self.move_away = False  # Move away from overlapping ghost flag
 
     def update(self, platforms, blank_platforms, blocks, entities):
         global PLAYER_X, PLAYER_Y
@@ -851,13 +852,23 @@ class RedGhost(Ghost):
             self.xdir, self.ydir = -1 * dx / dist, -1 * dy / dist # direction are reversed
             # move along this normalized vector towards the player at current speed
 
+        if self.move_away:
+            pass
+
     def collide(self, xvel, yvel, platforms, blocks, entities):
         for e in entities:
-            if type(e) == Player:
-                if pygame.sprite.collide_circle(self,e):
+            if isinstance(e,Player):
+                player_in_view = pygame.sprite.collide_circle(self,e)
+                if player_in_view and not self.chasing:
                     self.chasing = True
-                else:
+                elif not player_in_view and self.chasing:
                     self.chasing = False
+            elif isinstance(e,RedGhost):
+                overlapping_ghosts = pygame.sprite.collide_rect(self,e)
+                if overlapping_ghosts and not self.move_away:
+                    self.move_away = True
+                elif not overlapping_ghosts and self.move_away:
+                    self.move_away = False
 
     def dead(self):
         return False
@@ -875,6 +886,6 @@ class RedGhost(Ghost):
 
         NEW METHOD FOR LOADING IMAGES (one lines fucking rock)
 
-        #self.images = ['../sprites/PySnake/green_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
+        #self.images = [SPRITES_DIRECTORY + 'PySnake/green_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
 
 """
