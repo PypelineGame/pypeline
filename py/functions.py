@@ -31,6 +31,14 @@ def get_level(level_num):
 #    """ retreieve enemies """
 #    return levels.get_enemies[level_num]
 
+def delete_enemy(target, enemy_sprites, enemies, entities):
+    if target in enemy_sprites:
+        enemy_sprites.remove(target)
+    if target in enemies:
+        enemies.remove(target)
+    if target in entities:
+        entities.remove(target)
+
 def build_level(*args):
     """ build level passed in """
     # unpackage arguments
@@ -214,9 +222,7 @@ def bullet_collision(*args):
                     enemy.health -= 20
                     score += 20
             else:
-                enemies.remove(enemy)
-                enemy_sprites.remove(enemy)
-                entities.remove(enemy)
+                delete_enemy(enemy, enemy_sprites, enemies, entities)
 
     # See if we hit an indestructible block
     for bullet in bullets:
@@ -402,11 +408,6 @@ def scrollScore(current_score, score):
     if current_score < score:
         current_score += 1
     return current_score
-
-def delete_enemy(target, enemy_sprites, enemies, entities):
-    enemy_sprites.remove(target)
-    enemies.remove(target)
-    entities.remove(target)
 
 def out_of_level(rect, max_x, max_y):
     return rect.left < 0 or rect.left > max_x or \
