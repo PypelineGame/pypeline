@@ -11,12 +11,9 @@ from math import sqrt, hypot, sin, radians
 from random import randrange
 from copy import copy
 
-# import our functions
-import functions
 
 #out_of_level()
 SPRITES_DIRECTORY = "../assets/sprites/"
-
 # Define screen borders
 WIN_WIDTH = 800
 WIN_HEIGHT = 450 # 400 # 640
@@ -56,6 +53,8 @@ cache = {}
 PLAYER_X = 0
 PLAYER_Y = 0
 
+# import our functions
+import functions
 
 class Camera(object):
     """ Camera object """
