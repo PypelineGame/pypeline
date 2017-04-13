@@ -385,13 +385,13 @@ def displayTimer(screen, time_left, current_score, cache):
 
 def displayLives(screen, lives):
     if lives == 3:
-        image = pygame.image.load("../sprites/lives/3hearts.png").convert_alpha()
+        image = pygame.image.load(classes.SPRITES_DIRECTORY + "/lives/3hearts.png").convert_alpha()
     elif lives == 2:
-        image = pygame.image.load("../sprites/lives/2hearts.png").convert_alpha()
+        image = pygame.image.load(classes.SPRITES_DIRECTORY + "/lives/2hearts.png").convert_alpha()
     elif lives == 1:
-        image = pygame.image.load("../sprites/lives/1heart.png").convert_alpha()
+        image = pygame.image.load(classes.SPRITES_DIRECTORY + "/lives/1heart.png").convert_alpha()
     else:
-        image = pygame.image.load("../sprites/lives/0hearts.png").convert_alpha()
+        image = pygame.image.load(classes.SPRITES_DIRECTORY + "/lives/0hearts.png").convert_alpha()
     imagerect = image.get_rect()
     image = pygame.transform.scale(image, (75, 25))
     image_x = 675
