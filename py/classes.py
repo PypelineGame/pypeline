@@ -105,6 +105,10 @@ class Player(Entity):
         self.transparent_image = self.transparent_image.convert_alpha()
         self.image.convert_alpha()
 
+        #Sound effects
+        self.sound_jump = pygame.mixer.Sound(MUSIC_DIRECTORY + 'sound_effets/player/jump_sound')
+
+
     def damage(self, attack, enemy, camera):
         """ performs damage reduction on player's HP upon enemy collision """
         if self.damage_frame >= PLAYER_DAMAGE_FRAMES:
@@ -201,7 +205,9 @@ class Player(Entity):
                 #    self.frame_counter, self.counter = 0, 0
                 #self.images = self.jumping
                 # only jump if on the ground
-                if self.onGround: self.yvel -= 10
+                if self.onGround:
+                    self.yvel -= 10
+                    self.sound_jump.play()
             if down:
                 #if self.images != self.standing:
                 #    self.frame_counter, self.counter = 0, 0

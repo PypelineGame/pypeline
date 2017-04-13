@@ -34,7 +34,7 @@ def main():
     camera_state = 0
 
     # loads background music
-    pygame.mixer.music.load(MUSIC_DIRECTORY + "background.mp3")
+    pygame.mixer.music.load(MUSIC_DIRECTORY + "background/noah_background.ogg")
     pygame.mixer.music.set_volume(0.5)
     pygame.mixer.music.play(-1)
 
