@@ -19,7 +19,9 @@
 # n = unbreakable 1
 # m = unbreakable 2
 
-# X = Exit Block # TRIGGERS LEVEL CHANGE
+# X = Top of door (Exit Block) # TRIGGERS LEVEL CHANGE
+# Y = Bottom of door (Exit Block) # TRIGGERS LEVEL CHANGE
+
 # O = blank patrol platform # PLAYER REMOVES THESE BLOCKS WHEN COLLIDING WITH THEM
 # Q = Corner patrol platform # THESE BLOCKS ARE PERMANENT FOR EACH LEVEL
 
@@ -49,32 +51,32 @@ level_1 = [
 "nn                                                                                                                        B",
 "nn                                                                                                                        B",
 "nn                                                                                                                        B",
-"nn          Xo                                                                                                           B",
+"nn           o                                                                                                            B",
 "nn          Xo                                                                                                            B",
-"nn          Xo                                                                                                         B",
-"nn         nnn                                                                                                          B",
-"nn        n                     7                                                                                     B",
-"nn       n                         7                                                                                     B",
+"nn          Yo                                                                                                            B",
+"nn         nnn                                                                                                            B",
+"nn        n                     7                                                                                         B",
+"nn       n                         7                                                                                      B",
 "nn  n                                                                                                                     B",
-"nn  n                                                                                                                    B",
-"nn  nnQ  2   Q     n   Q   2   Q nQ 2  QnQ    2  Qn   7      Q                                                           B",
-"nn   nnnnnnnnnn   nnnnn   nnnnn  nnnnn   nnnnnnn   nnnnnnnnnn                                                           B",
+"nn  n                                                                                                                     B",
+"nn  nnQ  2   Q     n   Q   2   Q nQ 2  QnQ    2  Qn   7      Q                                                            B",
+"nn   nnnnnnnnnn   nnnnn   nnnnn  nnnnn   nnnnnnn   nnnnnnnnnn                                                             B",
 "nn                                                             n                                                          B",
 "nn                                                              n                                                         B",
 "nn                                                               n          7                                             B",
 "nn      Q                        1                          Q     n                                                       B",
-"nn      nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn    n                                                     B",
-"nn                                                                  D    nnnn                                           B",
-"nn                                                                   D        7                                          B",
+"nn      nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn    n                                                      B",
+"nn                                                                  D    nnnn                                             B",
+"nn                                                                   D        7                                           B",
 "nn  nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn                                                   B",
-"nn                                                                     n                                                 B",
+"nn                                                                     n                                                  B",
 "nn                                                                      n                                                 B",
 "nn                                                                       n                                                B",
 "nn                                                                        n                                               B",
-"nn                  nnnnnnnn                                               n                                             B",
-"nn                                                                         D                                          B",
-"nn              n            n                                              D n                                      B",
-"nn              nQ    2     Qn            Q  2                2  Q           nn                                        B",
+"nn                  nnnnnnnn                                               n                                              B",
+"nn                                                                         D                                              B",
+"nn              n            n                                              D n                                           B",
+"nn              nQ    2     Qn            Q  2                2  Q           nn                                           B",
 "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnB"]
 
 # add enemies/levels to list

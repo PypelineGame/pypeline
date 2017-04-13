@@ -493,10 +493,15 @@ class CornerPatrolBlock(CollisionBlock):
 
 class ExitBlock(BlockType):
     """ invisible block used to detect level endings """
-    def __init__(self, x, y):
+    def __init__(self, x, y, top):
         BlockType.__init__(self)
         self.rect = Rect(x, y, 32, 32)
-        self.image = pygame.Surface([32, 32], pygame.SRCALPHA, 32)
+        #self.image = pygame.Surface([32, 32], pygame.SRCALPHA, 32)
+        if top == "X":
+            self.image = pygame.image.load(SPRITES_DIRECTORY + "door/top_door.png")
+        elif top == "Y":
+            self.image = pygame.image.load(SPRITES_DIRECTORY + "door/bottom_door.png")
+
         # SRC ALPHA BUG IS PROBABLY HERE ^^^
         self.image = self.image.convert_alpha()
     def update(self):

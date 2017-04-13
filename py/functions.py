@@ -122,9 +122,9 @@ def build_level(*args):
                     collision_blocks.append(p)
                     collision_block_sprites.add(p)
                     entities.add(p)
-                elif col == "X":
+                elif col == "X" or col == "Y":
                     # add exit block manually to sprite lists
-                    p = classes.ExitBlock(x, y)
+                    p = classes.ExitBlock(x, y, col)
                     collision_blocks.append(p)
                     collision_block_sprites.add(p)
                     entities.add(p)
