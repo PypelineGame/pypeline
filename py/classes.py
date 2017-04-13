@@ -14,6 +14,8 @@ from copy import copy
 
 #out_of_level()
 SPRITES_DIRECTORY = "../assets/sprites/"
+MUSIC_DIRECTORY = "../assets/music/"
+
 # Define screen borders
 WIN_WIDTH = 800
 WIN_HEIGHT = 450 # 400 # 640
