@@ -38,7 +38,7 @@ import classes
 get_levels = [0] #, get_enemies = [0], [0] # init first index to 0
 
 MAX_PLAYTIME_PER_LEVEL = [0, 8000, 360, 360] # max time allowed before time runs out per level
-SPAWN_POINT_LEVEL = [0, (64, 135), (64, 64), (64, 64)] # x,y coordinates for each level spawn
+SPAWN_POINT_LEVEL = [0, (64, 700), (64, 64), (64, 64)] # x,y coordinates for each level spawn
 BACKGROUNDS = [0, 'background5.jpg', 'beauty.jpg', 'forest_day.png', 'montanha.png']
     # Get list of backgrounds for the levels
 for i in range(1, len(BACKGROUNDS)):
@@ -63,18 +63,18 @@ level_1 = [
 "nn                                                              n                                                         B",
 "nn                                                               n          7                                             B",
 "nn      Q                        1                          Q     n                                                       B",
-"nn      nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn      n                                                      B",
-"nn                                                                  n                                                     B",
-"nn                                                                   n         7                                          B",
-"nn                                                                    n                                                   B",
-"nn                                                                     n                                                  B",
+"nn      nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn    n                                                     B",
+"nn                                                                  D    nnnn                                           B",
+"nn                                                                   D        7                                          B",
+"nn  nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn                                                   B",
+"nn                                                                     n                                                 B",
 "nn                                                                      n                                                 B",
 "nn                                                                       n                                                B",
 "nn                                                                        n                                               B",
-"nn                nnnnnn                                                   n                                              B",
-"nn                                                                          D                                          B",
-"nn              n            n                                               D n                                      B",
-"nn              nQ    2     Qn            Q  2                2  Q            nn                                        B",
+"nn                  nnnnnnnn                                               n                                             B",
+"nn   X                                                                      D                                          B",
+"nn   X           n            n                                              D n                                      B",
+"nn   X           nQ    2     Qn            Q  2                2  Q           nn                                        B",
 "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnB"]
 
 # add enemies/levels to list
@@ -98,9 +98,9 @@ level_2 = [
 "nn                                           DDDDDDDDDDDDDDDD          7                                               				    B",
 "nn                                D          D              D                                                             					B",
 "nn                                D          D            7 D                                                            					 B",
-"nn    	               7           D                                                                 Q  2   Q             					B",
-"nn                            7   D          D              D     7   Q        1  Q       7            nnnnnn          					 B",
-"nn             O    2   2 Q       D     7   7DO      2     QD          QDDDDDDDDDD              n                      					 B",
+"nn    X               7           D                                                                 Q  2   Q             					B",
+"nn    X                       7   D          D              D     7   Q        1  Q       7            nnnnnn          					 B",
+"nn    X      O    2   2 Q       D     7   7DO      2     QD          QDDDDDDDDDD              n                      					 B",
 "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn     nnnnnnnnnnnnnnnnnnnn          nnnnnnnnnnnnnnnnnnnnnnnnnnnnB"
 "nn                                                                        nn                                 n                              B",
 "nn                                                  7                      n                                 n                              B",
@@ -115,7 +115,7 @@ level_2 = [
 "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnB"]
 # add enemies/levels to list
 get_levels.append(level_2)
-'''
+
 level_3 = [
 "nn                                                                                                                        B",
 "nn                                                                                                                        B",
@@ -142,4 +142,4 @@ level_3 = [
 # add enemies/levels to list
 
 get_levels.append(level_3)
-'''
+
