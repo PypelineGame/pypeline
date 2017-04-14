@@ -96,7 +96,10 @@ def main():
         time_remaining = float(levels.MAX_PLAYTIME_PER_LEVEL[current_level]-current_life_playtime)
 
         """ display fps and playtime on window """
-        text_display = "{0:.2f}fps    {1:.1f}s".format(timer.get_fps(), elapsed_playtime)
+        text_display = "Time remaining: %.1f" % time_remaining + "s"
+        text_display += "          Current score: " + str(current_score).zfill(8)
+        text_display += "                                  "
+        text_display += "FPS: {0:.2f}          Elapsed time: {1:.1f}s".format(timer.get_fps(), elapsed_playtime)
         pygame.display.set_caption(text_display)
 
         """ PLAYER BEAT THE LEVEL """
@@ -193,7 +196,6 @@ def main():
 
 
         """ DRAW BACKGROUND """
-        #""" commented out to debug lag
         # if player is moving right
         if camera.state[0] <= camera_state:
             camera_state = camera.state[0]
@@ -204,8 +206,6 @@ def main():
             camera_state = camera.state[0]
             screen.blit(bg, (CURRENT_WIN_WIDTH - WIN_WIDTH + camera.state[0],0))
             screen.blit(bg,(CURRENT_WIN_WIDTH + camera.state[0],0))
-        #"""
-        #screen.blit(bg, (0,0))
 
         """ update bullets, camera """
         bullets.update()
@@ -279,8 +279,6 @@ def main():
                 camera = Camera(complex_camera, pygame.total_level_width, pygame.total_level_height)
                 gameOver(screen, cache)
             else:
-                #font = pygame.font.Font(None, 36)
-                #text = font.render("Try again bruh...", True, WHITE)
                 text = get_msg('Try again bruh...', cache)
                 text_rect = text.get_rect()
                 text_x = screen.get_width() / 2 - text_rect.width / 2
@@ -297,8 +295,10 @@ def main():
             current_life_playtime = 0
 
 
-        # animate scrolling effect on score
-        current_score = scrollScore(current_score, score)
+        
+        #current_score = scrollScore(current_score, score) # animate scrolling effect on score
+        #current_score = score # score no scrolling
+
         # display player healthbar, timer, score, and lives
         healthBar(player.health, screen, cache)
         #displayTimer(screen, "%.1f" % time_remaining + "s", current_score, cache)
