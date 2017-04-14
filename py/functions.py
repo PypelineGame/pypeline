@@ -340,8 +340,6 @@ def get_msg(msg, cache, color = None):
 
 def gameOver(screen, cache):
     """ displays gameover message in center of screen """
-    #font = pygame.font.Font(None, 36)
-    #text = font.render("Game Over", True, WHITE)
     text = get_msg('Game Over', cache)
     text_rect = text.get_rect()
     text_x = screen.get_width() / 2 - text_rect.width / 2
@@ -352,17 +350,16 @@ def gameOver(screen, cache):
 
 def loading(screen, cache):
     """ displays loading message in center of screen """
-    #font = pygame.font.Font(None, 24)
-    #text = font.render("Loading...", True, WHITE)
     text = get_msg('Loading...', cache)
     text_rect = text.get_rect()
     text_x = screen.get_width() / 2 - text_rect.width / 2
     text_y = screen.get_height() / 2 - text_rect.height / 2
     screen.blit(text, [text_x, text_y])
-    #pygame.time.delay(1000)
 
+"""
 def displayTimer(screen, time_left, current_score, cache):
-    """ displays countdown timer and score """
+    # displays countdown timer and score
+
     # display timer text
     #font = pygame.font.Font(None, 24)
     #text = font.render('Timer: ', True, WHITE)
@@ -388,8 +385,14 @@ def displayTimer(screen, time_left, current_score, cache):
     text_y = screen.get_height() / 16 - 5
     text_width, text_height = text_x, 17
     screen.blit(text, [text_x, text_y])
+"""
 
-def displayLives(screen, lives):
+def displayLives(screen, lives, cache):
+    text = get_msg("Lives:", cache)
+    text_rect = text.get_rect()
+    text_x = 620
+    text_y = screen.get_height() / 10 - text_rect.height / 2 + 20
+    screen.blit(text, [text_x, text_y])
     if lives == 3:
         image = pygame.image.load(classes.SPRITES_DIRECTORY + "/lives/3hearts.png").convert_alpha()
     elif lives == 2:
@@ -403,6 +406,7 @@ def displayLives(screen, lives):
     image_x = 675
     image_y = 55
     screen.blit(image, [image_x, image_y])
+    screen.blit(text, [text_x, text_y])
 
 def scrollScore(current_score, score):
     if current_score < score:

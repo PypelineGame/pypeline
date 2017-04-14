@@ -302,7 +302,7 @@ def main():
         # display player healthbar, timer, score, and lives
         healthBar(player.health, screen, cache)
         #displayTimer(screen, "%.1f" % time_remaining + "s", current_score, cache)
-        displayLives(screen, lives)
+        displayLives(screen, lives, cache)
         # display enemy healthbar
         for enemy in enemies:
             if enemy.healthTrigger == True:
