@@ -395,7 +395,7 @@ class BrownBlock(BlockType):
         pass
 
 class NeonRedBlock(BlockType):
-    """ brown block class """
+    """ neon red block class """
     def __init__(self):
         BlockType.__init__(self)
         self.image = pygame.image.load(SPRITES_DIRECTORY + "blocks/neon_red.png").convert_alpha()
@@ -403,7 +403,7 @@ class NeonRedBlock(BlockType):
         pass
 
 class NeonWhiteBlock(BlockType):
-    """ brown block class """
+    """ neon white block class """
     def __init__(self):
         BlockType.__init__(self)
         self.image = pygame.image.load(SPRITES_DIRECTORY + "blocks/neon_white.png").convert_alpha()
@@ -411,7 +411,7 @@ class NeonWhiteBlock(BlockType):
         pass
 
 class NeonBlueBlock(BlockType):
-    """ brown block class """
+    """ neon blue block class """
     def __init__(self):
         BlockType.__init__(self)
         self.image = pygame.image.load(SPRITES_DIRECTORY + "blocks/neon_blue.png").convert_alpha()
@@ -419,7 +419,7 @@ class NeonBlueBlock(BlockType):
         pass
 
 class NeonYellowBlock(BlockType):
-    """ brown block class """
+    """ neon yellow block class """
     def __init__(self):
         BlockType.__init__(self)
         self.image = pygame.image.load(SPRITES_DIRECTORY + "blocks/neon_yellow.png").convert_alpha()
@@ -427,7 +427,7 @@ class NeonYellowBlock(BlockType):
         pass
 
 class NeonOrangeBlock(BlockType):
-    """ brown block class """
+    """ neon orange block class """
     def __init__(self):
         BlockType.__init__(self)
         self.image = pygame.image.load(SPRITES_DIRECTORY + "blocks/neon_orange.png").convert_alpha()
@@ -435,7 +435,7 @@ class NeonOrangeBlock(BlockType):
         pass
 
 class NeonGreenBlock(BlockType):
-    """ brown block class """
+    """ neon green block class """
     def __init__(self):
         BlockType.__init__(self)
         self.image = pygame.image.load(SPRITES_DIRECTORY + "blocks/neon_green.png").convert_alpha()

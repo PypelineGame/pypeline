@@ -111,7 +111,7 @@ def build_level(*args):
                     entities.add(p)
                     platforms.append(p)
                 elif col == "m":
-                    which_block = Unbreakable1
+                    which_block = Unbreakable2
                     # add indestructible manually to sprite lists
                     p = classes.Platform(x, y, which_block)
                     indestructibles.add(p)
