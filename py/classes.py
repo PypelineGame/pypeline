@@ -39,7 +39,7 @@ PURPLE = (128, 0, 128)
 DISPLAY = (WIN_WIDTH, WIN_HEIGHT)
 DEPTH = 32
 FLAGS = 0
-CAMERA_SLACK = 30
+CAMERA_SLACK = 1
 
 # Define animation frames for classes
 GARBAGE_COLLECTOR_MAX_FRAMES = 8
@@ -78,19 +78,23 @@ class Player(Entity):
     """ Player object """
     def __init__(self, x, y):
         Entity.__init__(self)
-        self.xvel = 0 # current x velocity
-        self.yvel = 0 # current y velocity
+        self.xvel, self.yvel = 0, 0 # x and y velocity
         self.onGround = False
-        self.image = Surface((60,60))
-        #self.image.fill(Color("#0000FF"))
+        #self.image = Surface((60,60))
+
+        # defines different rectangles for animations
         self.standing_rect = Rect(x, y, 58, 58)
         self.attack_rect = Rect(x, y, 80, 60)
         self.running_rect = Rect(x, y, 58, 66)
-        self.rect = self.standing_rect
-        self.attack_height = 32
+
+        self.rect = self.standing_rect # sets current rectangle size to start at standing image
+
+        self.attack_height = 32 # used for calculating strong attack position
         self.health = PLAYER_STARTER_HEALTH
         self.melee_attack, self.range_attack, self.num_of_bullets = 25, 50, 10
         self.damage_frame = 0 # counts # of frames until max damage frames
+
+        # used for knockback
         self.enemy_collision, self.knockback_left, self.knockback_right, self.flicker = False, False, False, False
         self.frame_counter, self.counter, self.jump_counter = 0, 0, 0
         self.running = [SPRITES_DIRECTORY + 'player/running/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8]]
@@ -99,8 +103,8 @@ class Player(Entity):
         self.images = self.standing # by default
         self.jump = False
         self.image = pygame.image.load(self.images[0])
-        self.facing_right = True # used to determine strong attack's direction
-        self.image_copy = pygame.image.load(self.jumping[2])#self.image.copy()
+        self.facing_right = True # used to determine attack's direction
+        self.knockback = pygame.image.load(self.jumping[2]) # determines knockback frame
         self.transparent_image = pygame.Surface([32, 32], pygame.SRCALPHA, 32)
         self.transparent_image = self.transparent_image.convert_alpha()
         self.image.convert_alpha()
@@ -139,12 +143,14 @@ class Player(Entity):
         if right and not self.jump:
             self.facing_right = True
             self.images = self.running
+            self.rect = self.running_rect
         elif self.jump == True:
             self.jump_counter += 1
             if self.jump_counter == 33:
                 self.jump = False
                 self.jump_counter, self.counter = 0, 0
                 self.images = self.standing
+                self.rect = self.standing_rect
 
         if self.frame_counter >= PLAYER_MAX_RUN_FRAMES:
             self.frame_counter = 0
@@ -156,8 +162,10 @@ class Player(Entity):
                 self.facing_right = False
                 if self.jump:
                     self.images = self.jumping
+                    self.rect = self.standing_rect
                 else:  #elif self.yvel < 0:
                     self.images = self.running
+                    self.rect = self.running_rect
                 #self.image = transform.flip(self.image, 1, 0)
 
         #if left and not right and self.jump == False and self.facing_right == False:
@@ -168,8 +176,9 @@ class Player(Entity):
 
         # flicker player when player is knocked back
         if self.flicker:
+            self.rect = self.standing_rect
             if self.image is self.transparent_image:
-                self.image = self.image_copy
+                self.image = self.knockback
             else:
                 self.image = self.transparent_image
 
@@ -184,11 +193,11 @@ class Player(Entity):
                 elif self.xvel > 0:
                     self.knockback_left = True
 
-        # perform knock back collision
+        # determine knock back direction
         if self.enemy_collision == True:
             if self.knockback_left:
                 self.xvel = -8
-            if self.knockback_right:
+            elif self.knockback_right:
                 self.xvel = 8
             # end knock back once we reach specified frames
             if PLAYER_DAMAGE_FRAMES <= self.damage_frame:
@@ -196,44 +205,28 @@ class Player(Entity):
                 self.knockback_left = False
                 self.knockback_right = False
                 self.flicker = False
-                self.image = self.image_copy
+                self.image = self.knockback
+                self.standing_rect
 
         # handle player movements
         else:
             if up:
-                #if self.images != self.jumping:
-                #    self.frame_counter, self.counter = 0, 0
-                #self.images = self.jumping
-                # only jump if on the ground
                 if self.onGround:
                     self.yvel -= 10
                     self.sound_jump.play()
             if down:
-                #if self.images != self.standing:
-                #    self.frame_counter, self.counter = 0, 0
-                #self.images = self.standing
-                pass # we can eventually implement crouching
+                pass # we can maybe implement crouching
             if left:
-                #if self.images != self.running:
-                #    self.frame_counter, self.counter = 0, 0
-                #self.images = self.running
                 if running:
                     self.xvel = -5
                 else:
                     self.xvel = -4
             if right:
-                #if self.images != self.running:
-                #    self.frame_counter, self.counter = 0, 0
-                #self.images = self.running
-                #self.rect.inflate_ip(55, 45)
                 if running:
                     self.xvel = 5
                 else:
                     self.xvel = 4
             if not(left or right):
-                #if self.images != self.standing:
-                #    self.frame_counter, self.counter = 0, 0
-                #self.images = self.standing
                 self.xvel = 0
 
         # switch frames
@@ -275,7 +268,7 @@ class Player(Entity):
                 #print type(c).__name__
                 if type(c).__name__ == "BlankPlatform":
                     return c
-                elif type(c).__name__ == "ExitBlock":#isinstance(c, ExitBlock):
+                elif type(c).__name__ == "ExitBlock":
                     return "Reset Level"
 
     def collide(self, xvel, yvel, platforms):
@@ -298,10 +291,6 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self, mouse, player, camera_state, direction, strength = None):
         # Call the parent class (Sprite) constructor
         pygame.sprite.Sprite.__init__(self)
-        #self.player = player
-        # calculate center of bullet
-        #self.center_y = (player[1] + player[2])# - player[2]/2)
-        #self.center_x = (player[0] - player[2])# - player[2]/2)
         # grab mouse coordinates
         self.mouse_x, self.mouse_y = mouse[0], mouse[1]
         if strength == "strong":
