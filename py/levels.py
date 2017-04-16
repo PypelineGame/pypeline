@@ -64,7 +64,7 @@ level_1 = [
 "gg                                                             b                    gg",
 "gg                                                              b                   gg",
 "gg                                                               b          7       gg",
-"gg      Q                           1                         P   b                 gg",
+"gg      Q                           1                         O   b                 gg",
 "gg      bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb    b                gg",
 "gg                                                                  w    bbbb       gg",
 "gg                                                                   w        7     gg",

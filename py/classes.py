@@ -100,7 +100,7 @@ class Player(Entity):
         self.jump = False
         self.image = pygame.image.load(self.images[0])
         self.facing_right = True # used to determine strong attack's direction
-        self.image_copy = pygame.image.load(self.jumping[2])#self.image.copy()
+        self.image_knockback = pygame.image.load(self.jumping[2])#self.image.copy()
         self.transparent_image = pygame.Surface([32, 32], pygame.SRCALPHA, 32)
         self.transparent_image = self.transparent_image.convert_alpha()
         self.image.convert_alpha()
@@ -169,7 +169,7 @@ class Player(Entity):
         # flicker player when player is knocked back
         if self.flicker:
             if self.image is self.transparent_image:
-                self.image = self.image_copy
+                self.image = self.image_knockback
             else:
                 self.image = self.transparent_image
 
@@ -196,7 +196,7 @@ class Player(Entity):
                 self.knockback_left = False
                 self.knockback_right = False
                 self.flicker = False
-                self.image = self.image_copy
+                self.image = self.image_knockback
 
         # handle player movements
         else:
