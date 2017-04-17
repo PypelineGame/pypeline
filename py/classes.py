@@ -144,6 +144,7 @@ class Player(Entity):
         #    self.images = self.running
         #el
 
+        """
         if right and not self.jump:
             self.facing_right = True
             self.images = self.running
@@ -158,13 +159,71 @@ class Player(Entity):
                 self.frame_counter = 0
                 self.rect.width = self.standing_size[0]
                 self.rect.height = self.standing_size[1]
+        """
+        #self.jump = self.onGround
 
-        if self.frame_counter >= PLAYER_MAX_RUN_FRAMES and self.images == self.running:
+        """
+        if right or left or self.jump:
+            if self.jump:
+                self.jump_counter += 1
+                if self.jump_counter == 33:
+                    self.jump = False
+                    self.jump_counter, self.frame_counter, self.counter = 0, 0, 0
+                    self.images = self.standing
+                self.images = self.jumping
+                self.frame_counter = 0
+            if right or left and not self.jump:
+                self.images = self.running
+                if right:
+                    self.facing_right = True
+                elif left:
+                    self.facing_right = False
+        """
+
+        if self.jump:
+            self.jump_counter += 1
+            if self.jump_counter == 33:
+                self.jump = False
+                self.jump_counter, self.frame_counter, self.counter = 0, 0, 0
+                self.images = self.standing
+            #else:
+            #    self.images = self.jumping
+
+        if self.yvel < 0 and self.jump_counter < 33:
+            self.images = self.jumping
+            self.jump = True
+        elif left or right:
+            if not self.jump:
+                self.images = self.running
+            if left:
+                self.facing_right = False
+            elif right:
+                self.facing_right = True
+        elif not left and not right:
+            self.images = self.standing
+
+
+        #if right:
+        #    self.facing_right = True
+        #    self.images = self.running
+
+        if self.frame_counter >= PLAYER_MAX_RUN_FRAMES and self.images == self.running or self.images == self.jumping:
             self.frame_counter = 0
             self.image = pygame.image.load(self.images[self.counter])
             self.counter = (self.counter + 1) % len(self.images)
+            
+            """
+            if right or left and not self.jump:
+                self.images = self.running
+                if right:
+                    self.facing_right = True
+                    self.frame_counter = 0
+                elif left:
+                    self.facing_right = False
+                    self.frame_counter = 0
+            """
 
-            # reverse images if player is facing left
+            """
             if left:
                 self.facing_right = False
                 if self.jump:
@@ -179,9 +238,8 @@ class Player(Entity):
                     self.rect.width = self.running_size[0]
                     self.rect.height = self.running_size[1]
                 #self.image = transform.flip(self.image, 1, 0)
-
-        #if left and not right and self.jump == False and self.facing_right == False:
-        #    self.images = self.standing
+            """
+            # reverse images if player is facing left
             if self.facing_right == False:
                 self.image = transform.flip(self.image, 1, 0)
         
@@ -256,13 +314,13 @@ class Player(Entity):
                 else:
                     self.xvel = 4
             if not(left or right):
-                if self.images != self.standing:
-                    self.frame_counter, self.counter = 0, 0
-                    self.rect.width = self.standing_size[0]
-                    self.rect.height = self.standing_size[1]
-                #self.images = self.standing
                 self.xvel = 0
-                self.images = self.standing
+                #if self.images != self.standing:
+                    #self.frame_counter = 0
+                    #self.rect.width = self.standing_size[0]
+                    #self.rect.height = self.standing_size[1]
+                #self.images = self.standing
+                    #self.images = self.standing
                 #self.rect.width = self.standing_size[0]
                 #self.rect.height = self.standing_size[1]
                 #self.rect = self.standing_rect
