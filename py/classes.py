@@ -48,7 +48,7 @@ PYSNAKE_MAX_FRAMES = 8
 
 PLAYER_DAMAGE_FRAMES = 20
 PLAYER_MAX_RUN_FRAMES = 8
-PLAYER_MAX_STANDING_FRAMES = 16
+PLAYER_MAX_STANDING_FRAMES = 20
 
 cache = {}
 #Player position
@@ -143,6 +143,7 @@ class Player(Entity):
         #if (right or left) and not self.jump:
         #    self.images = self.running
         #el
+
         if right and not self.jump:
             self.facing_right = True
             self.images = self.running
@@ -154,8 +155,11 @@ class Player(Entity):
                 self.jump = False
                 self.jump_counter, self.counter = 0, 0
                 self.images = self.standing
+                self.frame_counter = 0
+                self.rect.width = self.standing_size[0]
+                self.rect.height = self.standing_size[1]
 
-        if self.frame_counter >= PLAYER_MAX_RUN_FRAMES:
+        if self.frame_counter >= PLAYER_MAX_RUN_FRAMES and self.images == self.running:
             self.frame_counter = 0
             self.image = pygame.image.load(self.images[self.counter])
             self.counter = (self.counter + 1) % len(self.images)
@@ -165,9 +169,13 @@ class Player(Entity):
                 self.facing_right = False
                 if self.jump:
                     self.images = self.jumping
+                    self.frame_counter = 0
+                    self.rect.width = self.standing_size[0]
+                    self.rect.height = self.standing_size[1]
                     #self.rect = self.running_rect
                 else:  #elif self.yvel < 0:
                     self.images = self.running
+                    self.frame_counter = 0
                     self.rect.width = self.running_size[0]
                     self.rect.height = self.running_size[1]
                 #self.image = transform.flip(self.image, 1, 0)
@@ -176,6 +184,11 @@ class Player(Entity):
         #    self.images = self.standing
             if self.facing_right == False:
                 self.image = transform.flip(self.image, 1, 0)
+        
+        elif self.images == self.standing and self.frame_counter >= PLAYER_MAX_STANDING_FRAMES:
+            self.frame_counter = 0
+            self.image = pygame.image.load(self.images[self.counter]).convert_alpha()
+            self.counter = (self.counter + 1) % len(self.images)
             #self.images = self.standing
 
         # flicker player when player is knocked back
@@ -243,24 +256,28 @@ class Player(Entity):
                 else:
                     self.xvel = 4
             if not(left or right):
-                #if self.images != self.standing:
-                #    self.frame_counter, self.counter = 0, 0
+                if self.images != self.standing:
+                    self.frame_counter, self.counter = 0, 0
+                    self.rect.width = self.standing_size[0]
+                    self.rect.height = self.standing_size[1]
                 #self.images = self.standing
                 self.xvel = 0
+                self.images = self.standing
+                #self.rect.width = self.standing_size[0]
+                #self.rect.height = self.standing_size[1]
                 #self.rect = self.standing_rect
-                self.rect.width = self.standing_size[0]
-                self.rect.height = self.standing_size[1]
+
 
         # switch frames
-        if self.images == self.running and self.frame_counter >= PLAYER_MAX_RUN_FRAMES:
-            #pygame.transform.scale(self.image, (55, 45), self.image)
-            self.frame_counter = 0
-            self.image = pygame.image.load(self.images[self.counter]).convert_alpha()
-            self.counter = (self.counter + 1) % len(self.images)
-        elif self.images == self.standing and self.frame_counter >= PLAYER_MAX_STANDING_FRAMES:
-            self.frame_counter = 0
-            self.image = pygame.image.load(self.images[self.counter]).convert_alpha()
-            self.counter = (self.counter + 1) % len(self.images)
+        #if self.images == self.running and self.frame_counter >= PLAYER_MAX_RUN_FRAMES:
+        #    #pygame.transform.scale(self.image, (55, 45), self.image)
+        #    self.frame_counter = 0
+        #    self.image = pygame.image.load(self.images[self.counter]).convert_alpha()
+        #    self.counter = (self.counter + 1) % len(self.images)
+        #elif self.images == self.standing and self.frame_counter >= PLAYER_MAX_STANDING_FRAMES:
+        #    self.frame_counter = 0
+        #    self.image = pygame.image.load(self.images[self.counter]).convert_alpha()
+        #    self.counter = (self.counter + 1) % len(self.images)
 
         #elif self.images == self.standing and self.frame_counter >= PLAYER_MAX_STANDING_FRAMES:
         #    self.frame_counter = 0
