@@ -190,17 +190,18 @@ class Player(Entity):
             #    self.images = self.jumping
 
         if self.yvel < 0 and self.jump_counter < 33:
-            self.images = self.jumping
             self.jump = True
         elif left or right:
             if not self.jump:
                 self.images = self.running
+                #self.rect.width, self.rect.height = self.running_size
             if left:
                 self.facing_right = False
             elif right:
                 self.facing_right = True
         elif not left and not right:
             self.images = self.standing
+            #self.rect.width, self.rect.height = self.standing_size
 
 
         #if right:
@@ -212,6 +213,13 @@ class Player(Entity):
             self.image = pygame.image.load(self.images[self.counter])
             self.counter = (self.counter + 1) % len(self.images)
             
+            if self.jump:
+                self.images = self.jumping
+
+            #if not self.jump:
+            self.rect.width, self.rect.height = self.running_size
+            #else:
+            #    self.rect.width, self.rect.height = self.standing_size
             """
             if right or left and not self.jump:
                 self.images = self.running
@@ -244,6 +252,7 @@ class Player(Entity):
                 self.image = transform.flip(self.image, 1, 0)
         
         elif self.images == self.standing and self.frame_counter >= PLAYER_MAX_STANDING_FRAMES:
+            self.rect.width, self.rect.height = self.standing_size
             self.frame_counter = 0
             self.image = pygame.image.load(self.images[self.counter]).convert_alpha()
             self.counter = (self.counter + 1) % len(self.images)
