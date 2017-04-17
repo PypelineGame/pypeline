@@ -70,11 +70,11 @@ level_1 = [
 "gg b                                                                 w    bbbb      gg",
 "gg  b                                                            O   w              gg",
 "gg   bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb            gg",
-"gg                                 7                     7              b           gg",
-"gg                                                                       b          gg",
-"gg                                                                        b         gg",
-"gg                                 7                     7                 b        gg",
-"gg                 bbbbbbbb                                                 b       gg",
+"gg                                 7                     7              n           gg",
+"gg                                                                       n          gg",
+"gg                                                                        n         gg",
+"gg                                 7                     7                 n        gg",
+"gg                 bbbbbbbb                                                 n       gg",
 "gg                                                                             o    gg",
 "gg              o            o                           7                     n    gg",
 "gg              oQ    2     QoQ           O  5       O        3  O            Qn   Qgg",
@@ -84,8 +84,8 @@ level_1 = [
 get_levels.append(level_1)
 
 level_5 = [
-"nn                                                                                                                                         B",
-"nn                                                                                                                                         B",
+"nn                                                                                                                                          B",
+"nn                                                                                                                                          B",
 "nn                                                                                                                                          B",
 "nn                                                                                                                                          B",
 "nn                                                                                                                                          B",
