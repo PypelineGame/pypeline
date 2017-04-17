@@ -81,12 +81,18 @@ class Player(Entity):
         self.xvel = 0 # current x velocity
         self.yvel = 0 # current y velocity
         self.onGround = False
-        self.image = Surface((60,60))
+        #self.image = Surface((60,60))
         #self.image.fill(Color("#0000FF"))
-        self.standing_rect = Rect(x, y, 58, 58)
-        self.attack_rect = Rect(x, y, 80, 60)
-        self.running_rect = Rect(x, y, 58, 66)
-        self.rect = self.standing_rect
+        
+        #self.standing_rect = Rect(x, y, 45, 57)
+        #self.attack_rect = Rect(x, y, 80, 60)
+        #self.running_rect = Rect(x, y, 58, 45)
+
+        self.standing_size = (45, 57)
+        self.attack_size = (80, 60)
+        self.running_size = (58, 45)
+        
+        self.rect = Rect(x, y, self.standing_size[0], self.standing_size[1])
         self.attack_height = 32
         self.health = PLAYER_STARTER_HEALTH
         self.melee_attack, self.range_attack, self.num_of_bullets = 25, 50, 10
@@ -126,6 +132,7 @@ class Player(Entity):
         self.frame_counter += 1 # increments frame counter
 
 
+
             #if self.onGround and self.images == self.jumping:
             #    #if left or right:
             #    #    self.images = self.running
@@ -139,6 +146,8 @@ class Player(Entity):
         if right and not self.jump:
             self.facing_right = True
             self.images = self.running
+            self.rect.width = self.running_size[0]
+            self.rect.height = self.running_size[1]
         elif self.jump == True:
             self.jump_counter += 1
             if self.jump_counter == 33:
@@ -156,8 +165,11 @@ class Player(Entity):
                 self.facing_right = False
                 if self.jump:
                     self.images = self.jumping
+                    #self.rect = self.running_rect
                 else:  #elif self.yvel < 0:
                     self.images = self.running
+                    self.rect.width = self.running_size[0]
+                    self.rect.height = self.running_size[1]
                 #self.image = transform.flip(self.image, 1, 0)
 
         #if left and not right and self.jump == False and self.facing_right == False:
@@ -235,6 +247,9 @@ class Player(Entity):
                 #    self.frame_counter, self.counter = 0, 0
                 #self.images = self.standing
                 self.xvel = 0
+                #self.rect = self.standing_rect
+                self.rect.width = self.standing_size[0]
+                self.rect.height = self.standing_size[1]
 
         # switch frames
         if self.images == self.running and self.frame_counter >= PLAYER_MAX_RUN_FRAMES:
