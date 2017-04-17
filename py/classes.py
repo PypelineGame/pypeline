@@ -90,7 +90,7 @@ class Player(Entity):
 
         self.standing_size = (45, 57)
         self.attack_size = (80, 60)
-        self.running_size = (58, 45)
+        self.running_size = (58, 42)
         
         self.rect = Rect(x, y, self.standing_size[0], self.standing_size[1])
         self.attack_height = 32
@@ -180,18 +180,15 @@ class Player(Entity):
                     self.facing_right = False
         """
 
-        if self.jump:
-            self.jump_counter += 1
-            if self.jump_counter == 33:
-                self.jump = False
-                self.jump_counter, self.frame_counter, self.counter = 0, 0, 0
-                self.images = self.standing
+
+
             #else:
             #    self.images = self.jumping
 
         if self.yvel < 0 and self.jump_counter < 33:
             self.jump = True
-        elif left or right:
+            #pass
+        if left or right:
             if not self.jump:
                 self.images = self.running
                 #self.rect.width, self.rect.height = self.running_size
@@ -200,24 +197,36 @@ class Player(Entity):
             elif right:
                 self.facing_right = True
         elif not left and not right:
+            self.frame_counter == PLAYER_MAX_STANDING_FRAMES
             self.images = self.standing
             #self.rect.width, self.rect.height = self.standing_size
+
+        #if self.jump:
+        #    self.images = self.jumping
+
+        if self.jump:
+            self.jump_counter += 1
+            if self.jump_counter == 33:
+                self.jump = False
+                self.jump_counter, self.counter, self.frame_counter = 0, 0, 0
+                self.images = self.standing
+                self.rect.width, self.rect.height = self.standing_size
+            else:
+                self.images = self.jumping
 
 
         #if right:
         #    self.facing_right = True
         #    self.images = self.running
 
-        if self.frame_counter >= PLAYER_MAX_RUN_FRAMES and self.images == self.running or self.images == self.jumping:
+        if self.frame_counter >= PLAYER_MAX_RUN_FRAMES and (self.images == self.running or self.images == self.jumping):
             self.frame_counter = 0
             self.image = pygame.image.load(self.images[self.counter])
             self.counter = (self.counter + 1) % len(self.images)
             
-            if self.jump:
-                self.images = self.jumping
 
-            #if not self.jump:
-            self.rect.width, self.rect.height = self.running_size
+            if not self.jump:
+                self.rect.width, self.rect.height = self.running_size
             #else:
             #    self.rect.width, self.rect.height = self.standing_size
             """
@@ -256,6 +265,9 @@ class Player(Entity):
             self.frame_counter = 0
             self.image = pygame.image.load(self.images[self.counter]).convert_alpha()
             self.counter = (self.counter + 1) % len(self.images)
+
+            if self.facing_right == False:
+                self.image = transform.flip(self.image, 1, 0)
             #self.images = self.standing
 
         # flicker player when player is knocked back
