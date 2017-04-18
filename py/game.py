@@ -58,7 +58,7 @@ def main():
 
      # create list of different block types
     block_types = [
-    Unbreakable1(), Unbreakable2(), BaigeBlock(), Coin(),\
+    Unbreakable1(), Unbreakable2(), BaigeBlock(),\
     NeonRedBlock(), NeonWhiteBlock(), NeonBlueBlock(), NeonYellowBlock(), NeonOrangeBlock(), NeonGreenBlock(),\
     BlueBlock(), GrayBlock(), BrightBlueBlock(), BrownBlock(),
     CollisionBlock(), CornerPatrolBlock()
@@ -248,7 +248,11 @@ def main():
 
         # update coins
         for c in coins:
-            c.update()
+            if c.update(player):
+                coins.remove(c)
+                coin_sprites.remove(c)
+                entities.remove(c)
+                current_score += 10
 
         # update any additional entities
         for e in entities:

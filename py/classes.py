@@ -858,14 +858,19 @@ class RedGhost(Ghost):
 
 class Coin(Entity):
     """ Coin block class """
-    def __init__(self):
+    def __init__(self, x, y):
         Entity.__init__(self)
+        self.rect = Rect(x, y, 32, 32)
         self.counter, self.frame_counter = 0, 0
         self.images = [SPRITES_DIRECTORY + '/coin/' + str(x) + '.png' for x in [1, 2, 3, 4]]
         self.image = pygame.image.load(self.images[0]).convert_alpha() # start on first image
-    def update(self):
+    def update(self, player):
         self.frame_counter += 1
         if self.frame_counter == COIN_MAX_FRAMES:
             self.frame_counter = 0
             self.image = pygame.image.load(self.images[self.counter]).convert_alpha()
             self.counter = (self.counter + 1) % len(self.images)
+        if pygame.sprite.collide_rect(self, player):
+            return True
+        else:
+            return False

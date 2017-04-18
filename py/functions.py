@@ -47,7 +47,7 @@ def build_level(*args):
     collision_block_sprites, indestructibles, coins, coin_sprites = (x for x in args)
 
     # unpackage block_types
-    Unbreakable1, Unbreakable2, BaigeBlock, CoinBlock,\
+    Unbreakable1, Unbreakable2, BaigeBlock,\
     NeonRedBlock, NeonWhiteBlock, NeonBlueBlock, NeonYellowBlock, NeonOrangeBlock, NeonGreenBlock,\
     BlueBlock, GrayBlock, BrightBlueBlock, BrownBlock,\
     CollisionBlock, CornerPatrolBlock = (x for x in block_types)
@@ -60,8 +60,7 @@ def build_level(*args):
         for col in row:
             if col != " ":
                 if col =="c":
-                    which_block = CoinBlock
-                    p = classes.Platform(x, y, which_block)
+                    p = classes.Coin(x, y)
                     entities.add(p)
                     coins.append(p)
                     coin_sprites.add(p)
