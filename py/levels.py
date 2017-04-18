@@ -19,6 +19,8 @@
 # n = unbreakable 1
 # m = unbreakable 2
 
+# c = coin
+
 # X = Top of door (Exit Block) # TRIGGERS LEVEL CHANGE
 # Y = Bottom of door (Exit Block) # TRIGGERS LEVEL CHANGE
 
@@ -77,7 +79,7 @@ level_1 = [
 "gg                 bbbbbbbb                                                 n       gg",
 "gg                                                                             o    gg",
 "gg              o            o                           7                     n    gg",
-"gg              oQ    2     QoQ           O  5       O        3  O            Qn   Qgg",
+"gg     c  c  c  oQ    2     QoQ           O  5       O        3  O            Qn   Qgg",
 "ggDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDgg"]
 
 # add enemies/levels to list

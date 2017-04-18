@@ -858,9 +858,8 @@ class RedGhost(Ghost):
 
 class Coin(Entity):
     """ Coin block class """
-    def __init__(self, x, y, BlockType, patrol):
+    def __init__(self):
         Entity.__init__(self)
-        self.rect = Rect(x, y, 32, 32)
         self.counter, self.frame_counter = 0, 0
         self.images = [SPRITES_DIRECTORY + '/coin/' + str(x) + '.png' for x in [1, 2, 3, 4]]
         self.image = pygame.image.load(self.images[0]).convert_alpha() # start on first image

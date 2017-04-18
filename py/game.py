@@ -49,14 +49,16 @@ def main():
     enemy_sprites = pygame.sprite.Group()
     collision_block_sprites = pygame.sprite.Group()
     indestructibles = pygame.sprite.Group()
+    coin_sprites = pygame.sprite.Group()
 
     platforms = []
     collision_blocks = []
     enemies = []
+    coins = []
 
      # create list of different block types
     block_types = [
-    Unbreakable1(), Unbreakable2(), BaigeBlock(),\
+    Unbreakable1(), Unbreakable2(), BaigeBlock(), Coin(),\
     NeonRedBlock(), NeonWhiteBlock(), NeonBlueBlock(), NeonYellowBlock(), NeonOrangeBlock(), NeonGreenBlock(),\
     BlueBlock(), GrayBlock(), BrightBlueBlock(), BrownBlock(),
     CollisionBlock(), CornerPatrolBlock()
@@ -67,11 +69,12 @@ def main():
     # pack arg list to build level
     args = current_level, level, enemies, enemy_sprites, platforms, blocks,\
     entities, Platform, block_types, collision_blocks,\
-    collision_block_sprites, indestructibles
+    collision_block_sprites, indestructibles, coins, coin_sprites
 
     # build level and unpack return values
     platforms, blocks, entities, enemies, enemy_sprites,\
-    collision_block_sprites, indestructibles, collision_blocks = build_level(*args)
+    collision_block_sprites, indestructibles, collision_blocks,\
+    coins, coin_sprites = build_level(*args)
 
     # generate size of level and set camera
     pygame.total_level_width  = len(level[0])*32
@@ -243,6 +246,10 @@ def main():
             else:
                 enemy.update()
 
+        # update coins
+        for c in coins:
+            c.update()
+
         # update any additional entities
         for e in entities:
             screen.blit(e.image, camera.apply(e))
@@ -287,10 +294,11 @@ def main():
             # build argument list
             args = screen, player, level, current_level, platforms, bullets,\
             blocks, entities, enemies, enemy_sprites, Platform,\
-            block_types, collision_blocks, collision_block_sprites, indestructibles, levels.SPAWN_POINT_LEVEL
+            block_types, collision_blocks, collision_block_sprites, indestructibles, levels.SPAWN_POINT_LEVEL,\
+            coins, coin_sprites
             # call reset level function with *args
             player, platforms, blocks, collision_blocks, collision_block_sprites,\
-            entities, enemies, enemy_sprites, indestructibles = reset_level(*args)
+            entities, enemies, enemy_sprites, indestructibles, coins, coin_sprites = reset_level(*args)
 
             current_life_playtime = 0
 

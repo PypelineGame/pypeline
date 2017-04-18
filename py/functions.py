@@ -44,10 +44,10 @@ def build_level(*args):
     # unpackage arguments
     current_level, level, enemies, enemy_sprites, platforms, blocks, entities,\
     Platform, block_types, collision_blocks,\
-    collision_block_sprites, indestructibles = (x for x in args)
+    collision_block_sprites, indestructibles, coins, coin_sprites = (x for x in args)
 
     # unpackage block_types
-    Unbreakable1, Unbreakable2, BaigeBlock,\
+    Unbreakable1, Unbreakable2, BaigeBlock, CoinBlock,\
     NeonRedBlock, NeonWhiteBlock, NeonBlueBlock, NeonYellowBlock, NeonOrangeBlock, NeonGreenBlock,\
     BlueBlock, GrayBlock, BrightBlueBlock, BrownBlock,\
     CollisionBlock, CornerPatrolBlock = (x for x in block_types)
@@ -59,7 +59,13 @@ def build_level(*args):
     for row in level:
         for col in row:
             if col != " ":
-                if col == "E":
+                if col =="c":
+                    which_block = CoinBlock
+                    p = classes.Platform(x, y, which_block)
+                    entities.add(p)
+                    coins.append(p)
+                    coin_sprites.add(p)
+                elif col == "E":
                     which_block = BaigeBlock
                     p = classes.Platform(x, y, which_block)
                     platforms, blocks, entities = InsertPlatform(p, platforms, blocks, entities)
@@ -167,7 +173,8 @@ def build_level(*args):
     #    enemies.append(enemy)
 
     return platforms, blocks, entities, enemies,\
-    enemy_sprites, collision_block_sprites, indestructibles, collision_blocks
+    enemy_sprites, collision_block_sprites, indestructibles, collision_blocks,\
+    coins, coin_sprites
 
 def InsertPlatform(p, platforms, blocks, entities):
     platforms.append(p)
@@ -250,7 +257,7 @@ def reset_level(*args):
     screen, player, level, current_level, platforms, bullets, blocks,\
     entities, enemies, enemy_sprites, Platform,\
     block_types, collision_blocks, collision_block_sprites,\
-    indestructibles, SPAWN_POINT_LEVEL = (x for x in args)
+    indestructibles, SPAWN_POINT_LEVEL, coins, coin_sprites = (x for x in args)
 
     # reset sprites and re-add player to game
     platforms = []
@@ -262,15 +269,18 @@ def reset_level(*args):
     collision_block_sprites.empty()
     enemy_sprites.empty()
     enemies = []
+    coins = []
+    coin_sprites.empty()
 
     # build up arg list for build_level function
     args = current_level, level, enemies, enemy_sprites, platforms, blocks,\
     entities, Platform, block_types, collision_blocks,\
-    collision_block_sprites, indestructibles
+    collision_block_sprites, indestructibles, coins, coin_sprites
 
     # rebuild level
     platforms, blocks, entities, enemies, enemy_sprites,\
-    collision_block_sprites, indestructibles, collision_blocks = build_level(*args)
+    collision_block_sprites, indestructibles, collision_blocks,\
+    coins, coin_sprites = build_level(*args)
 
     # respawn player at these coordinates
     player.kill()
@@ -279,7 +289,7 @@ def reset_level(*args):
     entities.add(player)
 
     return player, platforms, blocks, collision_blocks, collision_block_sprites,\
-    entities, enemies, enemy_sprites, indestructibles
+    entities, enemies, enemy_sprites, indestructibles, coins, coin_sprites
 
 def healthBar(player_health, screen, cache):
     """ displays player's health bar at top right of screen """
