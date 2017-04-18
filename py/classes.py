@@ -45,7 +45,7 @@ CAMERA_SLACK = 30
 GARBAGE_COLLECTOR_MAX_FRAMES = 8
 MAX_HEALTH_FRAMES = 210
 PYSNAKE_MAX_FRAMES = 8
-
+COIN_MAX_FRAMES = 8
 PLAYER_DAMAGE_FRAMES = 20
 PLAYER_MAX_RUN_FRAMES = 8
 PLAYER_MAX_STANDING_FRAMES = 20
@@ -854,19 +854,19 @@ class RedGhost(Ghost):
     def dead(self):
         return False
 
+""" END OF ENEMIES """
 
-
-"""                              end of Enemies                              """
-
-"""
-        OLD METHOD FOR LOADING IMAGES
-
-        #self.images = ['1.png', '2.png', '3.png', '4.png']
-        #for index, x in enumerate(self.images):
-        #    self.images[index] =  "../sprites/garbage_collector/" + x
-
-        NEW METHOD FOR LOADING IMAGES (one lines fucking rock)
-
-        #self.images = [SPRITES_DIRECTORY + 'PySnake/green_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
-
-"""
+class Coin(Entity):
+    """ Coin block class """
+    def __init__(self, x, y, BlockType, patrol):
+        Entity.__init__(self)
+        self.rect = Rect(x, y, 32, 32)
+        self.counter, self.frame_counter = 0, 0
+        self.images = [SPRITES_DIRECTORY + '/coin/' + str(x) + '.png' for x in [1, 2, 3, 4]]
+        self.image = pygame.image.load(self.images[0]).convert_alpha() # start on first image
+    def update(self):
+        self.frame_counter += 1
+        if self.frame_counter == COIN_MAX_FRAMES:
+            self.frame_counter = 0
+            self.image = pygame.image.load(self.images[self.counter]).convert_alpha()
+            self.counter = (self.counter + 1) % len(self.images)
