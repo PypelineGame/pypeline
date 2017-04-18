@@ -78,32 +78,22 @@ class Player(Entity):
     """ Player object """
     def __init__(self, x, y):
         Entity.__init__(self)
-        self.xvel = 0 # current x velocity
-        self.yvel = 0 # current y velocity
-        self.onGround = False
-        #self.image = Surface((60,60))
-        #self.image.fill(Color("#0000FF"))
-        
-        #self.standing_rect = Rect(x, y, 45, 57)
-        #self.attack_rect = Rect(x, y, 80, 60)
-        #self.running_rect = Rect(x, y, 58, 45)
-
+        self.xvel, self.yvel = 0, 0 # current x and y velocity
+        self.onGround, self.jump = False, False
         self.standing_size = (45, 57)
         self.attack_size = (80, 60)
-        self.running_size = (58, 42)
-        
         self.rect = Rect(x, y, self.standing_size[0], self.standing_size[1])
-        self.attack_height = 32
-        self.health = PLAYER_STARTER_HEALTH
-        self.melee_attack, self.range_attack, self.num_of_bullets = 25, 50, 10
-        self.damage_frame = 0 # counts # of frames until max damage frames
         self.enemy_collision, self.knockback_left, self.knockback_right, self.flicker = False, False, False, False
+        self.attack_height = 32 # used for calculating height of ranged attack
+        self.health = PLAYER_STARTER_HEALTH
+        self.melee_attack, self.range_attack = 25, 50
+        self.rangeattack_cooldown = 0
+        self.damage_frame = 0 # counts # of frames until max damage frames
         self.frame_counter, self.counter, self.jump_counter = 0, 0, 0
         self.running = [SPRITES_DIRECTORY + 'player/running/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8]]
         self.standing = [SPRITES_DIRECTORY + 'player/standing/' + str(x) + '.png' for x in [1, 2, 3, 4]]#, 5, 6]]#, 7, 8, 9]]
         self.jumping = [SPRITES_DIRECTORY + 'player/jumping/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
         self.images = self.standing # by default
-        self.jump = False
         self.image = pygame.image.load(self.images[0])
         self.facing_right = True # used to determine strong attack's direction
         self.image_knockback = pygame.image.load(self.jumping[2])#self.image.copy()
@@ -112,7 +102,7 @@ class Player(Entity):
         self.image.convert_alpha()
 
         #Sound effects
-        self.sound_jump = pygame.mixer.Sound(MUSIC_DIRECTORY + 'sound_effets/player/jump_sound')
+        self.sound_jump = pygame.mixer.Sound(MUSIC_DIRECTORY + 'sound_effets/player/jump_sound.wav')
 
 
     def damage(self, attack, enemy, camera):
@@ -131,63 +121,9 @@ class Player(Entity):
         self.damage_frame += 1 # increments damage_frame every frame of game
         self.frame_counter += 1 # increments frame counter
 
-
-
-            #if self.onGround and self.images == self.jumping:
-            #    #if left or right:
-            #    #    self.images = self.running
-            #    #else:
-            #    #    self.images = self.standing
-            #    self.counter = 0
-            #pygame.transform.scale(self.image, (55, 45), self.image)
-        #if (right or left) and not self.jump:
-        #    self.images = self.running
-        #el
-
-        """
-        if right and not self.jump:
-            self.facing_right = True
-            self.images = self.running
-            self.rect.width = self.running_size[0]
-            self.rect.height = self.running_size[1]
-        elif self.jump == True:
-            self.jump_counter += 1
-            if self.jump_counter == 33:
-                self.jump = False
-                self.jump_counter, self.counter = 0, 0
-                self.images = self.standing
-                self.frame_counter = 0
-                self.rect.width = self.standing_size[0]
-                self.rect.height = self.standing_size[1]
-        """
-        #self.jump = self.onGround
-
-        """
-        if right or left or self.jump:
-            if self.jump:
-                self.jump_counter += 1
-                if self.jump_counter == 33:
-                    self.jump = False
-                    self.jump_counter, self.frame_counter, self.counter = 0, 0, 0
-                    self.images = self.standing
-                self.images = self.jumping
-                self.frame_counter = 0
-            if right or left and not self.jump:
-                self.images = self.running
-                if right:
-                    self.facing_right = True
-                elif left:
-                    self.facing_right = False
-        """
-
-
-
-            #else:
-            #    self.images = self.jumping
-
-        if self.yvel < 0 and self.jump_counter < 33:
+        # handle running while jumping
+        if self.yvel < 0 and self.jump_counter < 35:
             self.jump = True
-            #pass
         if left or right:
             if not self.jump:
                 self.images = self.running
@@ -197,69 +133,33 @@ class Player(Entity):
             elif right:
                 self.facing_right = True
         elif not left and not right:
-            self.frame_counter == PLAYER_MAX_STANDING_FRAMES
+            #self.frame_counter == PLAYER_MAX_STANDING_FRAMES
             self.images = self.standing
             #self.rect.width, self.rect.height = self.standing_size
 
-        #if self.jump:
-        #    self.images = self.jumping
-
+        # standing still while jumping
         if self.jump:
             self.jump_counter += 1
-            if self.jump_counter == 33:
+            if self.onGround:
                 self.jump = False
-                self.jump_counter, self.counter, self.frame_counter = 0, 0, 0
+                self.jump_counter, self.counter, self.frame_counter = 0, 0, PLAYER_MAX_STANDING_FRAMES
                 self.images = self.standing
                 self.rect.width, self.rect.height = self.standing_size
             else:
                 self.images = self.jumping
+                #self.rect.width, self.rect.height = self.jumping_size
 
-
-        #if right:
-        #    self.facing_right = True
-        #    self.images = self.running
-
+        # cycle jumping and running frames
         if self.frame_counter >= PLAYER_MAX_RUN_FRAMES and (self.images == self.running or self.images == self.jumping):
             self.frame_counter = 0
             self.image = pygame.image.load(self.images[self.counter])
             self.counter = (self.counter + 1) % len(self.images)
-            
 
-            if not self.jump:
-                self.rect.width, self.rect.height = self.running_size
-            #else:
-            #    self.rect.width, self.rect.height = self.standing_size
-            """
-            if right or left and not self.jump:
-                self.images = self.running
-                if right:
-                    self.facing_right = True
-                    self.frame_counter = 0
-                elif left:
-                    self.facing_right = False
-                    self.frame_counter = 0
-            """
-
-            """
-            if left:
-                self.facing_right = False
-                if self.jump:
-                    self.images = self.jumping
-                    self.frame_counter = 0
-                    self.rect.width = self.standing_size[0]
-                    self.rect.height = self.standing_size[1]
-                    #self.rect = self.running_rect
-                else:  #elif self.yvel < 0:
-                    self.images = self.running
-                    self.frame_counter = 0
-                    self.rect.width = self.running_size[0]
-                    self.rect.height = self.running_size[1]
-                #self.image = transform.flip(self.image, 1, 0)
-            """
             # reverse images if player is facing left
             if self.facing_right == False:
                 self.image = transform.flip(self.image, 1, 0)
         
+        # cycle standing frames
         elif self.images == self.standing and self.frame_counter >= PLAYER_MAX_STANDING_FRAMES:
             self.rect.width, self.rect.height = self.standing_size
             self.frame_counter = 0
@@ -305,63 +205,24 @@ class Player(Entity):
         # handle player movements
         else:
             if up:
-                #if self.images != self.jumping:
-                #    self.frame_counter, self.counter = 0, 0
-                #self.images = self.jumping
                 # only jump if on the ground
                 if self.onGround:
                     self.yvel -= 10
                     self.sound_jump.play()
             if down:
-                #if self.images != self.standing:
-                #    self.frame_counter, self.counter = 0, 0
-                #self.images = self.standing
                 pass # we can eventually implement crouching
             if left:
-                #if self.images != self.running:
-                #    self.frame_counter, self.counter = 0, 0
-                #self.images = self.running
                 if running:
                     self.xvel = -5
                 else:
                     self.xvel = -4
             if right:
-                #if self.images != self.running:
-                #    self.frame_counter, self.counter = 0, 0
-                #self.images = self.running
-                #self.rect.inflate_ip(55, 45)
                 if running:
                     self.xvel = 5
                 else:
                     self.xvel = 4
             if not(left or right):
                 self.xvel = 0
-                #if self.images != self.standing:
-                    #self.frame_counter = 0
-                    #self.rect.width = self.standing_size[0]
-                    #self.rect.height = self.standing_size[1]
-                #self.images = self.standing
-                    #self.images = self.standing
-                #self.rect.width = self.standing_size[0]
-                #self.rect.height = self.standing_size[1]
-                #self.rect = self.standing_rect
-
-
-        # switch frames
-        #if self.images == self.running and self.frame_counter >= PLAYER_MAX_RUN_FRAMES:
-        #    #pygame.transform.scale(self.image, (55, 45), self.image)
-        #    self.frame_counter = 0
-        #    self.image = pygame.image.load(self.images[self.counter]).convert_alpha()
-        #    self.counter = (self.counter + 1) % len(self.images)
-        #elif self.images == self.standing and self.frame_counter >= PLAYER_MAX_STANDING_FRAMES:
-        #    self.frame_counter = 0
-        #    self.image = pygame.image.load(self.images[self.counter]).convert_alpha()
-        #    self.counter = (self.counter + 1) % len(self.images)
-
-        #elif self.images == self.standing and self.frame_counter >= PLAYER_MAX_STANDING_FRAMES:
-        #    self.frame_counter = 0
-        #    self.image = pygame.image.load(self.images[self.counter])
-        #    self.counter = (self.counter + 1) % len(self.images)
 
         # only accelerate with gravity if in the air and no knockback
         if not self.onGround:
@@ -409,10 +270,6 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self, mouse, player, camera_state, direction, strength = None):
         # Call the parent class (Sprite) constructor
         pygame.sprite.Sprite.__init__(self)
-        #self.player = player
-        # calculate center of bullet
-        #self.center_y = (player[1] + player[2])# - player[2]/2)
-        #self.center_x = (player[0] - player[2])# - player[2]/2)
         # grab mouse coordinates
         self.mouse_x, self.mouse_y = mouse[0], mouse[1]
         if strength == "strong":

@@ -163,15 +163,15 @@ def main():
                 player.frame_counter, player.counter = 0, 0
             if e.type == KEYUP and e.key == K_LSHIFT:
                 running = False
-            if (e.type == pygame.MOUSEBUTTONDOWN and e.button == 1) or\
-            (e.type == KEYUP and e.key == K_SPACE):
-                bullet = Bullet(pygame.mouse.get_pos(),\
-                [player.rect.x, player.rect.y, player.attack_height], camera.state, player.facing_right)
-                # spawns bullet at the center of the player
-                bullet.rect.x = player.rect.x + player.attack_height/2
-                bullet.rect.y = player.rect.y - player.attack_height/2
-                entities.add(bullet)
-                bullets.add(bullet)
+            #if (e.type == pygame.MOUSEBUTTONDOWN and e.button == 1) or\
+            #(e.type == KEYUP and e.key == K_SPACE):
+            #    bullet = Bullet(pygame.mouse.get_pos(),\
+            #    [player.rect.x, player.rect.y, player.attack_height], camera.state, player.facing_right)
+            #    # spawns bullet at the center of the player
+            #    bullet.rect.x = player.rect.x + player.attack_height/2
+            #    bullet.rect.y = player.rect.y - player.attack_height/2
+            #    entities.add(bullet)
+            #    bullets.add(bullet)
             if e.type == KEYDOWN and e.key == K_f and not left and not right:# and player.facing_right == True):
                 bullet = Bullet(pygame.mouse.get_pos(),\
                 [player.rect.x, player.rect.y, player.attack_height], camera.state, player.facing_right, 'strong')
