@@ -56,7 +56,7 @@ level_1 = [
 "gg             o                                                                    gg",
 "gg            Xo                                                                    gg",
 "gg            Yo                                                                    gg",
-"gg    cccccccbbb                                                                    gg",
+"gg    c c c cbbb                                                                    gg",
 "gg    bbbbbbb                                                                       gg",
 "gg c                                                                                gg",
 "gg nc                                                                               gg",
@@ -67,10 +67,10 @@ level_1 = [
 "gg     ooooooo                                                    oooo              gg",
 "gg    o                                                        cco   n              gg",
 "gg   o                                                         oo    n              gg",
-"gg     Qcccccc    1          Q                               Qo      n              gg",
+"gg     Qc c c     1          O                                o      n              gg",
 "ggb     bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb       n     cc       gg",
 "gg b                                                                 w    bbbb      gg",
-"gg  b                                                            O   w              gg",
+"gg  bQ                                                              Qw              gg",
 "gg   bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb            gg",
 "gg                                 7                     7              n           gg",
 "gg                                                                       n          gg",
@@ -78,8 +78,8 @@ level_1 = [
 "gg                 c      c        7                     7                 n        gg",
 "gg                 bbbbbbbb                                                 n       gg",
 "gg              c            c                                                 o    gg",
-"gg              o            o                           7                     n    gg",
-"gg     c  c     oQ    2     QoQ           O  5       O        3  O            Qn ccQgg",
+"gg              o            o                           7                     nX   gg",
+"gg     c  c     oQ    2     QoQ           O  5       O        3  O            QnYccQgg",
 "ggDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDgg"]
 
 # add enemies/levels to list

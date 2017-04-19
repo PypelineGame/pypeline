@@ -126,6 +126,7 @@ class Player(Entity):
             self.jump = True
         if left or right:
             if not self.jump:
+                #self.counter = 0
                 self.images = self.running
                 #self.rect.width, self.rect.height = self.running_size
             if left:
@@ -134,6 +135,7 @@ class Player(Entity):
                 self.facing_right = True
         elif not left and not right:
             #self.frame_counter == PLAYER_MAX_STANDING_FRAMES
+            #self.counter = 0
             self.images = self.standing
             #self.rect.width, self.rect.height = self.standing_size
 
@@ -146,6 +148,7 @@ class Player(Entity):
                 self.images = self.standing
                 self.rect.width, self.rect.height = self.standing_size
             else:
+                #self.counter = 0
                 self.images = self.jumping
                 #self.rect.width, self.rect.height = self.jumping_size
 

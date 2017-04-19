@@ -250,13 +250,12 @@ def bullet_collision(*args):
     return bullets, entities, platforms, blocks, enemies, enemy_sprites, score
 
 def reset_level(*args):
-    """ respawn player and rebuild layer if player dies """
-
+    """ respawn player and rebuild player if player dies """
     # unpackage arguments
     screen, player, level, current_level, platforms, bullets, blocks,\
     entities, enemies, enemy_sprites, Platform,\
-    block_types, collision_blocks, collision_block_sprites,\
-    indestructibles, SPAWN_POINT_LEVEL, coins, coin_sprites = (x for x in args)
+    block_types, collision_blocks, collision_block_sprites, indestructibles, SPAWN_POINT_LEVEL,\
+    coins, coin_sprites = (x for x in args)
 
     # reset sprites and re-add player to game
     platforms = []

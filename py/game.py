@@ -298,8 +298,8 @@ def main():
             # build argument list
             args = screen, player, level, current_level, platforms, bullets,\
             blocks, entities, enemies, enemy_sprites, Platform,\
-            block_types, collision_blocks, collision_block_sprites, indestructibles, levels.SPAWN_POINT_LEVEL,\
-            coins, coin_sprites
+            block_types, collision_blocks, collision_block_sprites, indestructibles,\
+            levels.SPAWN_POINT_LEVEL, coins, coin_sprites
             # call reset level function with *args
             player, platforms, blocks, collision_blocks, collision_block_sprites,\
             entities, enemies, enemy_sprites, indestructibles, coins, coin_sprites = reset_level(*args)
