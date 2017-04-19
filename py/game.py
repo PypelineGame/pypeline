@@ -185,9 +185,16 @@ def main():
                 bullet.rect.y = player.rect.y - player.attack_height/2 + 10# + player.height/2# / 2
                 entities.add(bullet)
                 bullets.add(bullet)
+                player.strong_attack = True
+
             if e.type == pygame.MOUSEBUTTONDOWN and e.button == 3:
                 # if right click, print mouse coordinates for testing purposes
                 print(pygame.mouse.get_pos())
+            if (e.type == KEYDOWN and e.key == K_SPACE) or\
+            (e.type == pygame.MOUSEBUTTONDOWN and e.button == 1) or\
+            (e.type == KEYDOWN and e.key == K_k) and player.melee_attack == False:
+                player.melee_attack = True
+
 
         """ move background while camera moves """
         if -1 * camera.state[0] >= CURRENT_WIN_WIDTH:#_RIGHT:
@@ -215,7 +222,8 @@ def main():
         camera.update(player)
 
         """ update player and check if reached next level """
-        args = up, down, left, right, running, platforms, enemies, enemy_sprites, bullets, camera, collision_blocks, RESET_LEVEL_FLAG, entities
+        args = up, down, left, right, running, platforms, enemies, enemy_sprites,\
+        bullets, camera, collision_blocks, RESET_LEVEL_FLAG, entities, blocks
         result = player.update(*args)
         # remove patrol blocks, but not corner colision blocks
         if result != None and result in collision_blocks:

@@ -49,6 +49,7 @@ COIN_MAX_FRAMES = 8
 PLAYER_DAMAGE_FRAMES = 20
 PLAYER_MAX_RUN_FRAMES = 8
 PLAYER_MAX_STANDING_FRAMES = 20
+PLAYER_MAX_ATTACK_FRAMES = 5
 
 cache = {}
 #Player position
@@ -80,19 +81,29 @@ class Player(Entity):
         Entity.__init__(self)
         self.xvel, self.yvel = 0, 0 # current x and y velocity
         self.onGround, self.jump = False, False
+        self.strong_attack, self.melee_attack = False, False
         self.standing_size = (45, 57)
-        self.attack_size = (80, 60)
+        #self.attack_size = (80, 60)
+        self.attack_box = Rect(x, y, self.standing_size[0]/2, self.standing_size[1]/2)
+
+        #self.SURFACE = Surface(self.standing_size[0], self.standing_size[1]/2)
+        #self.SURFACE.fill(RED)
+        #self.SURFACE.convert_alpha()
+        #self.attack_box.fill(RED, rect=self.attack_box, special_flags=0)
+
         self.rect = Rect(x, y, self.standing_size[0], self.standing_size[1])
         self.enemy_collision, self.knockback_left, self.knockback_right, self.flicker = False, False, False, False
         self.attack_height = 32 # used for calculating height of ranged attack
         self.health = PLAYER_STARTER_HEALTH
-        self.melee_attack, self.range_attack = 25, 50
+        self.melee_damage, self.range_attack = 25, 50
         self.rangeattack_cooldown = 0
         self.damage_frame = 0 # counts # of frames until max damage frames
         self.frame_counter, self.counter, self.jump_counter = 0, 0, 0
+        self.attack_counter = 0
         self.running = [SPRITES_DIRECTORY + 'player/running/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8]]
         self.standing = [SPRITES_DIRECTORY + 'player/standing/' + str(x) + '.png' for x in [1, 2, 3, 4]]#, 5, 6]]#, 7, 8, 9]]
         self.jumping = [SPRITES_DIRECTORY + 'player/jumping/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
+        self.attacking = [SPRITES_DIRECTORY + 'player/attack/' + str(x) + '.png' for x in [1, 2, 3, 4]]#, 5, 6, 7]]
         self.images = self.standing # by default
         self.image = pygame.image.load(self.images[0])
         self.facing_right = True # used to determine strong attack's direction
@@ -115,7 +126,7 @@ class Player(Entity):
                 self.onGround = False
             self.flicker = True # causes player to flicker
 
-    def update(self, up, down, left, right, running, platforms, enemies, enemy_sprites, bullets, camera, collision_blocks, RESET_LEVEL_FLAG, entities):
+    def update(self, up, down, left, right, running, platforms, enemies, enemy_sprites, bullets, camera, collision_blocks, RESET_LEVEL_FLAG, entities, blocks):
         global PLAYER_X, PLAYER_Y
         """ updates the player on every frame of main game loop """
         self.damage_frame += 1 # increments damage_frame every frame of game
@@ -126,7 +137,6 @@ class Player(Entity):
             self.jump = True
         if left or right:
             if not self.jump:
-                #self.counter = 0
                 self.images = self.running
                 #self.rect.width, self.rect.height = self.running_size
             if left:
@@ -134,8 +144,6 @@ class Player(Entity):
             elif right:
                 self.facing_right = True
         elif not left and not right:
-            #self.frame_counter == PLAYER_MAX_STANDING_FRAMES
-            #self.counter = 0
             self.images = self.standing
             #self.rect.width, self.rect.height = self.standing_size
 
@@ -146,16 +154,65 @@ class Player(Entity):
                 self.jump = False
                 self.jump_counter, self.counter, self.frame_counter = 0, 0, PLAYER_MAX_STANDING_FRAMES
                 self.images = self.standing
-                self.rect.width, self.rect.height = self.standing_size
             else:
-                #self.counter = 0
                 self.images = self.jumping
                 #self.rect.width, self.rect.height = self.jumping_size
 
+        if self.strong_attack or self.melee_attack:
+            self.images = self.attacking
+            self.attack_box.y = self.rect.y
+            if self.facing_right:
+                self.attack_box.x = self.rect.x + self.standing_size[0]
+                #print(self.rect.x)
+                #print(self.attack_box.x)
+            else:
+                self.attack_box.x = self.rect.x - self.standing_size[0]
+            if self.attack_counter >= 4:
+                self.melee_attack = False
+                self.strong_attack = False
+                self.attack_counter = 0
+                self.frame_counter, self.counter = 0, 0
+            if self.frame_counter >= PLAYER_MAX_ATTACK_FRAMES:
+                self.attack_counter += 1
+                self.frame_counter = 0
+                self.image = pygame.image.load(self.images[self.counter]).convert_alpha()
+                self.counter = (self.counter + 1) % len(self.images)
+
+                # reverse images if player is facing left
+                if self.facing_right == False:
+                    self.image = transform.flip(self.image, 1, 0)
+
+            # See if it hit a block
+            for block in blocks:
+                if self.attack_box.colliderect(block.rect):
+                    platforms.remove(block)
+                    blocks.remove(block)
+                    entities.remove(block)
+
+            for enemy in enemies:
+                if self.attack_box.colliderect(enemy.rect):
+                    enemy.healthTrigger = True
+                    if type(enemy).__name__ != "GarbageCollector":
+                        if isinstance(enemy, PySnake):
+                            if type(enemy).__name__=="GreenPysnake":
+                                enemy.attack *= 2
+                            if enemy.health <= 0:
+                                enemy.hit = True
+                                enemy.counter = 0
+                                if not enemy.inflated:
+                                    enemy.rect.inflate_ip(-15,18)
+                                    enemy.inflated = True
+                            else:
+                                enemy.health -= self.melee_damage
+                                #score += 10
+                        else:
+                            functions.delete_enemy(enemy, enemy_sprites, enemies, entities)
+
+
         # cycle jumping and running frames
-        if self.frame_counter >= PLAYER_MAX_RUN_FRAMES and (self.images == self.running or self.images == self.jumping):
+        elif self.frame_counter >= PLAYER_MAX_RUN_FRAMES and (self.images == self.running or self.images == self.jumping):
             self.frame_counter = 0
-            self.image = pygame.image.load(self.images[self.counter])
+            self.image = pygame.image.load(self.images[self.counter]).convert_alpha()
             self.counter = (self.counter + 1) % len(self.images)
 
             # reverse images if player is facing left
@@ -164,14 +221,13 @@ class Player(Entity):
         
         # cycle standing frames
         elif self.images == self.standing and self.frame_counter >= PLAYER_MAX_STANDING_FRAMES:
-            self.rect.width, self.rect.height = self.standing_size
+            #self.rect.width, self.rect.height = self.standing_size
             self.frame_counter = 0
             self.image = pygame.image.load(self.images[self.counter]).convert_alpha()
             self.counter = (self.counter + 1) % len(self.images)
 
             if self.facing_right == False:
                 self.image = transform.flip(self.image, 1, 0)
-            #self.images = self.standing
 
         # flicker player when player is knocked back
         if self.flicker:
@@ -278,14 +334,9 @@ class Bullet(pygame.sprite.Sprite):
         if strength == "strong":
             # calculate center of bullet
             self.center_y = player[1]/2 + player[2]/2 + 10# + player[2] - player[2]/2)
-            if direction == True:
-                # draw going right
-                self.center_x = player[0]/2 + player[2]/2 + 10# - player[2] - player[2]/2)
-                self.image = pygame.image.load(SPRITES_DIRECTORY + 'player/blade_wave.png')
-            else:
-                # draw going left
-                self.center_x = player[0]/2 - player[2]/2 - 10
-                self.image = pygame.image.load(SPRITES_DIRECTORY + 'player/blade_wave.png')
+            self.center_x = player[0]/2 + player[2]/2 + 10
+            self.image = pygame.image.load(SPRITES_DIRECTORY + 'player/blade_wave.png')
+            if not direction:
                 self.image = transform.flip(self.image, 1, 0)
         else:
             self.image = pygame.Surface([4, 4])
@@ -662,12 +713,12 @@ class PySnake(Enemy):
             if pygame.sprite.collide_rect(self, p):
                 if xvel > 0: # moving right, hit left side of wall
                     self.rect.right = p.rect.left
-                    if p in blocks:
-                        pass
+                    #if p in blocks:
+                    #    pass
                 if xvel < 0: # moving left, hit right side of wall
                     self.rect.left = p.rect.right
-                    if p in blocks:
-                        pass
+                    #if p in blocks:
+                    #    pass
                 if yvel > 0: # moving down, hit top of wall
                     self.rect.bottom = p.rect.top
                     self.onGround = True
