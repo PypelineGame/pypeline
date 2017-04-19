@@ -67,7 +67,7 @@ level_1 = [
 "gg     ooooooo                                                    oooo              gg",
 "gg    o                                                        cco   n              gg",
 "gg   o                                                         oo    n              gg",
-"gg     Qc c c     1          O                                o      n              gg",
+"gg     Qc c c     1          O                               Qo      n              gg",
 "ggb     bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb       n     cc       gg",
 "gg b                                                                 w    bbbb      gg",
 "gg  bQ                                                              Qw              gg",
