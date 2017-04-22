@@ -123,7 +123,9 @@ def main():
             # package arguments for reset level
             args = screen, player, level, current_level, platforms, bullets,\
             blocks, entities, enemies, enemy_sprites, Platform,\
-            block_types, collision_blocks, collision_block_sprites, indestructibles, levels.SPAWN_POINT_LEVEL
+            block_types, collision_blocks, collision_block_sprites, indestructibles, levels.SPAWN_POINT_LEVEL,\
+            coins, coin_sprites
+
             # call reset level
             player, platforms, blocks, collision_blocks, collision_block_sprites,\
             entities, enemies, enemy_sprites, indestructibles = reset_level(*args)
@@ -317,7 +319,7 @@ def main():
             current_life_playtime = 0
 
 
-        
+
         #current_score = scrollScore(current_score, score) # animate scrolling effect on score
         #current_score = score # score no scrolling
 

@@ -256,6 +256,7 @@ def bullet_collision(*args):
 
 def reset_level(*args):
     """ respawn player and rebuild player if player dies """
+    print(len(args))
     # unpackage arguments
     screen, player, level, current_level, platforms, bullets, blocks,\
     entities, enemies, enemy_sprites, Platform,\
