@@ -352,7 +352,7 @@ def main():
     # draw game over and end the game
     gameOver(screen, cache)
     pygame.quit()
-    print ("Game terminated..\nTotal Runtime: ",str(elapsed_playtime), "s.")
+    print ("Game terminated..\nTotal Runtime: ",str(elapsed_playtime).zfill(8), "s.")
 
 if __name__ == "__main__":
     main()
