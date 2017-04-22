@@ -28,7 +28,7 @@ def main():
     up = down = left = right = running = False
     bullet = None
 
-    current_level = 2 # start at level 1
+    current_level = 1 # start at level 1
     level = get_level(current_level)
 
     # helps draw background
@@ -294,7 +294,7 @@ def main():
             loading = False
 
         # if player has fallen off screen or hit an enemy, player has died
-        if player.rect.y > 1000 or player.health <= 0 or time_remaining <= 0:
+        if player.rect.y > len(level) * 32 or player.health <= 0 or time_remaining <= 0:
 
             CURRENT_WIN_WIDTH = copy(WIN_WIDTH)
             lives -= 1 # count number of deaths
@@ -362,6 +362,7 @@ def main():
     # draw game over and end the game
     gameOver(screen, cache)
     pygame.quit()
+    sys.exit()
     print ("Game terminated..\nTotal Runtime: ",str(elapsed_playtime), "s.")
 
 if __name__ == "__main__":
