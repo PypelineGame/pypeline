@@ -20,8 +20,8 @@ def main():
     print ("Game loaded.")
     loading = False
     os.environ['SDL_VIDEO_CENTERED'] = '1'
-    screen = pygame.display.set_mode(DISPLAY, FLAGS, DEPTH)
-    hud = pygame.display.set_mode(DISPLAY, FLAGS, DEPTH)
+    screen = pygame.display.set_mode(classes.DISPLAY, classes.FLAGS, classes.DEPTH)
+    hud = pygame.display.set_mode(classes.DISPLAY, classes.FLAGS, classes.DEPTH)
     timer = pygame.time.Clock()
 
     # definitions
@@ -57,6 +57,9 @@ def main():
     collision_blocks = []
     enemies = []
     coins = []
+
+    revive = False # used to display respawn text
+    revive_text_counter = 0
 
      # create list of different block types
     block_types = [
@@ -302,11 +305,7 @@ def main():
                 camera = Camera(complex_camera, pygame.total_level_width, pygame.total_level_height)
                 gameOver(screen, cache)
             else:
-                text = get_msg('Try again bruh...', cache)
-                text_rect = text.get_rect()
-                text_x = screen.get_width() / 2 - text_rect.width / 2
-                text_y = screen.get_height() / 2 - text_rect.height / 2
-                screen.blit(text, [text_x, text_y])
+                revive = True
             # build argument list
             args = screen, player, level, current_level, platforms, bullets,\
             blocks, entities, enemies, enemy_sprites, Platform,\
@@ -318,22 +317,33 @@ def main():
 
             current_life_playtime = 0
 
+        # display revive text
+        if revive == True:
+            revive_text_counter += 1
+            if revive_text_counter == 50:
+                revive = False
+            else:
+                text = get_msg('Try again bruh...', cache)
+                text_rect = text.get_rect()
+                text_x = screen.get_width() / 2 - text_rect.width / 2
+                text_y = screen.get_height() / 2 - text_rect.height / 2
+                hud.blit(text, [text_x, text_y])
 
 
         #current_score = scrollScore(current_score, score) # animate scrolling effect on score
         #current_score = score # score no scrolling
 
         # display player healthbar, timer, score, and lives
-        healthBar(player, player.health, screen, cache)
-        #displayTimer(screen, "%.1f" % time_remaining + "s", current_score, cache)
-        displayLives(screen, lives, cache)
+        healthBar(player, player.health, hud, cache)
+        displayTimer(hud, "%.1f" % time_remaining + "s", current_score, cache)
+        displayLives(hud, lives, cache)
         # display enemy healthbar
         for enemy in enemies:
             if enemy.healthTrigger == True:
                 if type(enemy).__name__ != "GarbageCollector":
-                    enemyHealthBar(enemy.health, enemy, screen, camera.state)
+                    enemyHealthBar(enemy.health, enemy, hud, camera.state)
                 else:
-                    garbageCollectorHealthBar(enemy, screen, camera.state)
+                    garbageCollectorHealthBar(enemy, hud, camera.state)
 
         # refresh screen at end of each frame
         pygame.display.flip()

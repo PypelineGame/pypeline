@@ -372,7 +372,6 @@ def loading(screen, cache):
     text_y = screen.get_height() / 2 - text_rect.height / 2
     screen.blit(text, [text_x, text_y])
 
-"""
 def displayTimer(screen, time_left, current_score, cache):
     # displays countdown timer and score
 
@@ -401,7 +400,6 @@ def displayTimer(screen, time_left, current_score, cache):
     text_y = screen.get_height() / 16 - 5
     text_width, text_height = text_x, 17
     screen.blit(text, [text_x, text_y])
-"""
 
 def displayLives(screen, lives, cache):
     text = get_msg("Lives:", cache)
