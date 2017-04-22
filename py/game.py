@@ -28,7 +28,7 @@ def main():
     up = down = left = right = running = False
     bullet = None
 
-    current_level = 1 # start at level 1
+    current_level = 2 # start at level 1
     level = get_level(current_level)
 
     # helps draw background
@@ -254,7 +254,11 @@ def main():
                isinstance(enemy, Ghost):
                 enemy.update(platforms, collision_blocks, blocks, entities)
                 if enemy.dead():
-                    delete_enemy(enemy, enemy_sprites, enemies, entities)
+                    # if ghost out of level, respawn
+                    if isinstance(enemy, Ghost):
+                        enemy.rect.x, enemy.rect.y = enemy.spawn_position
+                    else:
+                        delete_enemy(enemy, enemy_sprites, enemies, entities)
 #                if (isinstance(enemy, PySnake) and enemy.hit and enemy.dying_counter >= 55) or \
 #                   (isinstance(enemy, Ghost) and outOfLevel(enemy.rect, pygame.total_level_width, pygame.total_level_height)):
 #                    deleteEnemy(enemy, enemy_sprites, enemies, entities)

@@ -86,7 +86,7 @@ level_1 = [
 # add enemies/levels to list
 get_levels.append(level_1)
 
-level_5 = [
+level_2 = [
 "nn                                                                                                                                          B",
 "nn                                                                                                                                          B",
 "nn                                                                                                                                          B",
@@ -95,33 +95,31 @@ level_5 = [
 "nn                                                                                                                                          B",
 "nn                                                                                                                                          B",
 "nn                                                                                                                                          B",
-"nn                                    7                                                                                                     B",
-"nn                                     7                                                                                                    B",
 "nn                                                                                                                                          B",
 "nn                                                                                                                                          B",
 "nn                                                                                                                                          B",
-"nn            7                                                                                                                             B",
+"nn                                                                                                                                          B",
+"nn                                                                                                                                          B",
+"nn                                                                                                                                          B",
 "nn                                           DDDDDDDDDDDDDDDD          7                                                                    B",
-"nn                                D          D              D                                                                               B",
-"nn                                D          D            7 D                                                                               B",
-"nn                   7           D                                                                 Q  5   Q                                 B",
-"nn                           7   D          D              D     7   O        1  Q       7            nnnnnn                                B",
-"nn          O    5   5 Q       D     7   7DO      5     QD          QDDDDDDDDDD              n                                              B",
-"nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn     nnnnnnnnnnnnnnnnnnnn          nnnnnnnnnnnnnnnnnnnnnnnnnnnn B"
-"nn                                                                        nn                                 n                              B",
-"nn                                                  7                      n                                 n                              B",
-"nn                                   7                      7              n                                 n                              B",
-"nn                                                                         nQ                               Qn                              B",
-"nn                                                                         nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn                              B",
-"nn                                                                                                                                          B",
-"nn                                                                                                                                          B",
-"nn                                                                                                                                          B",
-"nn                                                                                                                                          B",
-"nn                                                                                                                                          B",
+"nn                               D           D              D                                                                               B",
+"nn                               D           D            7 D                                                                               B",
+"nn                              D           D                                                     Q  5   Q                                  B",
+"nn                               D          D              D     7   O        1  Q       7            nnnnnn                                B",
+"nn                               D   7   7DO      5     QD          QDDDDDDDDDD              n                                              B",
+"nn          nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn     nnnnnnnnnnnnnnnnnnnn          nnnnnnnnnnnnnnnnnnnnnnnnnnnn  B",
+"nn         wwwwwwwwwwwwwwwwwwwwwwwww                                      nn                                 n                              B",
+"nn        wwwwwwwwwwwwwwwwwwwwwwwwww                                       n                                 n                              B",
+"nn       wwwwwwwwwwwwwwwwwwwwwwwwwww                                       n                                 n                              B",
+"nn      wwwwwwwwwwwnnnnnnnnnnnnnnnnn                                       nQ                               Qn                              B",
+"nn     wwwwwwwwwwwwwwwwwwwwwwwwwwwww                                       nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn                              B",
+"nn    wwwwwwwwwwwwwwwwwwwwwwwwwwwwww                                                                                                        B",
+"nnwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww                                                                                                        B",
 "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnB"]
 
+
 # add enemies/levels to list
-get_levels.append(level_5)
+get_levels.append(level_2)
 
 level_3 = [
 "nn                                                                                                                        B",
@@ -148,3 +146,40 @@ level_3 = [
 
 # add enemies/levels to list
 get_levels.append(level_3)
+
+level_4 = [
+"nn                                                                                                                                          B",
+"nn                                                                                                                                          B",
+"nn                                                                                                                                          B",
+"nn                                                                                                                                          B",
+"nn                                                                                                                                          B",
+"nn                                                                                                                                          B",
+"nn                                                                                                                                          B",
+"nn                                                                                                                                          B",
+"nn                                                                                                                                          B",
+"nn                                                                                                                                          B",
+"nn                                                                                                                                          B",
+"nn                                                                                                                                          B",
+"nn                                                                                                                                          B",
+"nn                                                                                                                                          B",
+"nn                                           DDDDDDDDDDDDDDDD          7                                                                    B",
+"nn                               D           D              D                                                                               B",
+"nn                               D           D            7 D                                                                               B",
+"nn                               D           D                                                     Q  5   Q                                 B",
+"nn                               D          D              D     7   O        1  Q       7            nnnnnn                                B",
+"nn          O    5   5 Q         D   7   7DO      5     QD          QDDDDDDDDDD              n                                              B",
+"nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn     nnnnnnnnnnnnnnnnnnnn          nnnnnnnnnnnnnnnnnnnnnnnnnnnn B"
+"nn                                                                        nn                                 n                              B",
+"nn                                                                         n                                 n                              B",
+"nn                                                                         n                                 n                              B",
+"nn                                                                         nQ                               Qn                              B",
+"nn                                                                         nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn                              B",
+"nn                                                                                                                                          B",
+"nn                                                                                                                                          B",
+"nn                                                                                                                                          B",
+"nn                                                                                                                                          B",
+"nn                                                                                                                                          B",
+"nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnB"]
+
+# add enemies/levels to list
+get_levels.append(level_4)
