@@ -64,6 +64,11 @@ def build_level(*args):
                     entities.add(p)
                     coins.append(p)
                     coin_sprites.add(p)
+                elif col == "p":
+                    p = classes.PurpleCoin(x, y)
+                    entities.add(p)
+                    coins.append(p)
+                    coin_sprites.add(p)
                 elif col == "E":
                     which_block = BaigeBlock
                     p = classes.Platform(x, y, which_block)
@@ -289,14 +294,17 @@ def reset_level(*args):
     return player, platforms, blocks, collision_blocks, collision_block_sprites,\
     entities, enemies, enemy_sprites, indestructibles, coins, coin_sprites
 
-def healthBar(player_health, screen, cache):
+def healthBar(player, player_health, screen, cache):
     """ displays player's health bar at top right of screen """
-    if player_health > classes.PLAYER_STARTER_HEALTH * 0.75:
-        player_health_color = classes.GREEN
-    elif player_health > classes.PLAYER_STARTER_HEALTH* 0.40:
-        player_health_color = classes.YELLOW
+    if player.poison:
+        player_health_color = classes.POISON
     else:
-        player_health_color = classes.RED
+        if player_health > classes.PLAYER_STARTER_HEALTH * 0.75:
+            player_health_color = classes.GREEN
+        elif player_health > classes.PLAYER_STARTER_HEALTH* 0.40:
+            player_health_color = classes.YELLOW
+        else:
+            player_health_color = classes.RED
     """ pygame.draw.rect(screen, color, (x,y,width,height), thickness) """
     pygame.draw.rect(screen, player_health_color, (549,25,player_health,25), 0)
     pygame.draw.rect(screen, classes.WHITE, (549,25,classes.PLAYER_STARTER_HEALTH,25), 3)

@@ -1,12 +1,14 @@
 #! /usr/bin/python
 
 # import our modules
+from __future__ import print_function
 from classes import *
 from functions import *
 import levels
 #from gifimage import *
 
 import time, os, sys
+
 
 def main():
     global cameraX, cameraY
@@ -175,7 +177,7 @@ def main():
             #    bullet.rect.y = player.rect.y - player.attack_height/2
             #    entities.add(bullet)
             #    bullets.add(bullet)
-            if e.type == KEYDOWN and e.key == K_f and not left and not right:# and player.facing_right == True):
+            if (e.type == KEYDOWN and e.key == K_f) or (e.type == pygame.MOUSEBUTTONDOWN and e.button == 3) and not left and not right:# and player.facing_right == True):
                 bullet = Bullet(pygame.mouse.get_pos(),\
                 [player.rect.x, player.rect.y, player.attack_height], camera.state, player.facing_right, 'strong')
                 if player.facing_right:
@@ -187,9 +189,9 @@ def main():
                 bullets.add(bullet)
                 player.strong_attack = True
 
-            if e.type == pygame.MOUSEBUTTONDOWN and e.button == 3:
+            #if e.type == pygame.MOUSEBUTTONDOWN and e.button == 3:
                 # if right click, print mouse coordinates for testing purposes
-                print(pygame.mouse.get_pos())
+            #    print(pygame.mouse.get_pos())
             if (e.type == KEYDOWN and e.key == K_SPACE) or\
             (e.type == pygame.MOUSEBUTTONDOWN and e.button == 1) or\
             (e.type == KEYDOWN and e.key == K_k) and player.melee_attack == False:
@@ -320,7 +322,7 @@ def main():
         #current_score = score # score no scrolling
 
         # display player healthbar, timer, score, and lives
-        healthBar(player.health, screen, cache)
+        healthBar(player, player.health, screen, cache)
         #displayTimer(screen, "%.1f" % time_remaining + "s", current_score, cache)
         displayLives(screen, lives, cache)
         # display enemy healthbar
@@ -337,7 +339,7 @@ def main():
     # draw game over and end the game
     gameOver(screen, cache)
     pygame.quit()
-    print "Game terminated..\nTotal Runtime: " + str(elapsed_playtime) + "s."
+    print ("Game terminated..\nTotal Runtime: ",str(elapsed_playtime), "s.")
 
 if __name__ == "__main__":
     main()

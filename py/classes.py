@@ -35,6 +35,8 @@ GREEN = (0, 255, 0)
 YELLOW = (255, 255, 0)
 PURPLE = (128, 0, 128)
 
+POISON = (160,32,240)
+
 # Define display and camera flags
 DISPLAY = (WIN_WIDTH, WIN_HEIGHT)
 DEPTH = 32
@@ -113,8 +115,11 @@ class Player(Entity):
         self.image.convert_alpha()
 
         #Sound effects
-        self.sound_jump = pygame.mixer.Sound(MUSIC_DIRECTORY + 'sound_effets/player/jump_sound.wav')
+        #self.sound_jump = pygame.mixer.Sound(MUSIC_DIRECTORY + 'sound_effects/player/jump_sound.wav')
 
+        #poison implementation 
+        self.poison = False;    
+        self.poison_frames = 0;
 
     def damage(self, attack, enemy, camera):
         """ performs damage reduction on player's HP upon enemy collision """
@@ -132,6 +137,16 @@ class Player(Entity):
         self.damage_frame += 1 # increments damage_frame every frame of game
         self.frame_counter += 1 # increments frame counter
 
+        if self.poison:
+            self.poison_frames += 1
+            if self.poison_frames >= 210:
+                if self.health > 11:
+                    self.health = self.health - 10
+                    self.poison_frames = 0     
+                else:
+                    self.health = 5
+        
+        
         # handle running while jumping
         if self.yvel < 0 and self.jump_counter < 35:
             self.jump = True
@@ -239,6 +254,9 @@ class Player(Entity):
         # handle knock back collision
         for enemy in enemies:
             if pygame.sprite.collide_rect(self, enemy):
+                if type(enemy).__name__ == "PurplePysnake":
+                     self.poison = True
+            if pygame.sprite.collide_rect(self, enemy):
                 self.enemy_collision = True
                 self.damage(enemy.attack, enemy, camera)
                 # enable knock-back left or knock-back right
@@ -267,7 +285,7 @@ class Player(Entity):
                 # only jump if on the ground
                 if self.onGround:
                     self.yvel -= 10
-                    self.sound_jump.play()
+                    #self.sound_jump.play()
             if down:
                 pass # we can eventually implement crouching
             if left:
@@ -928,3 +946,17 @@ class Coin(Entity):
             return True
         else:
             return False
+            
+class PurpleCoin(Coin):
+        def __init__(self, x, y):
+            Coin.__init__(self, x, y)
+            self.images = [SPRITES_DIRECTORY + '/coin/purple_coin/' + str(x) + '.png' for x in [1, 2, 3, 4]]
+        def update(self, player):
+            Coin.update(self, player)
+            if pygame.sprite.collide_rect(self, player):
+                 player.poison = False
+                 if player.health < PLAYER_STARTER_HEALTH - 25:
+                    player.health = player.health + 25
+                 return True
+            else:
+                 return False

@@ -20,6 +20,7 @@
 # m = unbreakable 2
 
 # c = coin
+# p - purple coin
 
 # X = Top of door (Exit Block) # TRIGGERS LEVEL CHANGE
 # Y = Bottom of door (Exit Block) # TRIGGERS LEVEL CHANGE
@@ -75,7 +76,7 @@ level_1 = [
 "gg                                 7                     7              n           gg",
 "gg                                                                       n          gg",
 "gg                                                                        n         gg",
-"gg                 c      c        7                     7                 n        gg",
+"gg                 c      p        7                     7                 n        gg",
 "gg                 bbbbbbbb                                                 n       gg",
 "gg              c            c                                                 o    gg",
 "gg              o            o                           7                     nX   gg",
