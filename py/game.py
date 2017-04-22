@@ -183,16 +183,19 @@ def main():
             #    entities.add(bullet)
             #    bullets.add(bullet)
             if ((e.type == KEYDOWN and e.key == K_f) or (e.type == pygame.MOUSEBUTTONDOWN and e.button == 3)) and not left and not right:# and player.facing_right == True):
-                bullet = Bullet(pygame.mouse.get_pos(),\
-                [player.rect.x, player.rect.y, player.attack_height], camera.state, player.facing_right, 'strong')
-                if player.facing_right:
-                    bullet.rect.x = player.rect.x + player.attack_height/2 + 10# - player.height/2# / 2
-                else:
-                    bullet.rect.x = player.rect.x - player.attack_height/2 - 10
-                bullet.rect.y = player.rect.y - player.attack_height/2 + 10# + player.height/2# / 2
-                entities.add(bullet)
-                bullets.add(bullet)
-                player.strong_attack = True
+                if player.strong_attack_timer >= 90:
+                    player.strong_attack = True
+                    player.strong_attack_timer = 0
+                    bullet = Bullet(pygame.mouse.get_pos(),\
+                    [player.rect.x, player.rect.y, player.attack_height], camera.state, player.facing_right, 'strong')
+                    if player.facing_right:
+                        bullet.rect.x = player.rect.x + player.attack_height/2 + 10# - player.height/2# / 2
+                    else:
+                        bullet.rect.x = player.rect.x - player.attack_height/2 - 10
+                    bullet.rect.y = player.rect.y - player.attack_height/2 + 10# + player.height/2# / 2
+                    entities.add(bullet)
+                    bullets.add(bullet)
+
 
             #if e.type == pygame.MOUSEBUTTONDOWN and e.button == 3:
                 # if right click, print mouse coordinates for testing purposes
@@ -350,13 +353,16 @@ def main():
                 else:
                     garbageCollectorHealthBar(enemy, hud, camera.state)
 
+        # draw attack cooldown
+        attack_cooldown(player, hud)
+
         # refresh screen at end of each frame
         pygame.display.flip()
 
     # draw game over and end the game
     gameOver(screen, cache)
     pygame.quit()
-    print ("Game terminated..\nTotal Runtime: ",str(elapsed_playtime).zfill(8), "s.")
+    print ("Game terminated..\nTotal Runtime: ",str(elapsed_playtime), "s.")
 
 if __name__ == "__main__":
     main()

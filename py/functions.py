@@ -306,15 +306,21 @@ def healthBar(player, player_health, screen, cache):
         else:
             player_health_color = classes.RED
     """ pygame.draw.rect(screen, color, (x,y,width,height), thickness) """
-    pygame.draw.rect(screen, player_health_color, (549,25,player_health,25), 0)
-    pygame.draw.rect(screen, classes.WHITE, (549,25,classes.PLAYER_STARTER_HEALTH,25), 3)
+    pygame.draw.rect(screen, player_health_color, (450,25,player_health,25), 0)
+    pygame.draw.rect(screen, classes.WHITE, (450,25,classes.PLAYER_STARTER_HEALTH,25), 3)
     font = pygame.font.Font(None, 18)
     text = font.render("HP " + str(player_health), True, player_health_color)
     #text = get_msg("HP " + str(player_health), cache, player_health_color)
     text_rect = text.get_rect()
-    text_x = 549
+    text_x = 450
     text_y = screen.get_height() / 10 - text_rect.height / 2 + 20
     screen.blit(text, [text_x, text_y])
+
+# draw cooldown bar
+def attack_cooldown(player, screen):
+    #549
+    pygame.draw.rect(screen, classes.BLUE, (670,25,player.strong_attack_timer,25), 0)
+    pygame.draw.rect(screen, classes.WHITE, (670,25,90,25), 2)
 
 def enemyHealthBar(enemy_health, enemy, screen, camera_state):
     """ displays health bar above enemy """
@@ -404,7 +410,7 @@ def displayTimer(screen, time_left, current_score, cache):
 def displayLives(screen, lives, cache):
     text = get_msg("Lives:", cache)
     text_rect = text.get_rect()
-    text_x = 620
+    text_x = 520
     text_y = screen.get_height() / 10 - text_rect.height / 2 + 20
     screen.blit(text, [text_x, text_y])
     if lives == 3:
@@ -417,7 +423,7 @@ def displayLives(screen, lives, cache):
         image = pygame.image.load(classes.SPRITES_DIRECTORY + "/lives/0hearts.png").convert_alpha()
     imagerect = image.get_rect()
     image = pygame.transform.scale(image, (75, 25))
-    image_x = 675
+    image_x = 575
     image_y = 55
     screen.blit(image, [image_x, image_y])
     screen.blit(text, [text_x, text_y])
