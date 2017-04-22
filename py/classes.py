@@ -175,8 +175,8 @@ class Player(Entity):
             if self.frame_counter >= PLAYER_MAX_ATTACK_FRAMES:
                 self.attack_counter += 1
                 self.frame_counter = 0
-                self.image = pygame.image.load(self.images[self.counter]).convert_alpha()
                 self.counter = (self.counter + 1) % len(self.images)
+                self.image = pygame.image.load(self.images[self.counter]).convert_alpha()
 
                 # reverse images if player is facing left
                 if self.facing_right == False:
@@ -218,7 +218,7 @@ class Player(Entity):
             # reverse images if player is facing left
             if self.facing_right == False:
                 self.image = transform.flip(self.image, 1, 0)
-        
+
         # cycle standing frames
         elif self.images == self.standing and self.frame_counter >= PLAYER_MAX_STANDING_FRAMES:
             #self.rect.width, self.rect.height = self.standing_size
