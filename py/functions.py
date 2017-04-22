@@ -222,7 +222,7 @@ def bullet_collision(*args):
         if type(enemy).__name__ != "GarbageCollector":
             if isinstance(enemy, classes.PySnake):
                 if type(enemy).__name__=="GreenPysnake":
-                    enemy.attack *= 2
+                    enemy.attack += enemy.attack
                 if enemy.health <= 0:
                     enemy.hit = True
                     enemy.counter = 0
