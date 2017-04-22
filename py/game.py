@@ -128,7 +128,7 @@ def main():
 
             # call reset level
             player, platforms, blocks, collision_blocks, collision_block_sprites,\
-            entities, enemies, enemy_sprites, indestructibles = reset_level(*args)
+            entities, enemies, enemy_sprites, indestructibles, coins, coin_sprites = reset_level(*args)
             # reset camera
             pygame.total_level_width  = len(level[0])*32
             pygame.total_level_height = len(level)*32
@@ -179,7 +179,7 @@ def main():
             #    bullet.rect.y = player.rect.y - player.attack_height/2
             #    entities.add(bullet)
             #    bullets.add(bullet)
-            if (e.type == KEYDOWN and e.key == K_f) or (e.type == pygame.MOUSEBUTTONDOWN and e.button == 3) and not left and not right:# and player.facing_right == True):
+            if ((e.type == KEYDOWN and e.key == K_f) or (e.type == pygame.MOUSEBUTTONDOWN and e.button == 3)) and not left and not right:# and player.facing_right == True):
                 bullet = Bullet(pygame.mouse.get_pos(),\
                 [player.rect.x, player.rect.y, player.attack_height], camera.state, player.facing_right, 'strong')
                 if player.facing_right:
