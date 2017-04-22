@@ -416,17 +416,21 @@ class Player(Entity):
 
 
 
-            # See if it hit a block
-
             for block in blocks:
 
                 if self.attack_box.colliderect(block.rect):
+                    if self.melee_attack:
+                        if self.melee_trigger:
+                            platforms.remove(block)
+                            blocks.remove(block)
+                            entities.remove(block)
+                            self.melee_trigger = False
+                    else:
+                        platforms.remove(block)
 
-                    platforms.remove(block)
+                        blocks.remove(block)
 
-                    blocks.remove(block)
-
-                    entities.remove(block)
+                        entities.remove(block)
 
 
 
