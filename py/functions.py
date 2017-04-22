@@ -230,7 +230,7 @@ def bullet_collision(*args):
                         enemy.rect.inflate_ip(-15,18)
                         enemy.inflated = True
                 else:
-                    enemy.health -= 20
+                    enemy.health -= classes.BULLET_DAMAGE
                     score += 20
             else:
                 delete_enemy(enemy, enemy_sprites, enemies, entities)
