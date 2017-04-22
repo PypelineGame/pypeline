@@ -228,7 +228,7 @@ class Player(Entity):
         elif self.frame_counter >= PLAYER_MAX_RUN_FRAMES and (self.images == self.running or self.images == self.jumping):
             self.frame_counter = 0
             self.image = pygame.image.load(self.images[self.counter]).convert_alpha()
-            self.counter = (self.counter + 1) % len(self.images)
+            self.counter = (self.counter + 1) % (len(self.images)-1)
 
             # reverse images if player is facing left
             if self.facing_right == False:
