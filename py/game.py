@@ -322,6 +322,7 @@ def main():
             revive_text_counter += 1
             if revive_text_counter == 50:
                 revive = False
+                revive_text_counter = 0
             else:
                 text = get_msg('Try again bruh...', cache)
                 text_rect = text.get_rect()

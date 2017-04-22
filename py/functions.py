@@ -396,7 +396,7 @@ def displayTimer(screen, time_left, current_score, cache):
     text = get_msg('Score: ' + str(current_score).zfill(8), cache)
     #text = font.render('Score: ' + str(current_score).zfill(8), True, WHITE)
     text_rect = text.get_rect()
-    text_x = screen.get_width() / 8 - text_rect.width / 2
+    text_x = screen.get_width() / 8 - text_rect.width / 2 - 1
     text_y = screen.get_height() / 16 - 5
     text_width, text_height = text_x, 17
     screen.blit(text, [text_x, text_y])
