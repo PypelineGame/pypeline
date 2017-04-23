@@ -1183,7 +1183,8 @@ class RedGhost(Ghost):
             # find normalized direction vector (dx, dy) between enemy and player
             dx, dy = self.rect.left - PLAYER_X, self.rect.top - PLAYER_Y
             dist = hypot(dx, dy)
-            self.xdir, self.ydir = -1 * dx / dist, -1 * dy / dist # direction are reversed
+            if dist != 0:
+                self.xdir, self.ydir = -1 * dx / dist, -1 * dy / dist # direction are reversed
             # move along this normalized vector towards the player at current speed
 
         if self.move_away:
@@ -1258,7 +1259,7 @@ class GreenCoin(Coin):
                  return False
 
 
-class PurpleCoin(Coin):
+class BlueCoin(Coin):
         def __init__(self, x, y):
             Coin.__init__(self, x, y)
             self.images = [SPRITES_DIRECTORY + '/coin/purple_coin/' + str(x) + '.png' for x in [1, 2, 3, 4]]
