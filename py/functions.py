@@ -147,7 +147,7 @@ def build_level(*args):
                     collision_block_sprites.add(p)
                     entities.add(p)
                 # spawn enemies
-                elif col in list('1234567'):
+                elif col in list('12345678'):
                     if col == "1":
                         enemy = classes.GarbageCollector(x-32, y-64)
                     elif col == "2":
@@ -162,6 +162,8 @@ def build_level(*args):
                         enemy = classes.RedGhost(x, y)
                     elif col == "7":
                         enemy = classes.WhiteGhost(x, y)
+                    elif col == "8":
+                        enemy = classes.Dragon(x-32, y-64)
                     entities.add(enemy)
                     enemies.append(enemy)
                     enemy_sprites.add(enemy)
@@ -220,7 +222,7 @@ def bullet_collision(*args):
     for enemy in enemy_hit_list:
         enemy.healthTrigger = True
         if type(enemy).__name__ != "GarbageCollector":
-            if isinstance(enemy, classes.PySnake):
+            if isinstance(enemy, (classes.PySnake or classes.Dragon)):
                 if type(enemy).__name__=="GreenPysnake":
                     enemy.attack += enemy.attack
                 if enemy.health <= 0:
