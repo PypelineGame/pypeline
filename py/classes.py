@@ -128,6 +128,9 @@ class Player(Entity):
         self.poison = False;
         self.poison_frames = 0;
 
+        self.strong_attack_disabled = False
+
+
     def damage(self, attack, enemy, camera):
         """ performs damage reduction on player's HP upon enemy collision """
         if self.damage_frame >= PLAYER_DAMAGE_FRAMES:
@@ -145,9 +148,11 @@ class Player(Entity):
         self.frame_counter += 1 # increments frame counter
         if self.strong_attack:
             self.count_strong_attack = True
-        if self.count_strong_attack:
+        if self.count_strong_attack and not self.strong_attack_disabled:
             if self.strong_attack_timer <= 90:
                 self.strong_attack_timer += 1
+        elif self.strong_attack_disabled:
+            self.strong_attack_timer = 0
 
         if self.poison:
             self.poison_frames += 1
@@ -1234,6 +1239,36 @@ class PurpleCoin(Coin):
                  if player.poison and player.health < PLAYER_STARTER_HEALTH - 25:
                     player.health = player.health + 25
                  player.poison = False
+                 return True
+            else:
+                 return False
+
+class GreenCoin(Coin):
+	def __init__(self, x, y):
+		Coin.__init__(self, x, y)
+		self.images = [SPRITES_DIRECTORY + '/coin/purple_coin/' + str(x) + '.png' for x in [1, 2, 3, 4]]
+
+	def update(self, player):
+            Coin.update(self, player)
+            if pygame.sprite.collide_rect(self, player):
+                 if player.health < PLAYER_STARTER_HEALTH:
+                    player.health = PLAYER_STARTER_HEALTH
+                 return True
+            else:
+                 return False
+
+
+class PurpleCoin(Coin):
+        def __init__(self, x, y):
+            Coin.__init__(self, x, y)
+            self.images = [SPRITES_DIRECTORY + '/coin/purple_coin/' + str(x) + '.png' for x in [1, 2, 3, 4]]
+        def update(self, player):
+            Coin.update(self, player)
+            if pygame.sprite.collide_rect(self, player):
+
+                 if player.strong_attack_disabled:
+                    player.strong_attack_timer = 89
+                    player.strong_attack_disabled = False
                  return True
             else:
                  return False
