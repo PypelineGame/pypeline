@@ -298,6 +298,18 @@ class Player(Entity):
                 elif self.xvel > 0:
                     self.knockback_left = True
 
+        # handle knock back collision for snake bullets
+        for bullet in bullets:
+            if bullet.bullet_type == "red_snake_shot":
+                if pygame.sprite.collide_rect(self, bullet):
+                    self.enemy_collision = True
+                    self.damage(10, None, None)
+                    # enable knock-back left or knock-back right
+                    if self.xvel <= 0: # defaults to knock-back left
+                        self.knockback_right = True
+                    elif self.xvel > 0:
+                        self.knockback_left = True
+
         # perform knock back collision
         if self.enemy_collision == True:
             if self.knockback_left:
@@ -377,47 +389,77 @@ class Player(Entity):
 
 class Bullet(pygame.sprite.Sprite):
     """ This class represents the bullet . """
-    def __init__(self, mouse, player, camera_state, direction, strength = None):
+    def __init__(self, bullet_direction, shooting_entity, camera_state, image_direction, bullet_type = None):
         # Call the parent class (Sprite) constructor
         pygame.sprite.Sprite.__init__(self)
-        # grab mouse coordinates
-        self.mouse_x, self.mouse_y = mouse[0], mouse[1]
-        if strength == "strong":
+        # grab bullet_direction coordinates
+        self.bullet_direction_x, self.bullet_direction_y = bullet_direction[0], bullet_direction[1]
+        if bullet_type == "player_strong_attack":
             # calculate center of bullet
-            self.center_y = player[1]/2 + player[2]/2 + 10# + player[2] - player[2]/2)
-            self.center_x = player[0]/2 + player[2]/2 + 10
+            self.center_y = shooting_entity[1]/2 + shooting_entity[2]/2 + 10# + shooting_entity[2] - shooting_entity[2]/2)
+            self.center_x = shooting_entity[0]/2 + shooting_entity[2]/2 + 10
             self.image = pygame.image.load(SPRITES_DIRECTORY + 'player/blade_wave.png')
-            if not direction:
+            if not image_direction:
+                self.image = transform.flip(self.image, 1, 0)
+        elif bullet_type == "red_snake_shot":
+            self.center_y = shooting_entity[1]/2 # + shooting_entity[2] - shooting_entity[2]/2)
+            self.center_x = shooting_entity[0]/2
+
+            #self.center_y = shooting_entity[1]/2 + shooting_entity[2]/2 + 10# + shooting_entity[2] - shooting_entity[2]/2)
+            #self.center_x = shooting_entity[0]/2 + shooting_entity[2]/2 + 10
+            self.image = pygame.Surface([8, 8])
+            self.image.fill(WHITE)
+            #self.image = pygame.image.load(SPRITES_DIRECTORY + 'player/blade_wave.png')
+            if not image_direction:
                 self.image = transform.flip(self.image, 1, 0)
         else:
-            self.image = pygame.Surface([4, 4])
+            self.image = pygame.Surface([8, 8])
             self.image.fill(WHITE)
             # calculate center of bullet
-            self.center_y = (player[1]/2 + player[2]/2)
-            self.center_x = (player[0]/2 - player[2]/2)
+            self.center_y = (shooting_entity[1]/2 + shooting_entity[2]/2)
+            self.center_x = (shooting_entity[0]/2 - shooting_entity[2]/2)
         self.rect = self.image.get_rect()
         #self.rect = Rect(x, y, 60, 60)
         # offset camera state on x coordinates
-        self.mouse_x -= camera_state[0]
-        self.strength = strength
-        self.direction = direction
+        #self.bullet_direction_x -= camera_state[0]
+        self.bullet_type = bullet_type
+        self.image_direction = image_direction
         # might need to offset camera in y coordinates in the future
         # .. add here
 
     def update(self):
         """ Move the bullet. """
-        speed = 7
+        speed = 4
         range = 200
         # generate bullet vector
-        if self.strength == None:
-            distance = [self.mouse_x - self.center_x, self.mouse_y - self.center_y]
-            norm = sqrt(distance[0] ** 2 + distance[1] ** 2)
-            direction = [distance[0] / norm, distance[1] / norm]
-            bullet_vector = [direction[0] * speed, direction[1] * speed]
+        if self.bullet_type == "red_snake_shot":
+            #distance = [self.bullet_direction_x - self.center_x, self.bullet_direction_y - self.center_y]
+            #distance = [self.center_x - self.bullet_direction_x, self.center_y - self.bullet_direction_y]
+            #print self.center_x, self.bullet_direction_x
+            if self.center_x < self.bullet_direction_x:
+                #print "right"
+                self.xdir = 1
+            elif self.center_x > self.bullet_direction_x:
+                #print "left"
+                self.xdir = -1
+            self.ydir = 1
+            #if self.center_y < self.bullet_direction_y:
+            #    self.ydir = -1
+            #elif self.center_y > self.bullet_direction_y:
+            #    self.ydir = 1
+            #dx, dy = self.center_x - self.bullet_direction_x, self.center_y - self.bullet_direction_y
+            #dist = hypot(dx, dy)
+            #self.xdir, self.ydir = dx / dist, dy / dist # direction are revers
+            #norm = sqrt(distance[0] ** 2 + distance[1] ** 2)
+            #direction = [distance[0] / norm, distance[1] / norm]
+            bullet_vector = [self.xdir * speed, self.ydir * speed]
+            #print bullet_vector[0]
             self.rect.x += bullet_vector[0]
-            self.rect.y += bullet_vector[1]
+            print self.rect.x
+            #self.rect.y += bullet_vector[1]
         else:
-            if self.direction == True:
+#        elif self.bullet_type == "player_strong_attack":
+            if self.image_direction == True:
                 self.rect.x += 4
             else:
                 self.rect.x -= 4
@@ -619,7 +661,7 @@ class GarbageCollector(Enemy):
         self.images = [SPRITES_DIRECTORY + 'garbage_collector/' + str(x) + '.png' for x in [1, 2, 3, 4]]
         self.image = pygame.image.load(self.images[0]) # start on first images
 
-    def update(self, platforms, blank_platforms, blocks, entities):
+    def update(self, platforms, blank_platforms, blocks, entities, bullets):
         """ update garbage collector """
         self.frame_counter += 1
         # switch frames
@@ -886,7 +928,7 @@ class PySnake(Enemy):
         self.dying_counter = 0
         self.inflated = False # for handeling resizing on death
 
-    def update(self, platforms, blank_platforms, blocks, entities):
+    def update(self, platforms, blank_platforms, blocks, entities, bullets):
         """ update garbage collector """
         self.frame_counter += 1
         if self.frame_counter == GARBAGE_COLLECTOR_MAX_FRAMES:
@@ -973,6 +1015,45 @@ class RedPysnake(PySnake):
         self.images = [SPRITES_DIRECTORY + 'PySnake/red_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
         self.image = pygame.image.load(self.images[0]) # start on first image
         self.dying = [SPRITES_DIRECTORY + 'PySnake/red_snake/red_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
+        self.radius = 500
+        self.shooting = False
+        self.shooting_timer = 180
+
+    def update(self, platforms, blank_platforms, blocks, entities, bullets):
+        PySnake.update(self, platforms, blank_platforms, blocks, entities, bullets)
+
+        if self.shooting and self.shooting_timer > 180:
+            self.shoot(entities, bullets)
+
+        if self.shooting_timer > 180:
+            self.shooting_timer = 0
+        else:
+            self.shooting_timer += 1
+
+
+    def collide(self, xvel, yvel, platforms, blocks, entities):
+        PySnake.collide(self, xvel, yvel, platforms, blocks, entities)
+        for e in entities:
+            if isinstance(e,Player):
+                player_in_view = pygame.sprite.collide_circle(self,e)
+                if player_in_view and not self.shooting:
+                    self.shooting = True
+                elif not player_in_view and self.shooting:
+                    self.shooting = False
+
+    def shoot(self,entities,bullets):
+        global PLAYER_X, PLAYER_Y
+        bullet = Bullet([PLAYER_X, PLAYER_Y],\
+        [self.rect.x, self.rect.y, self.rect.height], None, True, 'red_snake_shot')
+        # find normalized direction vector (dx, dy) between enemy and player
+        #dx, dy = self.rect.left - PLAYER_X, self.rect.top - PLAYER_Y
+        #dist = hypot(dx, dy)
+        #self.xdir, self.ydir = -1 * dx / dist, -1 * dy / dist # direction are reversed
+        # move along this normalized vector towards the player at current speed
+        bullet.rect.x = self.rect.x
+        bullet.rect.y = self.rect.y
+        entities.add(bullet)
+        bullets.add(bullet)
 
 class PurplePysnake(PySnake):
     """ purple pysnake enemy """
@@ -1020,7 +1101,7 @@ class Ghost(Enemy):
         #self.image = pygame.image.load(self.images[0]) # start on first image
 
 
-    def update(self, platforms, blank_platforms, blocks, entities):
+    def update(self, platforms, blank_platforms, blocks, entities, bullets):
 
         # Flip image and set reverse flag
         if self.xdir < 0 and self.reverse:
@@ -1061,8 +1142,8 @@ class WhiteGhost(Ghost):
         self.x_arr = []
         self.y_arr = []
 
-    def update(self, platforms, blank_platforms, blocks, entities):
-        Ghost.update(self, platforms, blank_platforms, blocks, entities)
+    def update(self, platforms, blank_platforms, blocks, entities, bullets):
+        Ghost.update(self, platforms, blank_platforms, blocks, entities, bullets)
 
         #self.ydir = sin(radians(self.rect.left))
 
@@ -1092,9 +1173,9 @@ class RedGhost(Ghost):
         self.chasing = False    # Chasing movement flag
         self.move_away = False  # Move away from overlapping ghost flag
 
-    def update(self, platforms, blank_platforms, blocks, entities):
+    def update(self, platforms, blank_platforms, blocks, entities, bullets):
         global PLAYER_X, PLAYER_Y
-        Ghost.update(self, platforms, blank_platforms, blocks, entities)
+        Ghost.update(self, platforms, blank_platforms, blocks, entities, bullets)
         # Chasing Functionality
         if self.chasing:
             # find normalized direction vector (dx, dy) between enemy and player

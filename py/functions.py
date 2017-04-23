@@ -64,6 +64,11 @@ def build_level(*args):
                     entities.add(p)
                     coins.append(p)
                     coin_sprites.add(p)
+                elif col == "h":
+                    p = classes.GreenCoin(x, y)
+                    entities.add(p)
+                    coins.append(p)
+                    coin_sprites.add(p)
                 elif col == "p":
                     p = classes.PurpleCoin(x, y)
                     entities.add(p)
@@ -198,10 +203,11 @@ def bullet_collision(*args):
     # See if it hit a block
     block_hit_list, bullet_hit_list = [], []
     for bullet in bullets:
-        hit_block = pygame.sprite.spritecollide(bullet, blocks, True)
-        block_hit_list += hit_block # keep track of hit blocks
-        if bool(hit_block):
-            bullet_hit_list.append(bullet)
+        if bullet.bullet_type == "player_strong_attack":
+            hit_block = pygame.sprite.spritecollide(bullet, blocks, True)
+            block_hit_list += hit_block # keep track of hit blocks
+            if bool(hit_block):
+                bullet_hit_list.append(bullet)
 
     # For each block hit, cause a collision
     for block in block_hit_list:
@@ -212,11 +218,12 @@ def bullet_collision(*args):
     # See if we hit an enemy
     enemy_hit_list = []
     for bullet in bullets:
-        hit_enemy = pygame.sprite.spritecollide(bullet, enemy_sprites, False)
-        enemy_hit_list += hit_enemy
-        if bool(hit_enemy):
-            bullets.remove(bullet)
-            entities.remove(bullet)
+        if bullet.bullet_type == "player_strong_attack":
+            hit_enemy = pygame.sprite.spritecollide(bullet, enemy_sprites, False)
+            enemy_hit_list += hit_enemy
+            if bool(hit_enemy):
+                bullets.remove(bullet)
+                entities.remove(bullet)
 
     # If we hit an enemy, destroy it (unless garbage collector)
     for enemy in enemy_hit_list:

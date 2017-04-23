@@ -187,7 +187,7 @@ def main():
                     player.strong_attack = True
                     player.strong_attack_timer = 0
                     bullet = Bullet(pygame.mouse.get_pos(),\
-                    [player.rect.x, player.rect.y, player.attack_height], camera.state, player.facing_right, 'strong')
+                    [player.rect.x, player.rect.y, player.attack_height], camera.state, player.facing_right, 'player_strong_attack')
                     if player.facing_right:
                         bullet.rect.x = player.rect.x + player.attack_height/2 + 10# - player.height/2# / 2
                     else:
