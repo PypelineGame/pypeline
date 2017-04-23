@@ -256,7 +256,7 @@ def main():
                isinstance(enemy, PySnake) or \
                isinstance(enemy, Ghost) or \
                isinstance(enemy, Dragon):
-                enemy.update(platforms, collision_blocks, blocks, entities)
+                enemy.update(platforms, collision_blocks, blocks, entities, bullets)
                 if enemy.dead():
                     # if ghost out of level, respawn
                     if isinstance(enemy, Ghost):
