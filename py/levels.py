@@ -77,9 +77,12 @@ level_1 = [
 "gg                                                                        n         gg",
 "gg                 c      p        7                     7                 n        gg",
 "gg                 bbbbbbbb                                                 n       gg",
-"gg   b          c            c                                                 o    gg",
-"gg  bX          o            o                           7                     n    gg",
-"gg  bY c  c     oQ    2     QoQ           O  5       O        3  O            Qn ccQgg",
+"gg                                                                             o    gg",
+"gg                                                       7                     n    gg",
+"gg Q           3                                              3  O            Qn ccQgg",
+#"gg   b          c            c                                                 o    gg",
+#"gg  bX          o            o                           7                     n    gg",
+#"gg  bY c  c   3  oQ    2     QoQ           O  5       O        3  O            Qn ccQgg",
 "ggDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDgg"]
 
 # add enemies/levels to list
