@@ -773,7 +773,7 @@ class Dragon(Enemy):
         self.inflated = False # for handeling resizing on death
 
 
-    def update(self, platforms, blank_platforms, blocks, entities):
+    def update(self, platforms, blank_platforms, blocks, entities, bullets):
 
         """ update Dragon """
 
