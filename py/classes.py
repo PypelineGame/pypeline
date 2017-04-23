@@ -1246,7 +1246,7 @@ class PurpleCoin(Coin):
 class GreenCoin(Coin):
 	def __init__(self, x, y):
 		Coin.__init__(self, x, y)
-		self.images = [SPRITES_DIRECTORY + '/coin/purple_coin/' + str(x) + '.png' for x in [1, 2, 3, 4]]
+		self.images = [SPRITES_DIRECTORY + '/coin/green_coin/' + str(x) + '.png' for x in [1, 2, 3, 4]]
 
 	def update(self, player):
             Coin.update(self, player)
@@ -1258,10 +1258,10 @@ class GreenCoin(Coin):
                  return False
 
 
-class PurpleCoin(Coin):
+class BlueCoin(Coin):
         def __init__(self, x, y):
             Coin.__init__(self, x, y)
-            self.images = [SPRITES_DIRECTORY + '/coin/purple_coin/' + str(x) + '.png' for x in [1, 2, 3, 4]]
+            self.images = [SPRITES_DIRECTORY + '/coin/blue_coin/' + str(x) + '.png' for x in [1, 2, 3, 4]]
         def update(self, player):
             Coin.update(self, player)
             if pygame.sprite.collide_rect(self, player):
