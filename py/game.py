@@ -254,8 +254,9 @@ def main():
                 enemy.healthTrigger = False
             if type(enemy).__name__ == "GarbageCollector" or \
                isinstance(enemy, PySnake) or \
-               isinstance(enemy, Ghost):
-                enemy.update(platforms, collision_blocks, blocks, entities, bullets)
+               isinstance(enemy, Ghost) or \
+               isinstance(enemy, Dragon):
+                enemy.update(platforms, collision_blocks, blocks, entities)
                 if enemy.dead():
                     # if ghost out of level, respawn
                     if isinstance(enemy, Ghost):
