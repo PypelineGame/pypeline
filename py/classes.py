@@ -306,6 +306,8 @@ class Player(Entity):
                         self.knockback_right = True
                     elif self.xvel > 0:
                         self.knockback_left = True
+                    bullets.remove(bullet)
+                    entities.remove(bullet)
 
         # perform knock back collision
         if self.enemy_collision == True:
@@ -426,13 +428,13 @@ class Bullet(pygame.sprite.Sprite):
 
     def update(self):
         """ Move the bullet. """
+        print self.center_x, self.bullet_direction_x
         speed = 4
         range = 200
         # generate bullet vector
         if self.bullet_type == "red_snake_shot":
             #distance = [self.bullet_direction_x - self.center_x, self.bullet_direction_y - self.center_y]
             #distance = [self.center_x - self.bullet_direction_x, self.center_y - self.bullet_direction_y]
-            #print self.center_x, self.bullet_direction_x
             if self.center_x < self.bullet_direction_x:
                 #print "right"
                 self.xdir = 1
@@ -452,7 +454,7 @@ class Bullet(pygame.sprite.Sprite):
             bullet_vector = [self.xdir * speed, self.ydir * speed]
             #print bullet_vector[0]
             self.rect.x += bullet_vector[0]
-            print self.rect.x
+            #print self.rect.x
             #self.rect.y += bullet_vector[1]
         else:
 #        elif self.bullet_type == "player_strong_attack":
@@ -867,11 +869,6 @@ class RedPysnake(PySnake):
         global PLAYER_X, PLAYER_Y
         bullet = Bullet([PLAYER_X, PLAYER_Y],\
         [self.rect.x, self.rect.y, self.rect.height], None, True, 'red_snake_shot')
-        # find normalized direction vector (dx, dy) between enemy and player
-        #dx, dy = self.rect.left - PLAYER_X, self.rect.top - PLAYER_Y
-        #dist = hypot(dx, dy)
-        #self.xdir, self.ydir = -1 * dx / dist, -1 * dy / dist # direction are reversed
-        # move along this normalized vector towards the player at current speed
         bullet.rect.x = self.rect.x
         bullet.rect.y = self.rect.y
         entities.add(bullet)

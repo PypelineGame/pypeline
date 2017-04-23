@@ -5,6 +5,10 @@ import classes
 import os, time
 import pygame
 
+def out_of_level(rect, max_x, max_y):
+    return rect.left < 0 or rect.left > max_x or \
+           rect.top < 0 or rect.top > max_y
+
 def simple_camera(camera, target_rect):
     """ simple camera class """
     l, t, _, _ = target_rect
@@ -255,7 +259,7 @@ def bullet_collision(*args):
 
     # Remove the bullet if it flies off the screen
     for bullet in bullets:
-        if bullet.rect.y > 1000:
+        if out_of_level(bullet.rect, pygame.total_level_width, pygame.total_level_height):
             bullets.remove(bullet)
             entities.remove(bullet)
 
@@ -439,7 +443,3 @@ def scrollScore(current_score, score):
     if current_score < score:
         current_score += 1
     return current_score
-
-def out_of_level(rect, max_x, max_y):
-    return rect.left < 0 or rect.left > max_x or \
-           rect.top < 0 or rect.top > max_y
