@@ -146,10 +146,10 @@ level_3 = [
 "nn                                                                             n  6                            B",
 "nn                          c   c   c       c    c    c                       n                                B",
 "nn       wwwwwwwwn    wwww  w   w   w   w   w    w    w   w  n               n                                 B",
-"nn      w       wn                                           n              n                                  B",
-"nn     w        wn               7                           n             n                                   B",
-"nn    w         ww                                7          w            n                                    B",
-"nn   wp Q c  5 QwwQ    1                1               1   QwQ p   5   Qn    Q                 8             QB",
+"nn      w       wn                                           n              w                                  B",
+"nn     w        wn               7                           n             w                                   B",
+"nn    w         ww                                7          w            w                                    B",
+"nn   wp Q c  5 QwwQ    1                1               1   QwQ p   5   Qw    Q                 8             QB",
 "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnB"]
 
 # add enemies/levels to list
