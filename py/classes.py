@@ -436,7 +436,7 @@ class Bullet(pygame.sprite.Sprite):
 
     def update(self):
         """ Move the bullet. """
-        print self.center_x, self.bullet_direction_x
+        #print self.center_x, self.bullet_direction_x
         speed = 4
         range = 200
         # generate bullet vector

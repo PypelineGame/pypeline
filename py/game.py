@@ -173,15 +173,6 @@ def main():
                 player.frame_counter, player.counter = 0, 0
             if e.type == KEYUP and e.key == K_LSHIFT:
                 running = False
-            #if (e.type == pygame.MOUSEBUTTONDOWN and e.button == 1) or\
-            #(e.type == KEYUP and e.key == K_SPACE):
-            #    bullet = Bullet(pygame.mouse.get_pos(),\
-            #    [player.rect.x, player.rect.y, player.attack_height], camera.state, player.facing_right)
-            #    # spawns bullet at the center of the player
-            #    bullet.rect.x = player.rect.x + player.attack_height/2
-            #    bullet.rect.y = player.rect.y - player.attack_height/2
-            #    entities.add(bullet)
-            #    bullets.add(bullet)
             if ((e.type == KEYDOWN and e.key == K_f) or (e.type == pygame.MOUSEBUTTONDOWN and e.button == 3)) and not left and not right:# and player.facing_right == True):
                 if player.strong_attack_timer >= 90:
                     player.strong_attack = True
@@ -195,11 +186,6 @@ def main():
                     bullet.rect.y = player.rect.y - player.attack_height/2 + 10# + player.height/2# / 2
                     entities.add(bullet)
                     bullets.add(bullet)
-
-
-            #if e.type == pygame.MOUSEBUTTONDOWN and e.button == 3:
-                # if right click, print mouse coordinates for testing purposes
-            #    print(pygame.mouse.get_pos())
             if (e.type == KEYDOWN and e.key == K_SPACE) or\
             (e.type == pygame.MOUSEBUTTONDOWN and e.button == 1) or\
             (e.type == KEYDOWN and e.key == K_k) and player.melee_attack == False:
@@ -245,42 +231,6 @@ def main():
         elif result != None and result == "Reset Level":
             RESET_LEVEL_FLAG = True
 
-        # update enemies
-        for enemy in enemies:
-            # count frames to stop displaying healthbar
-            enemy.health_counter += 1
-            if enemy.health_counter >= MAX_HEALTH_FRAMES:
-                enemy.health_counter = 0
-                enemy.healthTrigger = False
-            if type(enemy).__name__ == "GarbageCollector" or \
-               isinstance(enemy, PySnake) or \
-               isinstance(enemy, Ghost) or \
-               isinstance(enemy, Dragon):
-                enemy.update(platforms, collision_blocks, blocks, entities, bullets)
-                if enemy.dead():
-                    # if ghost out of level, respawn
-                    if isinstance(enemy, Ghost):
-                        enemy.rect.x, enemy.rect.y = enemy.spawn_position
-                    else:
-                        delete_enemy(enemy, enemy_sprites, enemies, entities)
-#                if (isinstance(enemy, PySnake) and enemy.hit and enemy.dying_counter >= 55) or \
-#                   (isinstance(enemy, Ghost) and outOfLevel(enemy.rect, pygame.total_level_width, pygame.total_level_height)):
-#                    deleteEnemy(enemy, enemy_sprites, enemies, entities)
-            else:
-                enemy.update()
-
-        # update coins
-        for c in coins:
-            if c.update(player):
-                coins.remove(c)
-                coin_sprites.remove(c)
-                entities.remove(c)
-                current_score += 10
-
-        # update any additional entities
-        for e in entities:
-            screen.blit(e.image, camera.apply(e))
-
         # handle bullet collision
         if len(bullets) > 0:
             args = bullets, blocks, platforms, entities, enemies, enemy_sprites, indestructibles, score
@@ -322,7 +272,6 @@ def main():
             # call reset level function with *args
             player, platforms, blocks, collision_blocks, collision_block_sprites,\
             entities, enemies, enemy_sprites, indestructibles, coins, coin_sprites = reset_level(*args)
-
             current_life_playtime = 0
 
         # display revive text
@@ -341,6 +290,46 @@ def main():
 
         #current_score = scrollScore(current_score, score) # animate scrolling effect on score
         #current_score = score # score no scrolling
+
+        # update enemies
+        for enemy in enemies:
+            if functions.on_screen(player.rect, enemy.rect, WIN_WIDTH, WIN_HEIGHT):
+                # count frames to stop displaying healthbar
+                enemy.health_counter += 1
+                if enemy.health_counter >= MAX_HEALTH_FRAMES:
+                    enemy.health_counter = 0
+                    enemy.healthTrigger = False
+                if type(enemy).__name__ == "GarbageCollector" or \
+                   isinstance(enemy, PySnake) or \
+                   isinstance(enemy, Ghost) or \
+                   isinstance(enemy, Dragon):
+                    enemy.update(platforms, collision_blocks, blocks, entities, bullets)
+                    if enemy.dead():
+                        # if ghost out of level, respawn
+                        if isinstance(enemy, Ghost):
+                            enemy.rect.x, enemy.rect.y = enemy.spawn_position
+                        else:
+                            delete_enemy(enemy, enemy_sprites, enemies, entities)
+                else:
+                    enemy.update()
+
+        #print("player x = ", player.rect.x)#, "\n camera-y = ", camera.state[1])
+        #print("player y = ", player.rect.y)
+
+
+
+        # update coins
+        for c in coins:
+            if functions.on_screen(player.rect, c.rect, WIN_WIDTH, WIN_HEIGHT):
+                if c.update(player):
+                    coins.remove(c)
+                    coin_sprites.remove(c)
+                    entities.remove(c)
+                    current_score += 10
+
+        # update any additional entities
+        for e in entities:
+            screen.blit(e.image, camera.apply(e))
 
         # display player healthbar, timer, score, and lives
         healthBar(player, player.health, hud, cache)

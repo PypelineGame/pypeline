@@ -9,6 +9,10 @@ def out_of_level(rect, max_x, max_y):
     return rect.left < 0 or rect.left > max_x or \
            rect.top < 0 or rect.top > max_y
 
+def on_screen(player_rect, obj_rect, max_x, max_y):
+    return obj_rect.x < player_rect.x + max_x/1.05 and obj_rect.x > player_rect.x - max_x/1.05\
+    and obj_rect.y < player_rect.y + max_y/1.05 and obj_rect.y > player_rect.y - max_y/1.05
+
 def simple_camera(camera, target_rect):
     """ simple camera class """
     l, t, _, _ = target_rect
@@ -31,9 +35,6 @@ def get_level(level_num):
     """ retrieve levels """
     return levels.get_levels[level_num]
 
-#def get_enemies(level_num):
-#    """ retreieve enemies """
-#    return levels.get_enemies[level_num]
 
 def delete_enemy(target, enemy_sprites, enemies, entities):
     if target in enemy_sprites:
