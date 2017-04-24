@@ -21,6 +21,8 @@
 
 # c = coin
 # p - purple coin
+# G - green coin
+# F - blue coin
 
 # X = Top of door (Exit Block) # TRIGGERS LEVEL CHANGE
 # Y = Bottom of door (Exit Block) # TRIGGERS LEVEL CHANGE
@@ -42,8 +44,8 @@ import classes
 """ lists to store levels and enemies """
 get_levels = [0] #, get_enemies = [0], [0] # init first index to 0
 
-MAX_PLAYTIME_PER_LEVEL = [0, 8000, 360, 360] # max time allowed before time runs out per level
-SPAWN_POINT_LEVEL = [0, (64, 700), (64, 64), (64, 64)] # x,y coordinates for each level spawn
+MAX_PLAYTIME_PER_LEVEL = [0, 8000, 360, 360, 360] # max time allowed before time runs out per level
+SPAWN_POINT_LEVEL = [0, (64, 700), (64, 64), (64, 64), (100, 200)] # x,y coordinates for each level spawn
 BACKGROUNDS = [0, 'background5.jpg', 'beauty.jpg', 'montanha.png', 'forest_day.png']
 # Get list of backgrounds for the levels
 for i in range(1, len(BACKGROUNDS)):
@@ -171,24 +173,13 @@ level_4 = [
 "nn                                                                                                                                          B",
 "nn                                                                                                                                          B",
 "nn                                                                                                                                          B",
-"nn                                           DDDDDDDDDDDDDDDD          7                                                                    B",
-"nn                               D           D              D                                                                               B",
-"nn                               D           D            7 D                                                                               B",
-"nn                               D           D                                                     Q  5   Q                                 B",
-"nn                               D          D              D     7   O        1  Q       7            nnnnnn                                B",
-"nn          O    5   5 Q         D   7   7DO      5     QD          QDDDDDDDDDD              n                                              B",
-"nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn     nnnnnnnnnnnnnnnnnnnn          nnnnnnnnnnnnnnnnnnnnnnnnnnnn B"
-"nn                                                                        nn                                 n                              B",
-"nn                                                                         n                                 n                              B",
-"nn                                                                         n                                 n                              B",
-"nn                                                                         nQ                               Qn                              B",
-"nn                                                                         nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn                              B",
+"nn                                                                                                                                          B",
+"nn                                                           8                                                                              B",
 "nn                                                                                                                                          B",
 "nn                                                                                                                                          B",
 "nn                                                                                                                                          B",
 "nn                                                                                                                                          B",
-"nn                                                                                                                                          B",
-"nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnB"]
+"nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn B"]
 
 # add enemies/levels to list
 get_levels.append(level_4)

@@ -740,177 +740,93 @@ class GarbageCollector(Enemy):
                     self.rect.top = p.rect.bottom
 
 class Dragon(Enemy):
-
     def __init__(self, x, y):
-
         Enemy.__init__(self)
-
         self.rect = Rect(x, y, 85, 70)
 
-
-
         # establishes attack for dragon boss
-
         self.attack = 15
 
-
-
         # max health and health should start at the same constant
-
         self.max_health = 1000
-
         self.health = 1000
-
         # establish list of sprite images
-
         self.images = [SPRITES_DIRECTORY + 'boss/attack/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8]]
-
        # self.dying = [SPRITES_DIRECTORY +  '   ' + str(x) + '.png' for x in [ ]]
-
         self.image = pygame.image.load(self.images[0]) # start on first image
-
         self.hit = False
-
         self.kill = False
-
         self.dying_counter = 0
-
         self.inflated = False # for handeling resizing on death
 
-
     def update(self, platforms, blank_platforms, blocks, entities, bullets):
-
         """ update Dragon """
-
         self.frame_counter += 1
-
         if self.frame_counter == DRAGON_MAX_FRAMES:
-
             self.frame_counter = 0
-
             self.image = pygame.image.load(self.images[self.counter]).convert_alpha()
             self.image = transform.flip(self.image, 1, 0) #added this to fix the backward movement
 
-
             if self.reverse:
-
                 self.image = transform.flip(self.image, 1, 0)
-
             self.counter = (self.counter + 1) % len(self.images)
-
         if self.hit:
-
             self.xvel = 0
-
             self.images = self.dying
-
             #self.counter = 0
-
             self.dying_counter += 1
-
         if not self.hit:
-
             if not self.reverse:
-
                 self.xvel = -2
-
             elif self.reverse:
-
                 self.xvel = 2
 
-
-
          # only accelerate with gravity if in the air
-
         if not self.onGround:
-
             self.yvel += 0.4 # increase falling distance
-
              # max falling speed
-
             if self.yvel > 100:
-
                 self.yvel = 100
 
-
-
         # increment in x direction
-
         self.rect.left += self.xvel
 
-
-
         # do x-axis collision
-
         if self.dying_counter < 30:
-
             self.collide(self.xvel, 0, platforms, blocks, entities)
 
-
-
         # increment in y direction
-
         self.rect.top += self.yvel
-
         self.onGround = False;
 
-
-
         # do y-axis collision
-
         if self.dying_counter < 30:
-
             self.collide(0, self.yvel, platforms, blocks, entities)
 
-
-
         # handle collisions for blank collision blocks
-
         for p in blank_platforms:
-
             if pygame.sprite.collide_rect(self, p):
-
                 self.reverse = not self.reverse
 
-
-
     def collide(self, xvel, yvel, platforms, blocks, entities):
-
         """ handles Dragon collision """
-
         for p in platforms:
-
             if pygame.sprite.collide_rect(self, p):
-
                 if xvel > 0: # moving right, hit left side of wall
-
                     self.rect.right = p.rect.left
-
                     #if p in blocks:
-
                     #    pass
-
                 if xvel < 0: # moving left, hit right side of wall
-
                     self.rect.left = p.rect.right
-
                     #if p in blocks:
-
                     #    pass
-
                 if yvel > 0: # moving down, hit top of wall
-
                     self.rect.bottom = p.rect.top
-
                     self.onGround = True
-
                     self.yvel = 0
-
                 if yvel < 0: # moving up, hit bottom side of wall
-
                     self.rect.top = p.rect.bottom
     def dead(self):
-
         return self.hit and self.dying_counter >= 55
 
 
