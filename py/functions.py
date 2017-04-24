@@ -240,6 +240,10 @@ def bullet_collision(*args):
         enemy.healthTrigger = True
         if type(enemy).__name__ != "GarbageCollector":
             if isinstance(enemy, (classes.PySnake or classes.Dragon)):
+                enemy.health -= classes.BULLET_DAMAGE
+                if enemy.health < 0:
+                    enemy.health = 0
+                score += 20
                 if type(enemy).__name__=="GreenPysnake":
                     enemy.attack += enemy.attack
                 if enemy.health <= 0:
@@ -248,9 +252,9 @@ def bullet_collision(*args):
                     if not enemy.inflated:
                         enemy.rect.inflate_ip(-15,18)
                         enemy.inflated = True
-                else:
-                    enemy.health -= classes.BULLET_DAMAGE
-                    score += 20
+                #else:
+                #    enemy.health -= classes.BULLET_DAMAGE
+                #    score += 20
             else:
                 delete_enemy(enemy, enemy_sprites, enemies, entities)
 

@@ -241,6 +241,11 @@ class Player(Entity):
                     enemy.healthTrigger = True
                     if type(enemy).__name__ != "GarbageCollector":
                         if isinstance(enemy, PySnake):
+                            if self.melee_trigger:
+                                   enemy.health -= self.melee_damage
+                                   self.melee_trigger = False
+                            if enemy.health < 0:
+                                enemy.health = 0
                             if type(enemy).__name__=="GreenPysnake":
                                 enemy.attack += enemy.attack
                             if enemy.health <= 0:
@@ -249,12 +254,12 @@ class Player(Entity):
                                 if not enemy.inflated:
                                     enemy.rect.inflate_ip(-15,18)
                                     enemy.inflated = True
-                            else:
-                                #if not self.melee_trigger:
-                               if self.melee_trigger:
-                                      enemy.health -= self.melee_damage
-                                      self.melee_trigger = False
-                                      #self.melee_trigger = True
+                            # else:
+                            #     #if not self.melee_trigger:
+                            #    if self.melee_trigger:
+                            #           enemy.health -= self.melee_damage
+                            #           self.melee_trigger = False
+                            #           #self.melee_trigger = True
                                 #self.melee_trigger = True
 
                                 #score += 10
