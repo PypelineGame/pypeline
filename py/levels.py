@@ -83,7 +83,7 @@ level_1 = [
 #"gg                                                       7                     n    gg",
 #"gg Q           3                                              3  O            Qn ccQgg",
 "gg              c            c                                                 o    gg",
-"gg              o            o                           7                     n    gg",
+"gg              o            o                                                 n    gg",
 "gg     c  c     oQ    2     QoQ           O  5       O        3  O            Qn ccQgg",
 "ggDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDgg"]
 
