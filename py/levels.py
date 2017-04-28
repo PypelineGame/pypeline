@@ -44,7 +44,7 @@ import classes
 """ lists to store levels and enemies """
 get_levels = [0] #, get_enemies = [0], [0] # init first index to 0
 
-MAX_PLAYTIME_PER_LEVEL = [0, 8000, 360, 360, 360] # max time allowed before time runs out per level
+MAX_PLAYTIME_PER_LEVEL = [0, 400, 400, 400, 400] # max time allowed before time runs out per level
 SPAWN_POINT_LEVEL = [0, (64, 700), (64, 64), (64, 64), (100, 200)] # x,y coordinates for each level spawn
 BACKGROUNDS = [0, 'background5.jpg', 'beauty.jpg', 'montanha.png', 'forest_day.png']
 # Get list of backgrounds for the levels
@@ -63,7 +63,7 @@ level_1 = [
 "gg c                                                                                gg",
 "gg nc                                                                               gg",
 "gg  nc Q  4    Q c                                               c                  gg",
-"gg   n  bbbbbbb  nQ  5  Q Q 5   Q  Q  5  Q  Q  5    Q Q    4  Qbbbbb                gg",
+"gg   n  bbbbbbb  nQ  5  Q Q 5   Q  Q  5  Q  Q  5   FQ Q    4  Qbbbbb                gg",
 "gg                bbbbbb   bbbbb    bbbbb    bbbbbbb   bbbbbbbb                     gg",
 "gg        c                                                        c  oo            gg",
 "gg     ooooooo                                                    oooo              gg",
@@ -81,7 +81,7 @@ level_1 = [
 "gg                 bbbbbbbb                                                 n       gg",
 #"gg                                                                             o    gg",
 #"gg                                                       7                     n    gg",
-#"gg Q           3                                              3  O            Qn ccQgg",
+#"gg Q           4       Q  F                                    3  O            Qn ccQgg",
 "gg              c            c                                                 o    gg",
 "gg              o            o                                                 n    gg",
 "gg     c  c     oQ    2     QoQ           O  5       O        3  O            Qn ccQgg",
@@ -150,7 +150,7 @@ level_3 = [
 "nn         n     wwwwwwwwwwwww    wwwwwwwwwwwwwwwwwwwwwww    wwwwwwwwwwwwwwwwwwwwwww    wwwwwwwwwwww           B",
 "nn          n    n   n   n   n   n   n   n   n   n   n   n   n  7 n   n   n   n   n   n   n   n    n           B",
 "nn           n                                                                                    n    y       B",
-"nn            n                                                                                 cn     y       B",
+"nn            nF                                                                                cn     y       B",
 "nn             n      Q  5  Q Q   5 Q Q     4    3     2    Q   Q  5   5   Q                    n    yyyyy     B",
 "nn              nnnn   nnnnn   nnnnn   nnnnnnnnnnnnnnnnnnnnn     nnnnnnnnnn   nnnnnnnn         n      yyy      B",
 "nn                                                          w                         n       n        y       B",
