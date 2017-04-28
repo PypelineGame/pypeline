@@ -414,8 +414,8 @@ class Bullet(pygame.sprite.Sprite):
             if not image_direction:
                 self.image = transform.flip(self.image, 1, 0)
         elif bullet_type == "red_snake_shot":
-            self.center_y = shooting_entity[1]/2 # + shooting_entity[2] - shooting_entity[2]/2)
-            self.center_x = shooting_entity[0]/2
+            self.center_y = shooting_entity[1]/4 # + shooting_entity[2] - shooting_entity[2]/2)
+            self.center_x = shooting_entity[0]/4
 
             #self.center_y = shooting_entity[1]/2 + shooting_entity[2]/2 + 10# + shooting_entity[2] - shooting_entity[2]/2)
             #self.center_x = shooting_entity[0]/2 + shooting_entity[2]/2 + 10
@@ -448,10 +448,10 @@ class Bullet(pygame.sprite.Sprite):
         if self.bullet_type == "red_snake_shot":
             #distance = [self.bullet_direction_x - self.center_x, self.bullet_direction_y - self.center_y]
             #distance = [self.center_x - self.bullet_direction_x, self.center_y - self.bullet_direction_y]
-            if self.center_x < self.bullet_direction_x:
+            if self.bullet_direction_x < 0:
                 #print "right"
                 self.xdir = 1
-            elif self.center_x > self.bullet_direction_x:
+            else:
                 #print "left"
                 self.xdir = -1
             self.ydir = 1
@@ -970,11 +970,15 @@ class RedPysnake(PySnake):
                     self.shooting = False
 
     def shoot(self,entities,bullets):
-        global PLAYER_X, PLAYER_Y
-        bullet = Bullet([PLAYER_X, PLAYER_Y],\
-        [self.rect.x, self.rect.y, self.rect.height], None, True, 'red_snake_shot')
+        #global PLAYER_X, PLAYER_Y
+        if self.reverse:
+            bull_dir = [-1000, self.rect.y]
+        else:
+            bull_dir = [1000, self.rect.y]
+        bullet = Bullet(bull_dir,\
+        [self.rect.x, self.rect.y, self.rect.height/2], None, True, 'red_snake_shot')
         bullet.rect.x = self.rect.x
-        bullet.rect.y = self.rect.y
+        bullet.rect.y = self.rect.y + 30
         entities.add(bullet)
         bullets.add(bullet)
 
