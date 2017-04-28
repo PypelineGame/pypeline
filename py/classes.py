@@ -310,7 +310,8 @@ class Player(Entity):
 
         # handle knock back collision for snake bullets
         for bullet in bullets:
-            if bullet.bullet_type == "red_snake_shot":
+            if bullet.bullet_type == "red_snake_shot" or \
+               bullet.bullet_type == "blue_snake_shot":
                 if pygame.sprite.collide_rect(self, bullet):
                     self.enemy_collision = True
                     self.damage(10, None, None)
@@ -319,6 +320,8 @@ class Player(Entity):
                         self.knockback_right = True
                     elif self.xvel > 0:
                         self.knockback_left = True
+                    if bullet.bullet_type == "blue_snake_shot":
+                        self.strong_attack_disabled = True
                     bullets.remove(bullet)
                     entities.remove(bullet)
 
@@ -417,10 +420,17 @@ class Bullet(pygame.sprite.Sprite):
             self.center_y = shooting_entity[1]/4 # + shooting_entity[2] - shooting_entity[2]/2)
             self.center_x = shooting_entity[0]/4
 
-            #self.center_y = shooting_entity[1]/2 + shooting_entity[2]/2 + 10# + shooting_entity[2] - shooting_entity[2]/2)
-            #self.center_x = shooting_entity[0]/2 + shooting_entity[2]/2 + 10
             self.image = pygame.Surface([8, 8])
-            self.image.fill(WHITE)
+            self.image.fill(RED)
+            #self.image = pygame.image.load(SPRITES_DIRECTORY + 'player/blade_wave.png')
+            if not image_direction:
+                self.image = transform.flip(self.image, 1, 0)
+        elif bullet_type == "blue_snake_shot":
+            self.center_y = shooting_entity[1]/4 # + shooting_entity[2] - shooting_entity[2]/2)
+            self.center_x = shooting_entity[0]/4
+
+            self.image = pygame.Surface([8, 8])
+            self.image.fill(BLUE)
             #self.image = pygame.image.load(SPRITES_DIRECTORY + 'player/blade_wave.png')
             if not image_direction:
                 self.image = transform.flip(self.image, 1, 0)
@@ -441,36 +451,18 @@ class Bullet(pygame.sprite.Sprite):
 
     def update(self):
         """ Move the bullet. """
-        #print self.center_x, self.bullet_direction_x
         speed = 4
         range = 200
         # generate bullet vector
-        if self.bullet_type == "red_snake_shot":
-            #distance = [self.bullet_direction_x - self.center_x, self.bullet_direction_y - self.center_y]
-            #distance = [self.center_x - self.bullet_direction_x, self.center_y - self.bullet_direction_y]
+        if self.bullet_type == "red_snake_shot" or self.bullet_type == "blue_snake_shot":
             if self.bullet_direction_x < 0:
-                #print "right"
                 self.xdir = 1
             else:
-                #print "left"
                 self.xdir = -1
             self.ydir = 1
-            #if self.center_y < self.bullet_direction_y:
-            #    self.ydir = -1
-            #elif self.center_y > self.bullet_direction_y:
-            #    self.ydir = 1
-            #dx, dy = self.center_x - self.bullet_direction_x, self.center_y - self.bullet_direction_y
-            #dist = hypot(dx, dy)
-            #self.xdir, self.ydir = dx / dist, dy / dist # direction are revers
-            #norm = sqrt(distance[0] ** 2 + distance[1] ** 2)
-            #direction = [distance[0] / norm, distance[1] / norm]
             bullet_vector = [self.xdir * speed, self.ydir * speed]
-            #print bullet_vector[0]
             self.rect.x += bullet_vector[0]
-            #print self.rect.x
-            #self.rect.y += bullet_vector[1]
         else:
-#        elif self.bullet_type == "player_strong_attack":
             if self.image_direction == True:
                 self.rect.x += 4
             else:
@@ -925,27 +917,14 @@ class PySnake(Enemy):
     def dead(self):
         return self.hit and self.dying_counter >= 55
 
-class GreenPysnake(PySnake):
-    """ green pysnake enemy """
-    def __init__(self, x, y):
-        PySnake.__init__(self, x, y)
-        self.images = [SPRITES_DIRECTORY + 'PySnake/green_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
-        self.image = pygame.image.load(self.images[0]) # start on first image
-        self.dying = [SPRITES_DIRECTORY + 'PySnake/green_snake/green_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
-
-    #def collide(self, xvel, yvel, platforms, blocks, entities, player):
-    #   PySnake.collide(self, xvel, yvel, platforms, blocks, entities)
-
-class RedPysnake(PySnake):
+class ShootingPySnake(PySnake):
     """ red pysnake enemy """
     def __init__(self, x, y):
         PySnake.__init__(self, x, y)
-        self.images = [SPRITES_DIRECTORY + 'PySnake/red_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
-        self.image = pygame.image.load(self.images[0]) # start on first image
-        self.dying = [SPRITES_DIRECTORY + 'PySnake/red_snake/red_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
         self.radius = 500
         self.shooting = False
         self.shooting_timer = 180
+        self.shotType = 'red_snake_shot'
 
     def update(self, platforms, blank_platforms, blocks, entities, bullets):
         PySnake.update(self, platforms, blank_platforms, blocks, entities, bullets)
@@ -976,11 +955,33 @@ class RedPysnake(PySnake):
         else:
             bull_dir = [1000, self.rect.y]
         bullet = Bullet(bull_dir,\
-        [self.rect.x, self.rect.y, self.rect.height/2], None, True, 'red_snake_shot')
+        [self.rect.x, self.rect.y, self.rect.height/2], None, True, self.shotType)
         bullet.rect.x = self.rect.x
         bullet.rect.y = self.rect.y + 30
         entities.add(bullet)
         bullets.add(bullet)
+
+
+class GreenPysnake(PySnake):
+    """ green pysnake enemy """
+    def __init__(self, x, y):
+        PySnake.__init__(self, x, y)
+        self.images = [SPRITES_DIRECTORY + 'PySnake/green_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
+        self.image = pygame.image.load(self.images[0]) # start on first image
+        self.dying = [SPRITES_DIRECTORY + 'PySnake/green_snake/green_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
+
+    #def collide(self, xvel, yvel, platforms, blocks, entities, player):
+    #   PySnake.collide(self, xvel, yvel, platforms, blocks, entities)
+
+class RedPysnake(ShootingPySnake):
+    """ red pysnake enemy """
+    def __init__(self, x, y):
+        ShootingPySnake.__init__(self, x, y)
+        self.images = [SPRITES_DIRECTORY + 'PySnake/red_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
+        self.image = pygame.image.load(self.images[0]) # start on first image
+        self.dying = [SPRITES_DIRECTORY + 'PySnake/red_snake/red_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
+        self.shotType = 'red_snake_shot'
+
 
 class PurplePysnake(PySnake):
     """ purple pysnake enemy """
@@ -990,13 +991,14 @@ class PurplePysnake(PySnake):
         self.image = pygame.image.load(self.images[0]) # start on first image
         self.dying = [SPRITES_DIRECTORY + 'PySnake/purple_snake/purple_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
 
-class BluePysnake(PySnake):
+class BluePysnake(ShootingPySnake):
     """ blue pysnake enemy """
     def __init__(self, x, y):
-        PySnake.__init__(self, x, y)
+        ShootingPySnake.__init__(self, x, y)
         self.images = [SPRITES_DIRECTORY + 'PySnake/blue_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]]
         self.image = pygame.image.load(self.images[0]) # start on first image
         self.dying = [SPRITES_DIRECTORY + 'PySnake/blue_snake/blue_dead_snake/' + str(x) + '.png' for x in [1, 2, 3, 4, 5, 6, 7]]
+        self.shotType = 'blue_snake_shot'
 
 class Ghost(Enemy):
     def __init__(self, x, y):
@@ -1193,7 +1195,7 @@ class BlueCoin(Coin):
             if pygame.sprite.collide_rect(self, player):
 
                  if player.strong_attack_disabled:
-                    player.strong_attack_timer = 89
+                    player.strong_attack_timer = 90
                     player.strong_attack_disabled = False
                  return True
             else:
