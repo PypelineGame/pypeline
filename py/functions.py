@@ -64,7 +64,7 @@ def build_level(*args):
     for row in level:
         for col in row:
             if col != " ":
-                if col =="G":
+                if col =="F":
                     p = classes.BlueCoin(x, y)
                     entities.add(p)
                     coins.append(p)
@@ -74,7 +74,7 @@ def build_level(*args):
                     entities.add(p)
                     coins.append(p)
                     coin_sprites.add(p)
-                elif col == "F":
+                elif col == "G":
                     p = classes.GreenCoin(x, y)
                     entities.add(p)
                     coins.append(p)
